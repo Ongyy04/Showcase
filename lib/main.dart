@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'pages/home.dart';
-import 'pages/search.dart';
-import 'pages/mygif.dart';
+import 'pages/home_page.dart';
+import 'pages/search_page.dart';
+import 'pages/order_page.dart';
+import 'pages/my_coupons_page.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -13,11 +16,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Pretendard'),
-      initialRoute: '/mygif',
+      initialRoute: '/my_coupons',
       routes: {
         '/home': (context) => const HomePage(),
         '/search': (context) => const SearchPage(),
-        '/mygif': (context) => const MyGifPage(),
+        '/order': (context) => const OrderPage(),
+        '/my_coupons': (context) => const MyCouponsPage(),
       },
     );
   }
