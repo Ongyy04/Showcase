@@ -28,8 +28,8 @@ class MyApp extends StatelessWidget {
         '/people': (context) => const PeoplePage(),
         '/coupon_detail': (context) => const CouponDetailPage(), 
         '/purchase': (context) => const PurchaseHistoryPage(),
-        
       },
     );
   }
 }
+

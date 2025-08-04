@@ -13,16 +13,16 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
   String sortOption = '최신순';
   final List<String> sortOptions = ['최신순', '오래된순', '가나다순'];
 
+  final List<String> purchaseOptions = ['구매내역', '선물하기'];
+  String selectedPurchaseButton = '구매내역';
+
   void _showExpiredDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: Container(
-            width: 300,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -33,32 +33,20 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               children: [
                 const Text(
                   '사용기한 만료 안내',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 15),
-                Image.asset(
-                  'assets/images/sad.png',
-                  width: 150,
-                  height: 150,
-                ),
+                Image.asset('assets/images/sad.png', width: 150, height: 150),
                 const SizedBox(height: 15),
                 const Text(
                   '기한이 만료되어 사용하실 수 없습니다.',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black,
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.black),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
                 GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
+                  onTap: () => Navigator.pop(context),
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -85,6 +73,115 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
     );
   }
 
+  Widget _buildCouponList() {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () => Navigator.pushNamed(context, '/coupon_detail'),
+          child: const CouponCard(
+            imageAsset: 'assets/images/cafe.png',
+            brand: '스타벅스',
+            name: '카페라떼 (ICE)',
+            period: '2025.08.11~2026.08.11',
+            statusLabel: '포인트 전환 가능 금액: 250원',
+            statusColor: Color(0xFFFFE96A),
+            statusTextColor: Colors.black,
+          ),
+        ),
+        const CouponCard(
+          imageAsset: 'assets/images/ade.png',
+          brand: '이디야커피',
+          name: '베리베리에이드 (ICE)',
+          period: '2025.08.11~2026.08.11',
+          statusLabel: '미사용',
+          statusColor: Color(0xFFFEDC56),
+          statusTextColor: Colors.black,
+        ),
+        const CouponCard(
+          imageAsset: 'assets/images/americano.png',
+          brand: '메가커피',
+          name: '아이스아메리카노 (ICE)',
+          period: '2025.08.11~2026.08.11',
+          statusLabel: '사용완료',
+          statusColor: Color(0xFF2F2C46),
+          statusTextColor: Colors.white,
+        ),
+        GestureDetector(
+          onTap: _showExpiredDialog,
+          child: const CouponCard(
+            imageAsset: 'assets/images/americano.png',
+            brand: '컴포즈커피',
+            name: '아이스아메리카노 (ICE)',
+            period: '2025.08.11~2026.08.11',
+            statusLabel: '기한 만료',
+            statusColor: Colors.black,
+            statusTextColor: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPurchaseHistory() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          color: Colors.white,
+          child: Row(
+            children: purchaseOptions.map((option) {
+              final bool isSelected = selectedPurchaseButton == option;
+              return Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedPurchaseButton = option;
+                    });
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(right: option == '선물하기' ? 0 : 8),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(
+                      color: isSelected ? const Color(0xFFFDAF17) : Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: isSelected ? null : Border.all(color: const Color(0xFF878C93)),
+                    ),
+                    child: Text(
+                      option,
+                      style: TextStyle(
+                        color: isSelected ? Colors.white : const Color(0xFF878C93),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          child: Text(
+            '총 0건',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+        ),
+        Expanded(
+          child: Center(
+            child: Text(
+              selectedPurchaseButton == '선물하기'
+                  ? '선물한 내역이 없습니다.'
+                  : '구매한 내역이 없습니다.',
+              style: const TextStyle(fontSize: 14, color: Colors.black54),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,23 +192,22 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
           icon: Image.asset('assets/images/arrow.png', width: 24, height: 24),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('모바일 쿠폰마켓', style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w600)),
+        title: const Text(
+          '모바일 쿠폰마켓',
+          style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w600),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: Row(
               children: [
                 GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/people');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/people'),
                   child: Image.asset('assets/images/people.png', width: 24, height: 24),
                 ),
                 const SizedBox(width: 16),
                 GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/home');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/home'),
                   child: Image.asset('assets/images/home.png', width: 24, height: 24),
                 ),
                 const SizedBox(width: 16),
@@ -123,25 +219,8 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
       ),
       backgroundColor: Colors.white,
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('gifcon', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                Row(
-                  children: const [
-                    Icon(Icons.monetization_on, color: Color(0xFF383C59)),
-                    SizedBox(width: 6),
-                    Text('2,300', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF383C59))),
-                  ],
-                )
-              ],
-            ),
-          ),
+          // 탭 메뉴
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             color: Colors.white,
@@ -152,10 +231,9 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                 return GestureDetector(
                   onTap: () {
                     if (tab == '구매내역') {
-                      // 구매내역 탭 클릭 시 새 페이지로 이동
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const PurchaseHistoryPage()), // 여기를 수정했습니다.
+                        MaterialPageRoute(builder: (context) => const PurchaseHistoryPage()),
                       );
                     } else {
                       setState(() {
@@ -165,9 +243,20 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                   },
                   child: Column(
                     children: [
-                      Text(tab, style: TextStyle(color: isSelected ? Colors.black : const Color(0xFF878C93), fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                      Text(
+                        tab,
+                        style: TextStyle(
+                          color: isSelected ? Colors.black : const Color(0xFF878C93),
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
                       const SizedBox(height: 2),
-                      Text('────────', style: TextStyle(color: isSelected ? Colors.black : Colors.transparent))
+                      Text(
+                        '────────',
+                        style: TextStyle(
+                          color: isSelected ? Colors.black : Colors.transparent,
+                        ),
+                      ),
                     ],
                   ),
                 );
@@ -175,98 +264,19 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
             ),
           ),
           
-          if (selectedMainTab == '내 기프티콘') ...[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-              color: Colors.white,
-              child: GestureDetector(
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: sortOptions.map((option) => ListTile(
-                        title: Text(option),
-                        onTap: () {
-                          setState(() {
-                            sortOption = option;
-                            Navigator.pop(context);
-                          });
-                        },
-                      )).toList(),
-                    ),
-                  );
-                },
-                child: Row(
-                  children: [
-                    Text(sortOption, style: const TextStyle(color: Colors.black, fontSize: 14)),
-                    const SizedBox(width: 6),
-                    Image.asset('assets/images/down.arrow.png', width: 16, height: 16),
-                  ],
-                ),
-              ),
+          // 본문
+          Expanded(
+            child: SingleChildScrollView(
+              child: selectedMainTab == '내 기프티콘'
+                  ? _buildCouponList()
+                  : _buildPurchaseHistory(),
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/coupon_detail');
-                      },
-                      child: const CouponCard(
-                        imageAsset: 'assets/images/cafe.png',
-                        brand: '스타벅스',
-                        name: '카페라떼 (ICE)',
-                        period: '2025.08.11~2026.08.11',
-                        statusLabel: '포인트 전환 가능 금액: 250원',
-                        statusColor: Color(0xFFFFE96A),
-                        statusTextColor: Colors.black,
-                      ),
-                    ),
-                    const CouponCard(
-                      imageAsset: 'assets/images/ade.png',
-                      brand: '이디야커피',
-                      name: '베리베리에이드 (ICE)',
-                      period: '2025.08.11~2026.08.11',
-                      statusLabel: '미사용',
-                      statusColor: Color(0xFFFEDC56),
-                      statusTextColor: Colors.black,
-                    ),
-                    const CouponCard(
-                      imageAsset: 'assets/images/americano.png',
-                      brand: '메가커피',
-                      name: '아이스아메리카노 (ICE)',
-                      period: '2025.08.11~2026.08.11',
-                      statusLabel: '사용완료',
-                      statusColor: Color(0xFF2F2C46),
-                      statusTextColor: Colors.white,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        _showExpiredDialog();
-                      },
-                      child: const CouponCard(
-                        imageAsset: 'assets/images/americano.png',
-                        brand: '컴포즈커피',
-                        name: '아이스아메리카노 (ICE)',
-                        period: '2025.08.11~2026.08.11',
-                        statusLabel: '기한 만료',
-                        statusColor: Colors.black,
-                        statusTextColor: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ],
+          ),
         ],
       ),
     );
   }
 }
-
 class CouponCard extends StatelessWidget {
   final String imageAsset;
   final String brand;
