@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
         '/search': (context) => const SearchPage(),
         '/order': (context) => const OrderPage(),
         '/my_coupons': (context) => const MyCouponsPage(),
+        '/people': (context) => const PeoplePage(),
       },
     );
   }
