@@ -12,6 +12,64 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
   String sortOption = '최신순';
   final List<String> sortOptions = ['최신순', '오래된순', '가나다순'];
 
+  // 기한 만료 팝업 함수
+  void _showExpiredDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  '사용기한 만료 안내',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 15),
+                Image.asset('assets/images/sad.png', width: 150, height: 150),
+                const SizedBox(height: 15),
+                const Text(
+                  '기한이 만료되어 사용하실 수 없습니다.',
+                  style: TextStyle(fontSize: 14, color: Colors.black),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEDC56),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      '확인',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -190,14 +248,17 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     statusColor: Color(0xFF2F2C46),
                     statusTextColor: Colors.white,
                   ),
-                  const CouponCard(
-                    imageAsset: 'assets/images/americano.png',
-                    brand: '컴포즈커피',
-                    name: '아이스아메리카노 (ICE)',
-                    period: '2025.08.11~2026.08.11',
-                    statusLabel: '기한 만료',
-                    statusColor: Colors.black,
-                    statusTextColor: Colors.white,
+                  GestureDetector(
+                    onTap: _showExpiredDialog, // 기한만료 클릭 시 팝업
+                    child: const CouponCard(
+                      imageAsset: 'assets/images/americano.png',
+                      brand: '컴포즈커피',
+                      name: '아이스아메리카노 (ICE)',
+                      period: '2025.08.11~2026.08.11',
+                      statusLabel: '기한 만료',
+                      statusColor: Colors.black,
+                      statusTextColor: Colors.white,
+                    ),
                   ),
                 ],
               ),
