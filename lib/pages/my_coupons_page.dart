@@ -8,11 +8,12 @@ class MyCouponsPage extends StatefulWidget {
 }
 
 class _MyCouponsPageState extends State<MyCouponsPage> {
-  String selectedTab = '내 기프티콘';
+  String selectedMainTab = '내 기프티콘'; 
   String sortOption = '최신순';
   final List<String> sortOptions = ['최신순', '오래된순', '가나다순'];
+  String selectedPurchaseButton = '전체';
+  final List<String> purchaseOptions = ['전체', '구매하기', '선물하기'];
 
-  // '기한 만료' 팝업을 띄우는 함수
   void _showExpiredDialog() {
     showDialog(
       context: context,
@@ -41,7 +42,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                 ),
                 const SizedBox(height: 15),
                 Image.asset(
-                  'assets/images/sad.png', // 이미지 경로 확인
+                  'assets/images/sad.png',
                   width: 150,
                   height: 150,
                 ),
@@ -121,7 +122,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
           )
         ],
       ),
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Colors.white,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -145,120 +146,225 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             color: Colors.white,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: ['홈', '검색', '구매내역', '내 기프티콘'].map((tab) {
-                    final bool isSelected = selectedTab == tab;
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedTab = tab;
-                          if (tab == '홈') Navigator.pushNamed(context, '/home');
-                          if (tab == '검색') Navigator.pushNamed(context, '/search');
-                        });
-                      },
-                      child: Column(
-                        children: [
-                          Text(tab, style: TextStyle(color: isSelected ? Colors.black : const Color(0xFF878C93), fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
-                          const SizedBox(height: 2),
-                          Text('────────', style: TextStyle(color: isSelected ? Colors.black : Colors.transparent))
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 8),
-                if (selectedTab != '내 기프티콘')
-                  const Text('아직 구현 전입니다.', style: TextStyle(fontSize: 12, color: Colors.grey))
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            color: Colors.white,
-            child: GestureDetector(
-              onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: sortOptions.map((option) => ListTile(
-                      title: Text(option),
-                      onTap: () {
-                        setState(() {
-                          sortOption = option;
-                          Navigator.pop(context);
-                        });
-                      },
-                    )).toList(),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: ['홈', '검색', '구매내역', '내 기프티콘'].map((tab) {
+                final bool isSelected = selectedMainTab == tab;
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedMainTab = tab;
+                    });
+                  },
+                  child: Column(
+                    children: [
+                      Text(tab, style: TextStyle(color: isSelected ? Colors.black : const Color(0xFF878C93), fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                      const SizedBox(height: 2),
+                      Text('────────', style: TextStyle(color: isSelected ? Colors.black : Colors.transparent))
+                    ],
                   ),
                 );
-              },
-              child: Row(
-                children: [
-                  Text(sortOption, style: const TextStyle(color: Colors.black, fontSize: 14)),
-                  const SizedBox(width: 6),
-                  Image.asset('assets/images/down.arrow.png', width: 16, height: 16),
-                ],
-              ),
+              }).toList(),
             ),
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/coupon_detail');
-                    },
-                    child: const CouponCard(
-                      imageAsset: 'assets/images/cafe.png',
-                      brand: '스타벅스',
-                      name: '카페라떼 (ICE)',
-                      period: '2025.08.11~2026.08.11',
-                      statusLabel: '포인트 전환 가능 금액: 250원',
-                      statusColor: Color(0xFFFFE96A),
-                      statusTextColor: Colors.black,
+          
+          if (selectedMainTab == '내 기프티콘') ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              color: Colors.white,
+              child: GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (context) => Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: sortOptions.map((option) => ListTile(
+                        title: Text(option),
+                        onTap: () {
+                          setState(() {
+                            sortOption = option;
+                            Navigator.pop(context);
+                          });
+                        },
+                      )).toList(),
                     ),
-                  ),
-                  const CouponCard(
-                    imageAsset: 'assets/images/ade.png',
-                    brand: '이디야커피',
-                    name: '베리베리에이드 (ICE)',
-                    period: '2025.08.11~2026.08.11',
-                    statusLabel: '미사용',
-                    statusColor: Color(0xFFFEDC56),
-                    statusTextColor: Colors.black,
-                  ),
-                  const CouponCard(
-                    imageAsset: 'assets/images/americano.png',
-                    brand: '메가커피',
-                    name: '아이스아메리카노 (ICE)',
-                    period: '2025.08.11~2026.08.11',
-                    statusLabel: '사용완료',
-                    statusColor: Color(0xFF2F2C46),
-                    statusTextColor: Colors.white,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      _showExpiredDialog();
-                    },
-                    child: const CouponCard(
-                      imageAsset: 'assets/images/americano.png',
-                      brand: '컴포즈커피',
-                      name: '아이스아메리카노 (ICE)',
-                      period: '2025.08.11~2026.08.11',
-                      statusLabel: '기한 만료',
-                      statusColor: Colors.black,
-                      statusTextColor: Colors.white,
-                    ),
-                  ),
-                ],
+                  );
+                },
+                child: Row(
+                  children: [
+                    Text(sortOption, style: const TextStyle(color: Colors.black, fontSize: 14)),
+                    const SizedBox(width: 6),
+                    Image.asset('assets/images/down.arrow.png', width: 16, height: 16),
+                  ],
+                ),
               ),
             ),
-          )
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/coupon_detail');
+                      },
+                      child: const CouponCard(
+                        imageAsset: 'assets/images/cafe.png',
+                        brand: '스타벅스',
+                        name: '카페라떼 (ICE)',
+                        period: '2025.08.11~2026.08.11',
+                        statusLabel: '포인트 전환 가능 금액: 250원',
+                        statusColor: Color(0xFFFFE96A),
+                        statusTextColor: Colors.black,
+                      ),
+                    ),
+                    const CouponCard(
+                      imageAsset: 'assets/images/ade.png',
+                      brand: '이디야커피',
+                      name: '베리베리에이드 (ICE)',
+                      period: '2025.08.11~2026.08.11',
+                      statusLabel: '미사용',
+                      statusColor: Color(0xFFFEDC56),
+                      statusTextColor: Colors.black,
+                    ),
+                    const CouponCard(
+                      imageAsset: 'assets/images/americano.png',
+                      brand: '메가커피',
+                      name: '아이스아메리카노 (ICE)',
+                      period: '2025.08.11~2026.08.11',
+                      statusLabel: '사용완료',
+                      statusColor: Color(0xFF2F2C46),
+                      statusTextColor: Colors.white,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        _showExpiredDialog();
+                      },
+                      child: const CouponCard(
+                        imageAsset: 'assets/images/americano.png',
+                        brand: '컴포즈커피',
+                        name: '아이스아메리카노 (ICE)',
+                        period: '2025.08.11~2026.08.11',
+                        statusLabel: '기한 만료',
+                        statusColor: Colors.black,
+                        statusTextColor: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ] else if (selectedMainTab == '구매내역') ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              color: Colors.white,
+              child: Row(
+                children: purchaseOptions.map((option) {
+                  final bool isSelected = selectedPurchaseButton == option;
+                  return Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedPurchaseButton = option;
+                        });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: option == '선물하기' ? 0 : 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: isSelected ? const Color(0xFFFDAF17) : Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: isSelected ? null : Border.all(color: const Color(0xFF878C93)),
+                        ),
+                        child: Text(
+                          option,
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : const Color(0xFF878C93),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            // '총 0건' 텍스트
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Text(
+                '총 0건',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Container(
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              // 선택된 버튼에 따라 텍스트 변경
+                              selectedPurchaseButton == '선물하기'
+                                  ? '선물한 내역이 없습니다.'
+                                  : '구매한 내역이 없습니다.',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      color: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Text(
+                                '이용약관',
+                                style: TextStyle(fontSize: 12, color: Colors.black54),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(width: 1, height: 12, color: Colors.black12),
+                              const SizedBox(width: 8),
+                              const Text(
+                                '개인정보처리방침',
+                                style: TextStyle(fontSize: 12, color: Colors.black54),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: const [
+                              Text(
+                                '사업자정보',
+                                style: TextStyle(fontSize: 12, color: Colors.black54),
+                              ),
+                              SizedBox(width: 4),
+                              Icon(Icons.keyboard_arrow_up, size: 16, color: Colors.black54),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
