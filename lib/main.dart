@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'pages/home_page.dart';
 import 'pages/search_page.dart';
 import 'pages/order_page.dart';
@@ -26,6 +27,8 @@ class MyApp extends StatelessWidget {
         '/my_coupons': (context) => const MyCouponsPage(),
         '/people': (context) => const PeoplePage(),
         '/coupon_detail': (context) => const CouponDetailPage(), 
+        '/purchase': (context) => const MyPurchasePage(),   
+        
       },
     );
   }
