@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 
-void main() => runApp(const MyApp());
-=======
 import 'pages/home_page.dart';
 import 'pages/search_page.dart';
 import 'pages/order_page.dart';
@@ -11,7 +8,6 @@ import 'pages/my_coupons_page.dart';
 void main() {
   runApp(const MyApp());
 }
->>>>>>> 7d95d7c31832520b37b6efc93f4ed86a6bdb532b
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
