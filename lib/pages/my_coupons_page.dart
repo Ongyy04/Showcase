@@ -338,4 +338,4 @@ class CouponCard extends StatelessWidget {
       ),
     );
   }
-}//ㅇㄹ
+}
