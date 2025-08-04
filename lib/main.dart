@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         '/my_coupons': (context) => const MyCouponsPage(),
         '/people': (context) => const PeoplePage(),
         '/coupon_detail': (context) => const CouponDetailPage(), 
-        '/purchase': (context) => const MyPurchasePage(),   
+        //'/purchase': (context) => const MyPurchasePage(),   
         
       },
     );
