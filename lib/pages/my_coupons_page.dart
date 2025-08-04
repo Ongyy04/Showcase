@@ -132,20 +132,25 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               ),
             ),
           ),
-          const Expanded(
+          Expanded(
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  CouponCard(
-                    imageAsset: 'assets/images/cafe.png',
-                    brand: '스타벅스',
-                    name: '카페라떼 (ICE)',
-                    period: '2025.08.11~2026.08.11',
-                    statusLabel: '포인트 전환 가능 금액: 250원',
-                    statusColor: Color(0xFFFFE96A),
-                    statusTextColor: Colors.black,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/coupon_detail');
+                    },
+                    child: const CouponCard(
+                      imageAsset: 'assets/images/cafe.png',
+                      brand: '스타벅스',
+                      name: '카페라떼 (ICE)',
+                      period: '2025.08.11~2026.08.11',
+                      statusLabel: '포인트 전환 가능 금액: 250원',
+                      statusColor: Color(0xFFFFE96A),
+                      statusTextColor: Colors.black,
+                    ),
                   ),
-                  CouponCard(
+                  const CouponCard(
                     imageAsset: 'assets/images/ade.png',
                     brand: '이디야커피',
                     name: '베리베리에이드 (ICE)',
@@ -154,7 +159,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     statusColor: Color(0xFFFEDC56),
                     statusTextColor: Colors.black,
                   ),
-                  CouponCard(
+                  const CouponCard(
                     imageAsset: 'assets/images/americano.png',
                     brand: '메가커피',
                     name: '아이스아메리카노 (ICE)',
@@ -163,7 +168,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     statusColor: Color(0xFF2F2C46),
                     statusTextColor: Colors.white,
                   ),
-                  CouponCard(
+                  const CouponCard(
                     imageAsset: 'assets/images/americano.png',
                     brand: '컴포즈커피',
                     name: '아이스아메리카노 (ICE)',
