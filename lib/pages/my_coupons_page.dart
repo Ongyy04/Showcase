@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'purchase_list.dart';
 
 class MyCouponsPage extends StatefulWidget {
   const MyCouponsPage({super.key});
@@ -8,11 +9,9 @@ class MyCouponsPage extends StatefulWidget {
 }
 
 class _MyCouponsPageState extends State<MyCouponsPage> {
-  String selectedMainTab = '내 기프티콘'; 
+  String selectedMainTab = '내 기프티콘';
   String sortOption = '최신순';
   final List<String> sortOptions = ['최신순', '오래된순', '가나다순'];
-  String selectedPurchaseButton = '전체';
-  final List<String> purchaseOptions = ['전체', '구매하기', '선물하기'];
 
   void _showExpiredDialog() {
     showDialog(
@@ -152,9 +151,17 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                 final bool isSelected = selectedMainTab == tab;
                 return GestureDetector(
                   onTap: () {
-                    setState(() {
-                      selectedMainTab = tab;
-                    });
+                    if (tab == '구매내역') {
+                      // 구매내역 탭 클릭 시 새 페이지로 이동
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const PurchaseHistoryPage()), // 여기를 수정했습니다.
+                      );
+                    } else {
+                      setState(() {
+                        selectedMainTab = tab;
+                      });
+                    }
                   },
                   child: Column(
                     children: [
@@ -253,117 +260,6 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                 ),
               ),
             )
-          ] else if (selectedMainTab == '구매내역') ...[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              color: Colors.white,
-              child: Row(
-                children: purchaseOptions.map((option) {
-                  final bool isSelected = selectedPurchaseButton == option;
-                  return Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedPurchaseButton = option;
-                        });
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(right: option == '선물하기' ? 0 : 8),
-                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: isSelected ? const Color(0xFFFDAF17) : Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          border: isSelected ? null : Border.all(color: const Color(0xFF878C93)),
-                        ),
-                        child: Text(
-                          option,
-                          style: TextStyle(
-                            color: isSelected ? Colors.white : const Color(0xFF878C93),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            // '총 0건' 텍스트
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Text(
-                '총 0건',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                color: Colors.white,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              // 선택된 버튼에 따라 텍스트 변경
-                              selectedPurchaseButton == '선물하기'
-                                  ? '선물한 내역이 없습니다.'
-                                  : '구매한 내역이 없습니다.',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.black54,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(
-                      color: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              const Text(
-                                '이용약관',
-                                style: TextStyle(fontSize: 12, color: Colors.black54),
-                              ),
-                              const SizedBox(width: 8),
-                              Container(width: 1, height: 12, color: Colors.black12),
-                              const SizedBox(width: 8),
-                              const Text(
-                                '개인정보처리방침',
-                                style: TextStyle(fontSize: 12, color: Colors.black54),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: const [
-                              Text(
-                                '사업자정보',
-                                style: TextStyle(fontSize: 12, color: Colors.black54),
-                              ),
-                              SizedBox(width: 4),
-                              Icon(Icons.keyboard_arrow_up, size: 16, color: Colors.black54),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ],
         ],
       ),
