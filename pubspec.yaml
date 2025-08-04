@@ -20,11 +20,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/arrow.png
-    - assets/images/people.png
-    - assets/images/home.png
-    - assets/images/more.png
-    - assets/images/down.arrow.png
-    - assets/images/cafe.png
-    - assets/images/ade.png
-    - assets/images/americano.png
+    - assets/images/
