@@ -28,7 +28,12 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
             padding: const EdgeInsets.only(right: 12),
             child: Row(
               children: [
-                Image.asset('assets/images/people.png', width: 24, height: 24),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/people');
+                  },
+                  child: Image.asset('assets/images/people.png', width: 24, height: 24),
+                ),
                 const SizedBox(width: 16),
                 GestureDetector(
                   onTap: () {
