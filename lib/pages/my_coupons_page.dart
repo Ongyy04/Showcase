@@ -22,23 +22,22 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
           icon: Image.asset('assets/images/arrow.png', width: 24, height: 24),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('모바일 쿠폰마켓', style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w600)),
+        title: const Text(
+          '모바일 쿠폰마켓',
+          style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w600),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: Row(
               children: [
                 GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/people');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/people'),
                   child: Image.asset('assets/images/people.png', width: 24, height: 24),
                 ),
                 const SizedBox(width: 16),
                 GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/home');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/home'),
                   child: Image.asset('assets/images/home.png', width: 24, height: 24),
                 ),
                 const SizedBox(width: 16),
@@ -52,6 +51,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 상단 잔액 영역
           Container(
             padding: const EdgeInsets.all(20),
             color: Colors.white,
@@ -63,12 +63,21 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                   children: const [
                     Icon(Icons.monetization_on, color: Color(0xFF383C59)),
                     SizedBox(width: 6),
-                    Text('2,300', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF383C59))),
+                    Text(
+                      '2,300',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Color(0xFF383C59),
+                      ),
+                    ),
                   ],
                 )
               ],
             ),
           ),
+
+          // 하단 탭 메뉴
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             color: Colors.white,
@@ -88,20 +97,30 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                       },
                       child: Column(
                         children: [
-                          Text(tab, style: TextStyle(color: isSelected ? Colors.black : const Color(0xFF878C93), fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                          Text(
+                            tab,
+                            style: TextStyle(
+                              color: isSelected ? Colors.black : const Color(0xFF878C93),
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
                           const SizedBox(height: 2),
-                          Text('────────', style: TextStyle(color: isSelected ? Colors.black : Colors.transparent))
+                          Text(
+                            '────────',
+                            style: TextStyle(
+                              color: isSelected ? Colors.black : Colors.transparent,
+                            ),
+                          ),
                         ],
                       ),
                     );
                   }).toList(),
                 ),
-                const SizedBox(height: 8),
-                if (selectedTab != '내 기프티콘')
-                  const Text('아직 구현 전입니다.', style: TextStyle(fontSize: 12, color: Colors.grey))
               ],
             ),
           ),
+
+          // 정렬 옵션
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             color: Colors.white,
@@ -111,15 +130,17 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                   context: context,
                   builder: (context) => Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: sortOptions.map((option) => ListTile(
-                      title: Text(option),
-                      onTap: () {
-                        setState(() {
-                          sortOption = option;
-                          Navigator.pop(context);
-                        });
-                      },
-                    )).toList(),
+                    children: sortOptions.map((option) {
+                      return ListTile(
+                        title: Text(option),
+                        onTap: () {
+                          setState(() {
+                            sortOption = option;
+                            Navigator.pop(context);
+                          });
+                        },
+                      );
+                    }).toList(),
                   ),
                 );
               },
@@ -132,20 +153,26 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               ),
             ),
           ),
-          const Expanded(
+
+          // 쿠폰 목록
+          Expanded(
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  CouponCard(
-                    imageAsset: 'assets/images/cafe.png',
-                    brand: '스타벅스',
-                    name: '카페라떼 (ICE)',
-                    period: '2025.08.11~2026.08.11',
-                    statusLabel: '포인트 전환 가능 금액: 250원',
-                    statusColor: Color(0xFFFFE96A),
-                    statusTextColor: Colors.black,
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => Navigator.pushNamed(context, '/coupon_detail'),
+                    child: const CouponCard(
+                      imageAsset: 'assets/images/cafe.png',
+                      brand: '스타벅스',
+                      name: '카페라떼 (ICE)',
+                      period: '2025.08.11~2026.08.11',
+                      statusLabel: '포인트 전환 가능 금액: 250원',
+                      statusColor: Color(0xFFFFE96A),
+                      statusTextColor: Colors.black,
+                    ),
                   ),
-                  CouponCard(
+                  const CouponCard(
                     imageAsset: 'assets/images/ade.png',
                     brand: '이디야커피',
                     name: '베리베리에이드 (ICE)',
@@ -154,7 +181,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     statusColor: Color(0xFFFEDC56),
                     statusTextColor: Colors.black,
                   ),
-                  CouponCard(
+                  const CouponCard(
                     imageAsset: 'assets/images/americano.png',
                     brand: '메가커피',
                     name: '아이스아메리카노 (ICE)',
@@ -163,7 +190,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     statusColor: Color(0xFF2F2C46),
                     statusTextColor: Colors.white,
                   ),
-                  CouponCard(
+                  const CouponCard(
                     imageAsset: 'assets/images/americano.png',
                     brand: '컴포즈커피',
                     name: '아이스아메리카노 (ICE)',
@@ -251,3 +278,4 @@ class CouponCard extends StatelessWidget {
     );
   }
 }
+
