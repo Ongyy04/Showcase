@@ -18,13 +18,16 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
 
   int? _currentUserKey;
 
+  @override
   void initState() {
     super.initState();
     _currentUserKey = DatabaseService.currentUserKey();
   }
 
-  // 기한 만료 팝업
-  void _showExpiredDialog() {
+  Future<void> _showExpiredDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -80,7 +83,6 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
   }
 
   Widget _buildStarPoint() {
-    // 로그인 안되어 있으면 '-'
     if (_currentUserKey == null) {
       return const Text(
         '-',
@@ -91,9 +93,8 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
         ),
       );
     }
-    // 해당 유저 key만 리스닝해서 포인트 변화 실시간 반영
     return ValueListenableBuilder<Box<User>>(
-      valueListenable: DatabaseService.users.listenable(keys: [_currentUserKey]),
+      valueListenable: DatabaseService.users.listenable(keys: [_currentUserKey!]),
       builder: (_, box, __) {
         final user = box.get(_currentUserKey!);
         final point = user?.starPoint ?? 0;
@@ -140,7 +141,6 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                 const SizedBox(width: 16),
                 GestureDetector(
                   onTap: () {
-                    // 'more.png' 아이콘을 탭하면 SettingsPage로 이동
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const SettingsPage()),
@@ -161,7 +161,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
             padding: const EdgeInsets.all(20),
             color: Colors.white,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.space-between,
               children: [
                 const Text('gifcon', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                 Row(
@@ -174,10 +174,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               ],
             ),
           ),
-
-          // 하단 탭 메뉴
-          Container
-          (
+          Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             color: Colors.white,
             child: Column(
@@ -231,19 +228,21 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               onTap: () {
                 showModalBottomSheet(
                   context: context,
-                  builder: (context) => Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: sortOptions.map((option) {
-                      return ListTile(
-                        title: Text(option),
-                        onTap: () {
-                          setState(() {
-                            sortOption = option;
+                  builder: (context) => SafeArea(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: sortOptions.map((option) {
+                        return ListTile(
+                          title: Text(option),
+                          onTap: () {
                             Navigator.pop(context);
-                          });
-                        },
-                      );
-                    }).toList(),
+                            setState(() {
+                              sortOption = option;
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
                   ),
                 );
               },
