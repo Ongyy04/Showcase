@@ -10,8 +10,6 @@ import 'pages/purchase_list.dart';
 import 'pages/login.dart';  
 import 'pages/signup.dart';
 
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DatabaseService.init();
