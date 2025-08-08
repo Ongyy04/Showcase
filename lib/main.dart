@@ -8,6 +8,8 @@ import 'pages/people.dart';
 import 'pages/coupon_detail_page.dart';
 import 'pages/purchase_list.dart';
 import 'pages/login.dart';  
+import 'pages/myinfo.dart'; 
+import 'pages/gifticon_catalog_page.dart'; 
 
 
 
@@ -35,6 +37,8 @@ class MyApp extends StatelessWidget {
         '/people': (context) => const PeoplePage(),
         '/coupon_detail': (context) => const CouponDetailPage(),
         '/purchase_list': (context) => const PurchaseHistoryPage(),
+        '/myinfo': (context) => const MyInfo(),
+        '/catalog': (context) => const GifticonCatalogPage(),
       },
     );
   }

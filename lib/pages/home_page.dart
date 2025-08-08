@@ -78,6 +78,14 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w600),
         ),
         actions: [
+          // ✅ 테스트 이동 아이콘 추가
+          IconButton(
+            icon: const Icon(Icons.card_giftcard, color: Colors.black),
+            onPressed: () {
+              Navigator.pushNamed(context, '/catalog');
+            },
+          ),
+
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: Row(
@@ -166,7 +174,6 @@ class _HomePageState extends State<HomePage> {
           // ✅ 배너 섹션
           _GoToMarketBanner(
             onPressed: () {
-              // TODO: 실제 이동 로직
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('국민마켓으로 이동 (연동 예정)')),
               );
