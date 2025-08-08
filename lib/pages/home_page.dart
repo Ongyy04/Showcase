@@ -1,4 +1,7 @@
+// lib/pages/home.dart
+
 import 'package:flutter/material.dart';
+import 'package:my_app/pages/setting_page.dart'; // settings_page.dart import
 
 String _money(int v) =>
     v.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',');
@@ -92,7 +95,15 @@ class _HomePageState extends State<HomePage> {
                   child: Image.asset('assets/images/home.png', width: 24, height: 24),
                 ),
                 const SizedBox(width: 16),
-                Image.asset('assets/images/more.png', width: 24, height: 24),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SettingsPage()),
+                    );
+                  },
+                  child: Image.asset('assets/images/more.png', width: 24, height: 24),
+                ),
               ],
             ),
           )
@@ -164,7 +175,6 @@ class _HomePageState extends State<HomePage> {
           ),
           _GoToMarketBanner(
             onPressed: () {
-              // TODO: 실제 이동 로직
               Navigator.pushNamed(context, '/kb_market');
             },
           ),

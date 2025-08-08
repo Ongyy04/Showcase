@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/pages/setting_page.dart'; // SettingsPage import
 
 class PurchaseHistoryPage extends StatefulWidget {
   const PurchaseHistoryPage({super.key});
 
   @override
-  State<PurchaseHistoryPage> createState() => _PurchaseHistoryPageState(); // 여기를 수정했습니다.
+  State<PurchaseHistoryPage> createState() => _PurchaseHistoryPageState();
 }
 
 class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
@@ -41,7 +42,16 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
                   child: Image.asset('assets/images/home.png', width: 24, height: 24),
                 ),
                 const SizedBox(width: 16),
-                Image.asset('assets/images/more.png', width: 24, height: 24),
+                GestureDetector(
+                  onTap: () {
+                    // 'more.png' 아이콘을 탭하면 SettingsPage로 이동
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SettingsPage()),
+                    );
+                  },
+                  child: Image.asset('assets/images/more.png', width: 24, height: 24),
+                ),
               ],
             ),
           )

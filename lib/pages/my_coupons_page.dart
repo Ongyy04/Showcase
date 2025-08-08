@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/pages/setting_page.dart';
 
 class MyCouponsPage extends StatefulWidget {
   const MyCouponsPage({super.key});
@@ -98,7 +99,16 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                   child: Image.asset('assets/images/home.png', width: 24, height: 24),
                 ),
                 const SizedBox(width: 16),
-                Image.asset('assets/images/more.png', width: 24, height: 24),
+                GestureDetector(
+                  onTap: () {
+                    // 'more.png' 아이콘을 탭하면 SettingsPage로 이동
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SettingsPage()),
+                    );
+                  },
+                  child: Image.asset('assets/images/more.png', width: 24, height: 24),
+                ),
               ],
             ),
           )
