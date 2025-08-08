@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'myinfo.dart'; // MyInfo 페이지가 정의된 파일 import
 
 class PeoplePage extends StatefulWidget {
   const PeoplePage({super.key});
@@ -69,12 +70,18 @@ class _PeoplePageState extends State<PeoplePage> {
             color: Colors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: const [
-                Padding(
+              children: [
+                const Padding(
                   padding: EdgeInsets.symmetric(vertical: 14),
                   child: Text('친구', style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
-                Text('내 정보', style: TextStyle(color: Colors.grey)),
+                GestureDetector(
+                  onTap: () => Navigator.pushNamed(context, '/myinfo'),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                    child: Text('내 정보', style: TextStyle(color: Colors.grey)),
+                  ),
+                ),
               ],
             ),
           ),
