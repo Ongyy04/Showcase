@@ -7,6 +7,9 @@ import 'pages/my_coupons_page.dart';
 import 'pages/people.dart';
 import 'pages/coupon_detail_page.dart';
 import 'pages/purchase_list.dart';
+import 'pages/login.dart';  
+import 'pages/signup.dart';
+
 
 
 void main() async {
@@ -33,6 +36,7 @@ class MyApp extends StatelessWidget {
         '/people': (context) => const PeoplePage(),
         '/coupon_detail': (context) => const CouponDetailPage(),
         '/purchase_list': (context) => const PurchaseHistoryPage(),
+        '/signup': (context) => const SignUpPage(), 
       },
     );
   }
