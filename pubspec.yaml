@@ -17,6 +17,9 @@ dependencies:
   crypto: ^3.0.3
   cached_network_image: ^3.3.1
 
+  file_picker: ^8.0.0
+  csv: ^5.0.0
+  excel: ^4.0.6
 
 dev_dependencies:
   flutter_test:
@@ -29,3 +32,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/data/user_data.xlsx
+    - assets/data/user_data.csv

@@ -1,4 +1,7 @@
+// lib/pages/home.dart
+
 import 'package:flutter/material.dart';
+import 'package:my_app/pages/setting_page.dart'; // settings_page.dart import
 
 String _money(int v) =>
     v.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',');
@@ -39,26 +42,26 @@ class _HomePageState extends State<HomePage> {
       title: '[이디야커피] 베리베리에이드 (ICE)',
       price: 3800,
       listPrice: 4000,
-      imagePath: 'assets/images/ade.png', // 1
+      imagePath: 'assets/images/ade.png',
     ),
     Product(
       brand: '컴포즈커피',
       title: '[컴포즈커피] 아이스 아메리카노',
       price: 2250,
       listPrice: 2500,
-      imagePath: 'assets/images/americano.png', // 2
+      imagePath: 'assets/images/americano.png',
     ),
     Product(
       brand: '바나프레소',
       title: '[바나프레소] 시그니처 아이스 아메리카노',
       price: 2700,
-      imagePath: 'assets/images/americano.png', // 3
+      imagePath: 'assets/images/americano.png',
     ),
     Product(
       brand: '백억커피',
       title: '[백억커피] 카라멜 팝콘 + 아메리카노',
       price: 9900,
-      imagePath: 'assets/images/popcorn.png', // 4
+      imagePath: 'assets/images/popcorn.png',
     ),
   ];
 
@@ -78,14 +81,13 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w600),
         ),
         actions: [
-          // ✅ 테스트 이동 아이콘 추가
+          // 테스트 이동 아이콘 추가
           IconButton(
             icon: const Icon(Icons.card_giftcard, color: Colors.black),
             onPressed: () {
               Navigator.pushNamed(context, '/catalog');
             },
           ),
-
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: Row(
@@ -100,7 +102,15 @@ class _HomePageState extends State<HomePage> {
                   child: Image.asset('assets/images/home.png', width: 24, height: 24),
                 ),
                 const SizedBox(width: 16),
-                Image.asset('assets/images/more.png', width: 24, height: 24),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SettingsPage()),
+                    );
+                  },
+                  child: Image.asset('assets/images/more.png', width: 24, height: 24),
+                ),
               ],
             ),
           )
@@ -121,9 +131,14 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Icon(Icons.monetization_on, color: Color(0xFF383C59)),
                     SizedBox(width: 6),
-                    Text('2,300',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF383C59))),
+                    Text(
+                      '2,300',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Color(0xFF383C59),
+                      ),
+                    ),
                   ],
                 )
               ],
@@ -171,12 +186,15 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // ✅ 배너 섹션
+          // 배너 섹션
           _GoToMarketBanner(
             onPressed: () {
+              // 실제 연동 전 임시 동작
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('국민마켓으로 이동 (연동 예정)')),
               );
+              // 혹은 연결할 페이지가 있다면:
+              // Navigator.pushNamed(context, '/market');
             },
           ),
 

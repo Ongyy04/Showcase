@@ -1,41 +1,50 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user.dart';
+part of 'friend.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class UserAdapter extends TypeAdapter<User> {
+class FriendAdapter extends TypeAdapter<Friend> {
   @override
-  final int typeId = 0;
+  final int typeId = 2;
 
   @override
-  User read(BinaryReader reader) {
+  Friend read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return User(
-      username: fields[0] as String,
-      passwordHash: fields[1] as String,
+    return Friend(
+      ownerUserKey: fields[0] as int,
+      name: fields[1] as String,
       phone: fields[2] as String,
-      starPoint: fields[3] as int,
+      birthday: fields[3] as String,
+      level: fields[4] as int,
+      type: fields[5] as String,
+      isFavorite: fields[6] as bool,
     );
   }
 
   @override
-  void write(BinaryWriter writer, User obj) {
+  void write(BinaryWriter writer, Friend obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(7)
       ..writeByte(0)
-      ..write(obj.username)
+      ..write(obj.ownerUserKey)
       ..writeByte(1)
-      ..write(obj.passwordHash)
+      ..write(obj.name)
       ..writeByte(2)
       ..write(obj.phone)
       ..writeByte(3)
-      ..write(obj.starPoint);
+      ..write(obj.birthday)
+      ..writeByte(4)
+      ..write(obj.level)
+      ..writeByte(5)
+      ..write(obj.type)
+      ..writeByte(6)
+      ..write(obj.isFavorite);
   }
 
   @override
@@ -44,7 +53,7 @@ class UserAdapter extends TypeAdapter<User> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is UserAdapter &&
+      other is FriendAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

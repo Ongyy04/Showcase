@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/pages/setting_page.dart';
 import 'database.dart';
 import 'pages/home_page.dart';
 import 'pages/search_page.dart';
@@ -10,12 +11,23 @@ import 'pages/purchase_list.dart';
 import 'pages/login.dart';  
 import 'pages/myinfo.dart'; 
 import 'pages/gifticon_catalog_page.dart'; 
+import 'pages/login.dart';
+import 'pages/signup.dart';
+
+import 'pages/db_inspector_page.dart';
+import 'package:my_app/pages/purchase_list.dart';
+import 'pages/newpeople.dart';
+import '../services/directory_service.dart';
 
 
 
-void main() async {
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DatabaseService.init();
+
+  await DirectoryService.init(); // 내부에서 debugStatus 찍음
+
   runApp(const MyApp());
 }
 
@@ -39,6 +51,16 @@ class MyApp extends StatelessWidget {
         '/purchase_list': (context) => const PurchaseHistoryPage(),
         '/myinfo': (context) => const MyInfo(),
         '/catalog': (context) => const GifticonCatalogPage(),
+        '/signup': (context) => const SignUpPage(),
+
+        '/db': (context) => const DbInspectorPage(),
+
+        '/coupon_detail': (context) => const CouponDetailPage(), 
+        '/purchase': (context) => const PurchaseHistoryPage(),
+        '/newpeople': (_) => const NewPeoplePage(),
+
+        '/settings': (context) => const SettingsPage(),
+
       },
     );
   }

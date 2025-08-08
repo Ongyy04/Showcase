@@ -1,41 +1,35 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user.dart';
+part of 'login_event.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class UserAdapter extends TypeAdapter<User> {
+class LoginEventAdapter extends TypeAdapter<LoginEvent> {
   @override
-  final int typeId = 0;
+  final int typeId = 1;
 
   @override
-  User read(BinaryReader reader) {
+  LoginEvent read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return User(
-      username: fields[0] as String,
-      passwordHash: fields[1] as String,
-      phone: fields[2] as String,
-      starPoint: fields[3] as int,
+    return LoginEvent(
+      userKey: fields[0] as int,
+      at: fields[1] as DateTime,
     );
   }
 
   @override
-  void write(BinaryWriter writer, User obj) {
+  void write(BinaryWriter writer, LoginEvent obj) {
     writer
-      ..writeByte(4)
-      ..writeByte(0)
-      ..write(obj.username)
-      ..writeByte(1)
-      ..write(obj.passwordHash)
       ..writeByte(2)
-      ..write(obj.phone)
-      ..writeByte(3)
-      ..write(obj.starPoint);
+      ..writeByte(0)
+      ..write(obj.userKey)
+      ..writeByte(1)
+      ..write(obj.at);
   }
 
   @override
@@ -44,7 +38,7 @@ class UserAdapter extends TypeAdapter<User> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is UserAdapter &&
+      other is LoginEventAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

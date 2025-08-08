@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import '../database.dart';
+import '../models/user.dart';
+import 'package:my_app/pages/setting_page.dart';
 
 class MyCouponsPage extends StatefulWidget {
   const MyCouponsPage({super.key});
@@ -12,9 +16,18 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
   String sortOption = '최신순';
   final List<String> sortOptions = ['최신순', '오래된순', '가나다순'];
 
-  void _showExpiredDialog() {
-    showDialog(
+  int? _currentUserKey;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentUserKey = DatabaseService.currentUserKey();
+  }
+
+  Future<void> _showExpiredDialog() async {
+    return showDialog<void>(
       context: context,
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -69,6 +82,34 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
     );
   }
 
+  Widget _buildStarPoint() {
+    if (_currentUserKey == null) {
+      return const Text(
+        '-',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+          color: Color(0xFF383C59),
+        ),
+      );
+    }
+    return ValueListenableBuilder<Box<User>>(
+      valueListenable: DatabaseService.users.listenable(keys: [_currentUserKey!]),
+      builder: (_, box, __) {
+        final user = box.get(_currentUserKey!);
+        final point = user?.starPoint ?? 0;
+        return Text(
+          '$point',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Color(0xFF383C59),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,7 +139,15 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                   child: Image.asset('assets/images/home.png', width: 24, height: 24),
                 ),
                 const SizedBox(width: 16),
-                Image.asset('assets/images/more.png', width: 24, height: 24),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SettingsPage()),
+                    );
+                  },
+                  child: Image.asset('assets/images/more.png', width: 24, height: 24),
+                ),
               ],
             ),
           )
@@ -116,17 +165,10 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               children: [
                 const Text('gifcon', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                 Row(
-                  children: const [
-                    Icon(Icons.monetization_on, color: Color(0xFF383C59)),
-                    SizedBox(width: 6),
-                    Text(
-                      '2,300',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Color(0xFF383C59),
-                      ),
-                    ),
+                  children: [
+                    const Icon(Icons.monetization_on, color: Color(0xFF383C59)),
+                    const SizedBox(width: 6),
+                    _buildStarPoint(),
                   ],
                 )
               ],
@@ -186,19 +228,21 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               onTap: () {
                 showModalBottomSheet(
                   context: context,
-                  builder: (context) => Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: sortOptions.map((option) {
-                      return ListTile(
-                        title: Text(option),
-                        onTap: () {
-                          setState(() {
-                            sortOption = option;
+                  builder: (context) => SafeArea(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: sortOptions.map((option) {
+                        return ListTile(
+                          title: Text(option),
+                          onTap: () {
                             Navigator.pop(context);
-                          });
-                        },
-                      );
-                    }).toList(),
+                            setState(() {
+                              sortOption = option;
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
                   ),
                 );
               },
