@@ -167,9 +167,7 @@ class _HomePageState extends State<HomePage> {
           _GoToMarketBanner(
             onPressed: () {
               // TODO: 실제 이동 로직
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('국민마켓으로 이동 (연동 예정)')),
-              );
+              Navigator.pushNamed(context, '/kb_market');
             },
           ),
 
