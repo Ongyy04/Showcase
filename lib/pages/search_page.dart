@@ -46,7 +46,7 @@ class _SearchPageState extends State<SearchPage> {
           )
         ],
       ),
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Colors.white, // 전체 배경을 흰색으로 유지
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,12 +106,11 @@ class _SearchPageState extends State<SearchPage> {
                                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                               ),
                             ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '────────',
-                              style: TextStyle(
-                                color: isSelected ? Colors.black : Colors.transparent,
-                              ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 2),
+                              height: 2,
+                              width: 30,
+                              color: isSelected ? Colors.black : Colors.transparent,
                             ),
                           ],
                         ),
@@ -121,14 +120,16 @@ class _SearchPageState extends State<SearchPage> {
                 ],
               ),
             ),
-            Padding(
+            // 이 부분을 회색 경계가 있는 Container로 감싸서 배경을 구분합니다.
+            Container(
+              color: Colors.white,
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     '찾고있는 상품이 있으신가요?',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black54),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 0, 0, 0)),
                   ),
                   const SizedBox(height: 16),
                   TextField(
@@ -153,51 +154,55 @@ class _SearchPageState extends State<SearchPage> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    '이 달의 추천상품',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.7,
-                    children: const [
-                      RecommendedItemCard(
-                        imageAsset: 'assets/images/cafe.png',
-                        brand: '스타벅스',
-                        name: '카페라떼 (ICE)',
-                        price: '4,500원',
-                      ),
-                      RecommendedItemCard(
-                        imageAsset: 'assets/images/cafe.png',
-                        brand: '이디야커피',
-                        name: '베리베리 에이드 (ICE)',
-                        price: '4,800원',
-                      ),
-                      RecommendedItemCard(
-                        imageAsset: 'assets/images/cafe.png',
-                        brand: '메가커피',
-                        name: '아이스 아메리카노 (ICE)',
-                        price: '2,000원',
-                      ),
-                      RecommendedItemCard(
-                        imageAsset: 'assets/images/cafe.png',
-                        brand: '컴포즈커피',
-                        name: '아이스 아메리카노 (ICE)',
-                        price: '1,500원',
-                      ),
-                    ],
-                  ),
-                ],
+            // 이 부분이 회색 배경을 가져야 하는 부분입니다.
+            Container(
+              color:  Colors.white, 
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '이 달의 추천상품',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16),
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 0.7,
+                      children: const [
+                        RecommendedItemCard(
+                          imageAsset: 'assets/images/cafe.png',
+                          brand: '스타벅스',
+                          name: '카페라떼 (ICE)',
+                          price: '4,500원',
+                        ),
+                        RecommendedItemCard(
+                          imageAsset: 'assets/images/cafe.png',
+                          brand: '이디야커피',
+                          name: '베리베리 에이드 (ICE)',
+                          price: '4,800원',
+                        ),
+                        RecommendedItemCard(
+                          imageAsset: 'assets/images/cafe.png',
+                          brand: '메가커피',
+                          name: '아이스 아메리카노 (ICE)',
+                          price: '2,000원',
+                        ),
+                        RecommendedItemCard(
+                          imageAsset: 'assets/images/cafe.png',
+                          brand: '컴포즈커피',
+                          name: '아이스 아메리카노 (ICE)',
+                          price: '1,500원',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -229,7 +234,7 @@ class RecommendedItemCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: const [
           BoxShadow(
-            color: Colors.black12,
+            color: Colors.black12, // 그림자 색상으로 경계 효과 주기
             blurRadius: 4,
             offset: Offset(0, 2),
           ),
@@ -257,7 +262,7 @@ class RecommendedItemCard extends StatelessWidget {
               children: [
                 Text(
                   brand,
-                  style: const TextStyle(fontSize: 14, color: Color.fromARGB(255, 255, 255, 255)),
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
                 ),
                 const SizedBox(height: 4),
                 Text(
