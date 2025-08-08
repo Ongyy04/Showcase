@@ -161,7 +161,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
             padding: const EdgeInsets.all(20),
             color: Colors.white,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.space-between,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('gifcon', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                 Row(
