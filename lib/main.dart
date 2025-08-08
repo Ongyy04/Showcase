@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/pages/setting_page.dart';
 import 'database.dart';
 import 'pages/home_page.dart';
 import 'pages/search_page.dart';
@@ -6,13 +7,16 @@ import 'pages/order_page.dart';
 import 'pages/my_coupons_page.dart';
 import 'pages/people.dart';
 import 'pages/coupon_detail_page.dart';
-import 'pages/myinfo.dart';
+import 'pages/purchase_list.dart';
 import 'pages/login.dart';
 import 'pages/signup.dart';
+
 import 'pages/db_inspector_page.dart';
 import 'package:my_app/pages/purchase_list.dart';
 import 'pages/newpeople.dart';
 import '../services/directory_service.dart';
+
+
 
 
 Future<void> main() async {
@@ -41,15 +45,18 @@ class MyApp extends StatelessWidget {
         '/my_coupons': (context) => const MyCouponsPage(),
         '/people': (context) => const PeoplePage(),
         '/coupon_detail': (context) => const CouponDetailPage(),
-        '/myinfo': (context) => const MyInfo(),
+        '/purchase_list': (context) => const PurchaseHistoryPage(),
         '/signup': (context) => const SignUpPage(),
+
         '/db': (context) => const DbInspectorPage(),
 
         '/coupon_detail': (context) => const CouponDetailPage(), 
         '/purchase': (context) => const PurchaseHistoryPage(),
         '/newpeople': (_) => const NewPeoplePage(),
+
+        '/settings': (context) => const SettingsPage(),
+
       },
     );
   }
 }
-

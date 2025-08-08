@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:my_app/pages/setting_page.dart'; // SettingsPage import
 
 class PurchaseHistoryPage extends StatefulWidget {
   const PurchaseHistoryPage({super.key});
 
   @override
-  State<PurchaseHistoryPage> createState() => _PurchaseHistoryPageState(); // 여기를 수정했습니다.
+  State<PurchaseHistoryPage> createState() => _PurchaseHistoryPageState();
 }
 
-// State 클래스의 이름을 _PurchaseHistoryPageState로 수정했습니다.
 class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
   String selectedPurchaseButton = '전체';
   final List<String> purchaseOptions = ['전체', '구매하기', '선물하기'];
@@ -42,7 +42,16 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
                   child: Image.asset('assets/images/home.png', width: 24, height: 24),
                 ),
                 const SizedBox(width: 16),
-                Image.asset('assets/images/more.png', width: 24, height: 24),
+                GestureDetector(
+                  onTap: () {
+                    // 'more.png' 아이콘을 탭하면 SettingsPage로 이동
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SettingsPage()),
+                    );
+                  },
+                  child: Image.asset('assets/images/more.png', width: 24, height: 24),
+                ),
               ],
             ),
           )
@@ -78,8 +87,12 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
                 final bool isSelected = tab == '구매내역'; // 이 페이지에서는 구매내역 탭이 항상 선택된 상태
                 return GestureDetector(
                   onTap: () {
-                    if (tab == '내 기프티콘') {
-                      Navigator.pop(context); // MyCouponsPage로 돌아가기
+                    if (tab == '홈') {
+                      Navigator.pushNamed(context, '/home');
+                    } else if (tab == '검색') {
+                      Navigator.pushNamed(context, '/search');
+                    } else if (tab == '내 기프티콘') {
+                      Navigator.pushNamed(context, '/my_coupons');
                     }
                   },
                   child: Column(

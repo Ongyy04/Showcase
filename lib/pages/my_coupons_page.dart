@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../database.dart';
 import '../models/user.dart';
+import 'package:my_app/pages/setting_page.dart';
 
 class MyCouponsPage extends StatefulWidget {
   const MyCouponsPage({super.key});
@@ -17,7 +18,6 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
 
   int? _currentUserKey;
 
-  @override
   void initState() {
     super.initState();
     _currentUserKey = DatabaseService.currentUserKey();
@@ -25,8 +25,6 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
 
   // 기한 만료 팝업
   void _showExpiredDialog() {
-    showDialog(
-      context: context,
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -140,7 +138,16 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                   child: Image.asset('assets/images/home.png', width: 24, height: 24),
                 ),
                 const SizedBox(width: 16),
-                Image.asset('assets/images/more.png', width: 24, height: 24),
+                GestureDetector(
+                  onTap: () {
+                    // 'more.png' 아이콘을 탭하면 SettingsPage로 이동
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SettingsPage()),
+                    );
+                  },
+                  child: Image.asset('assets/images/more.png', width: 24, height: 24),
+                ),
               ],
             ),
           )
@@ -150,7 +157,6 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 상단 잔액 영역
           Container(
             padding: const EdgeInsets.all(20),
             color: Colors.white,
@@ -182,11 +188,17 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     final bool isSelected = selectedTab == tab;
                     return GestureDetector(
                       onTap: () {
-                        setState(() {
-                          selectedTab = tab;
-                          if (tab == '홈') Navigator.pushNamed(context, '/home');
-                          if (tab == '검색') Navigator.pushNamed(context, '/search');
-                        });
+                        if (tab == '홈') {
+                          Navigator.pushNamed(context, '/home');
+                        } else if (tab == '검색') {
+                          Navigator.pushNamed(context, '/search');
+                        } else if (tab == '구매내역') {
+                          Navigator.pushNamed(context, '/purchase_list');
+                        } else if (tab == '내 기프티콘') {
+                          setState(() {
+                            selectedTab = tab;
+                          });
+                        }
                       },
                       child: Column(
                         children: [
@@ -212,8 +224,6 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               ],
             ),
           ),
-
-          // 정렬 옵션
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             color: Colors.white,
@@ -246,8 +256,6 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               ),
             ),
           ),
-
-          // 쿠폰 목록
           Expanded(
             child: SingleChildScrollView(
               child: Column(
