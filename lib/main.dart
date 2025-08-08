@@ -7,6 +7,8 @@ import 'pages/my_coupons_page.dart';
 import 'pages/people.dart';
 import 'pages/coupon_detail_page.dart';
 import 'pages/purchase_list.dart';
+import 'pages/login.dart';  
+
 
 
 void main() async {
