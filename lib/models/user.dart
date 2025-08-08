@@ -7,15 +7,19 @@ class User extends HiveObject {
   @HiveField(0)
   String username;
 
-  @HiveField(1) // 기존 password 자리에 hash를 저장
+  @HiveField(1)
   String passwordHash;
 
   @HiveField(2)
   String phone;
 
+  @HiveField(3)
+  int starPoint;
+
   User({
     required this.username,
     required this.passwordHash,
     required this.phone,
+    this.starPoint = 0,
   });
 }

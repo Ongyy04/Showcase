@@ -109,30 +109,32 @@ class _MyInfoState extends State<MyInfo> {
                 const Text('모든 친구 공개: 내 친구라면 누구나 추천받은 기프티콘을 볼 수 있어요.',
                     style: TextStyle(fontSize: 14, color: Colors.black)),
                 const SizedBox(height: 20),
-                 const Text(
-                '공개 범위는 언제든지 변경 가능하며,\n여러분의 프라이버시는 안전하게 보호됩니다.',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
-              ),
-              const SizedBox(height: 12),
-
-              // 이미지 + 확인 버튼 정렬
-              Row(
-                children: [
-                  const Spacer(),
-                  Image.asset('assets/images/hello.png', width: 80),
-                ],
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                height: 44,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFDD5D),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: const Text('확인', style: TextStyle(color: Colors.black)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text('프라이버시는 안전하게 보호됩니다.', style: TextStyle(fontSize: 14, color: Colors.grey)),
+                    SizedBox(width: 8),
+                    Icon(Icons.lock_outline, size: 18, color: Colors.grey),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Spacer(),
+                    Image.asset('assets/images/hello.png', width: 80),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  height: 44,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFDD5D),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: const Text('확인', style: TextStyle(color: Colors.black)),
                   ),
                 ),
               ],
@@ -197,7 +199,7 @@ class _MyInfoState extends State<MyInfo> {
               ),
             ),
             const Divider(height: 1),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
@@ -237,12 +239,12 @@ class _MyInfoState extends State<MyInfo> {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: const Text('나의 장소', style: TextStyle(fontWeight: FontWeight.w500)),
+            const SizedBox(height: 18),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text('나의 장소', style: TextStyle(fontWeight: FontWeight.w500)),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
@@ -260,13 +262,13 @@ class _MyInfoState extends State<MyInfo> {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: GestureDetector(
                 onTap: () => _showPlaceDialog(context),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade400),
                     borderRadius: BorderRadius.circular(12),
@@ -278,53 +280,80 @@ class _MyInfoState extends State<MyInfo> {
                 ),
               ),
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 22),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text('KB가 추천해주는 아무개님 맞춤 기프티콘', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text('아무개님 근처에서 요즘 인기 있는 기프티콘을 모아봤어요!',
                   style: TextStyle(color: Colors.grey, fontSize: 12)),
             ),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: GridView.count(
-                crossAxisCount: 3,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                childAspectRatio: 0.85,
-                children: List.generate(3, (index) => const GiftItem()),
-              ),
+            const SizedBox(height: 10),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: ResponsiveGiftGrid(itemCount: 3),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text('아무개님이 자주 구매한 브랜드, 이런 건 어때요?',
                   style: TextStyle(color: Colors.grey, fontSize: 12)),
             ),
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: GridView.count(
-                crossAxisCount: 3,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                childAspectRatio: 0.85,
-                children: List.generate(3, (index) => const GiftItem()),
-              ),
+            const SizedBox(height: 8),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: ResponsiveGiftGrid(itemCount: 3),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
           ],
         ),
       ),
+    );
+  }
+}
+
+class ResponsiveGiftGrid extends StatelessWidget {
+  final int itemCount;
+  const ResponsiveGiftGrid({super.key, required this.itemCount});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        int crossAxisCount;
+        if (width >= 900) {
+          crossAxisCount = 5;
+        } else if (width >= 600) {
+          crossAxisCount = 4;
+        } else if (width >= 360) {
+          crossAxisCount = 3;
+        } else {
+          crossAxisCount = 2;
+        }
+        const spacing = 10.0;
+        final itemWidth = (width - spacing * (crossAxisCount - 1)) / crossAxisCount;
+        final itemHeight = itemWidth * 1.12;
+
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: itemCount,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              crossAxisSpacing: spacing,
+              mainAxisSpacing: spacing,
+              mainAxisExtent: itemHeight,
+            ),
+            itemBuilder: (_, __) => const GiftItem(),
+          ),
+        );
+      },
     );
   }
 }
@@ -346,15 +375,26 @@ class GiftItem extends StatelessWidget {
           )
         ],
       ),
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
       child: Column(
-        children: [
-          Image.asset('assets/images/cafe.png', width: 50, height: 50),
-          const SizedBox(height: 8),
-          const Text('카페라떼(ICE)', style: TextStyle(fontSize: 12)),
-          const Text('3,900', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          _GiftImage(),
+          SizedBox(height: 6),
+          Text('카페라떼(ICE)', style: TextStyle(fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
+          SizedBox(height: 2),
+          Text('3,900원', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
         ],
       ),
     );
   }
+}
+
+class _GiftImage extends StatelessWidget {
+  const _GiftImage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset('assets/images/cafe.png', width: 46, height: 46);
+    }
 }

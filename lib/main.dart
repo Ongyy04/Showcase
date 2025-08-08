@@ -11,11 +11,16 @@ import 'pages/login.dart';
 import 'pages/signup.dart';
 import 'pages/db_inspector_page.dart';
 import 'package:my_app/pages/purchase_list.dart';
+import 'pages/newpeople.dart';
+import '../services/directory_service.dart';
 
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DatabaseService.init();
+
+  await DirectoryService.init(); // 내부에서 debugStatus 찍음
+
   runApp(const MyApp());
 }
 
@@ -42,6 +47,7 @@ class MyApp extends StatelessWidget {
 
         '/coupon_detail': (context) => const CouponDetailPage(), 
         '/purchase': (context) => const PurchaseHistoryPage(),
+        '/newpeople': (_) => const NewPeoplePage(),
       },
     );
   }

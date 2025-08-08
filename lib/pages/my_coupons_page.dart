@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import '../database.dart';
+import '../models/user.dart';
 
 class MyCouponsPage extends StatefulWidget {
   const MyCouponsPage({super.key});
@@ -12,7 +15,15 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
   String sortOption = '최신순';
   final List<String> sortOptions = ['최신순', '오래된순', '가나다순'];
 
-  // 기한 만료 팝업 함수
+  int? _currentUserKey;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentUserKey = DatabaseService.currentUserKey();
+  }
+
+  // 기한 만료 팝업
   void _showExpiredDialog() {
     showDialog(
       context: context,
@@ -70,6 +81,36 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
     );
   }
 
+  Widget _buildStarPoint() {
+    // 로그인 안되어 있으면 '-'
+    if (_currentUserKey == null) {
+      return const Text(
+        '-',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+          color: Color(0xFF383C59),
+        ),
+      );
+    }
+    // 해당 유저 key만 리스닝해서 포인트 변화 실시간 반영
+    return ValueListenableBuilder<Box<User>>(
+      valueListenable: DatabaseService.users.listenable(keys: [_currentUserKey]),
+      builder: (_, box, __) {
+        final user = box.get(_currentUserKey!);
+        final point = user?.starPoint ?? 0;
+        return Text(
+          '$point',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Color(0xFF383C59),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,17 +159,10 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               children: [
                 const Text('gifcon', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                 Row(
-                  children: const [
-                    Icon(Icons.monetization_on, color: Color(0xFF383C59)),
-                    SizedBox(width: 6),
-                    Text(
-                      '2,300',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Color(0xFF383C59),
-                      ),
-                    ),
+                  children: [
+                    const Icon(Icons.monetization_on, color: Color(0xFF383C59)),
+                    const SizedBox(width: 6),
+                    _buildStarPoint(),
                   ],
                 )
               ],
@@ -136,7 +170,8 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
           ),
 
           // 하단 탭 메뉴
-          Container(
+          Container
+          (
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             color: Colors.white,
             child: Column(
@@ -249,7 +284,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     statusTextColor: Colors.white,
                   ),
                   GestureDetector(
-                    onTap: _showExpiredDialog, // 기한만료 클릭 시 팝업
+                    onTap: _showExpiredDialog,
                     child: const CouponCard(
                       imageAsset: 'assets/images/americano.png',
                       brand: '컴포즈커피',

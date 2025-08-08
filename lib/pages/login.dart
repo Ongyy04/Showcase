@@ -24,7 +24,6 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _handleLogin() async {
     final id = _idController.text.trim();
     final pwHash = hashPassword(_passwordController.text);
-
     if (id.isEmpty || _passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('아이디와 비밀번호를 입력하세요')),
@@ -33,11 +32,11 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     final box = DatabaseService.users;
-    dynamic matchKey;
+    int? matchKey;
     for (final k in box.keys) {
       final u = box.get(k);
       if (u != null && u.username == id && u.passwordHash == pwHash) {
-        matchKey = k;
+        matchKey = k as int;
         break;
       }
     }
@@ -50,6 +49,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     await DatabaseService.setCurrentUserKey(matchKey);
+    await DatabaseService.logLogin(matchKey);
     if (mounted) {
       Navigator.pushReplacementNamed(context, '/my_coupons');
     }
