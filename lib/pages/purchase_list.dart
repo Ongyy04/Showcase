@@ -7,7 +7,6 @@ class PurchaseHistoryPage extends StatefulWidget {
   State<PurchaseHistoryPage> createState() => _PurchaseHistoryPageState(); // 여기를 수정했습니다.
 }
 
-// State 클래스의 이름을 _PurchaseHistoryPageState로 수정했습니다.
 class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
   String selectedPurchaseButton = '전체';
   final List<String> purchaseOptions = ['전체', '구매하기', '선물하기'];
@@ -78,8 +77,12 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
                 final bool isSelected = tab == '구매내역'; // 이 페이지에서는 구매내역 탭이 항상 선택된 상태
                 return GestureDetector(
                   onTap: () {
-                    if (tab == '내 기프티콘') {
-                      Navigator.pop(context); // MyCouponsPage로 돌아가기
+                    if (tab == '홈') {
+                      Navigator.pushNamed(context, '/home');
+                    } else if (tab == '검색') {
+                      Navigator.pushNamed(context, '/search');
+                    } else if (tab == '내 기프티콘') {
+                      Navigator.pushNamed(context, '/my_coupons');
                     }
                   },
                   child: Column(

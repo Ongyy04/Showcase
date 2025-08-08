@@ -5,7 +5,7 @@ import 'pages/order_page.dart';
 import 'pages/my_coupons_page.dart';
 import 'pages/people.dart';
 import 'pages/coupon_detail_page.dart';
-import 'package:my_app/pages/purchase_list.dart';
+import 'pages/purchase_list.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,10 +26,9 @@ class MyApp extends StatelessWidget {
         '/order': (context) => const OrderPage(),
         '/my_coupons': (context) => const MyCouponsPage(),
         '/people': (context) => const PeoplePage(),
-        '/coupon_detail': (context) => const CouponDetailPage(), 
-        '/purchase': (context) => const PurchaseHistoryPage(),
+        '/coupon_detail': (context) => const CouponDetailPage(),
+        '/purchase_list': (context) => const PurchaseHistoryPage(),
       },
     );
   }
 }
-

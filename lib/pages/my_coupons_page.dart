@@ -12,7 +12,6 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
   String sortOption = '최신순';
   final List<String> sortOptions = ['최신순', '오래된순', '가나다순'];
 
-  // 기한 만료 팝업 함수
   void _showExpiredDialog() {
     showDialog(
       context: context,
@@ -109,7 +108,6 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 상단 잔액 영역
           Container(
             padding: const EdgeInsets.all(20),
             color: Colors.white,
@@ -134,8 +132,6 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               ],
             ),
           ),
-
-          // 하단 탭 메뉴
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             color: Colors.white,
@@ -147,11 +143,17 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     final bool isSelected = selectedTab == tab;
                     return GestureDetector(
                       onTap: () {
-                        setState(() {
-                          selectedTab = tab;
-                          if (tab == '홈') Navigator.pushNamed(context, '/home');
-                          if (tab == '검색') Navigator.pushNamed(context, '/search');
-                        });
+                        if (tab == '홈') {
+                          Navigator.pushNamed(context, '/home');
+                        } else if (tab == '검색') {
+                          Navigator.pushNamed(context, '/search');
+                        } else if (tab == '구매내역') {
+                          Navigator.pushNamed(context, '/purchase_list');
+                        } else if (tab == '내 기프티콘') {
+                          setState(() {
+                            selectedTab = tab;
+                          });
+                        }
                       },
                       child: Column(
                         children: [
@@ -177,8 +179,6 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               ],
             ),
           ),
-
-          // 정렬 옵션
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             color: Colors.white,
@@ -211,8 +211,6 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               ),
             ),
           ),
-
-          // 쿠폰 목록
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -249,7 +247,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     statusTextColor: Colors.white,
                   ),
                   GestureDetector(
-                    onTap: _showExpiredDialog, // 기한만료 클릭 시 팝업
+                    onTap: _showExpiredDialog,
                     child: const CouponCard(
                       imageAsset: 'assets/images/americano.png',
                       brand: '컴포즈커피',
