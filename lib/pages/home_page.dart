@@ -162,8 +162,6 @@ class _HomePageState extends State<HomePage> {
               }).toList(),
             ),
           ),
-
-          // ✅ 배너 섹션
           _GoToMarketBanner(
             onPressed: () {
               // TODO: 실제 이동 로직

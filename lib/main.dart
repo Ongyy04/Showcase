@@ -9,7 +9,6 @@ import 'pages/coupon_detail_page.dart';
 import 'pages/purchase_list.dart';
 import 'pages/login.dart';  
 import 'pages/signup.dart';
-import 'pages/kb_market.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +35,6 @@ class MyApp extends StatelessWidget {
         '/coupon_detail': (context) => const CouponDetailPage(),
         '/purchase_list': (context) => const PurchaseHistoryPage(),
         '/signup': (context) => const SignUpPage(), 
-        '/kb_market': (context) => const KbMarketPage(),
       },
     );
   }
