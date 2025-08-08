@@ -10,6 +10,7 @@ import 'pages/myinfo.dart';
 import 'pages/login.dart';
 import 'pages/signup.dart';
 import 'pages/db_inspector_page.dart';
+import 'package:my_app/pages/purchase_list.dart';
 
 
 void main() async {
@@ -39,7 +40,10 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUpPage(),
         '/db': (context) => const DbInspectorPage(),
 
+        '/coupon_detail': (context) => const CouponDetailPage(), 
+        '/purchase': (context) => const PurchaseHistoryPage(),
       },
     );
   }
 }
+

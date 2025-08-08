@@ -12,6 +12,64 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
   String sortOption = '최신순';
   final List<String> sortOptions = ['최신순', '오래된순', '가나다순'];
 
+  // 기한 만료 팝업 함수
+  void _showExpiredDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  '사용기한 만료 안내',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 15),
+                Image.asset('assets/images/sad.png', width: 150, height: 150),
+                const SizedBox(height: 15),
+                const Text(
+                  '기한이 만료되어 사용하실 수 없습니다.',
+                  style: TextStyle(fontSize: 14, color: Colors.black),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEDC56),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      '확인',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,23 +80,22 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
           icon: Image.asset('assets/images/arrow.png', width: 24, height: 24),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('모바일 쿠폰마켓', style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w600)),
+        title: const Text(
+          '모바일 쿠폰마켓',
+          style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w600),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: Row(
               children: [
                 GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/people');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/people'),
                   child: Image.asset('assets/images/people.png', width: 24, height: 24),
                 ),
                 const SizedBox(width: 16),
                 GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/home');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/home'),
                   child: Image.asset('assets/images/home.png', width: 24, height: 24),
                 ),
                 const SizedBox(width: 16),
@@ -52,6 +109,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 상단 잔액 영역
           Container(
             padding: const EdgeInsets.all(20),
             color: Colors.white,
@@ -63,12 +121,21 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                   children: const [
                     Icon(Icons.monetization_on, color: Color(0xFF383C59)),
                     SizedBox(width: 6),
-                    Text('2,300', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF383C59))),
+                    Text(
+                      '2,300',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Color(0xFF383C59),
+                      ),
+                    ),
                   ],
                 )
               ],
             ),
           ),
+
+          // 하단 탭 메뉴
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             color: Colors.white,
@@ -88,20 +155,30 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                       },
                       child: Column(
                         children: [
-                          Text(tab, style: TextStyle(color: isSelected ? Colors.black : const Color(0xFF878C93), fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
+                          Text(
+                            tab,
+                            style: TextStyle(
+                              color: isSelected ? Colors.black : const Color(0xFF878C93),
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
                           const SizedBox(height: 2),
-                          Text('────────', style: TextStyle(color: isSelected ? Colors.black : Colors.transparent))
+                          Text(
+                            '────────',
+                            style: TextStyle(
+                              color: isSelected ? Colors.black : Colors.transparent,
+                            ),
+                          ),
                         ],
                       ),
                     );
                   }).toList(),
                 ),
-                const SizedBox(height: 8),
-                if (selectedTab != '내 기프티콘')
-                  const Text('아직 구현 전입니다.', style: TextStyle(fontSize: 12, color: Colors.grey))
               ],
             ),
           ),
+
+          // 정렬 옵션
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             color: Colors.white,
@@ -111,15 +188,17 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                   context: context,
                   builder: (context) => Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: sortOptions.map((option) => ListTile(
-                      title: Text(option),
-                      onTap: () {
-                        setState(() {
-                          sortOption = option;
-                          Navigator.pop(context);
-                        });
-                      },
-                    )).toList(),
+                    children: sortOptions.map((option) {
+                      return ListTile(
+                        title: Text(option),
+                        onTap: () {
+                          setState(() {
+                            sortOption = option;
+                            Navigator.pop(context);
+                          });
+                        },
+                      );
+                    }).toList(),
                   ),
                 );
               },
@@ -132,14 +211,15 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               ),
             ),
           ),
+
+          // 쿠폰 목록
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/coupon_detail');
-                    },
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => Navigator.pushNamed(context, '/coupon_detail'),
                     child: const CouponCard(
                       imageAsset: 'assets/images/cafe.png',
                       brand: '스타벅스',
@@ -168,14 +248,17 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     statusColor: Color(0xFF2F2C46),
                     statusTextColor: Colors.white,
                   ),
-                  const CouponCard(
-                    imageAsset: 'assets/images/americano.png',
-                    brand: '컴포즈커피',
-                    name: '아이스아메리카노 (ICE)',
-                    period: '2025.08.11~2026.08.11',
-                    statusLabel: '기한 만료',
-                    statusColor: Colors.black,
-                    statusTextColor: Colors.white,
+                  GestureDetector(
+                    onTap: _showExpiredDialog, // 기한만료 클릭 시 팝업
+                    child: const CouponCard(
+                      imageAsset: 'assets/images/americano.png',
+                      brand: '컴포즈커피',
+                      name: '아이스아메리카노 (ICE)',
+                      period: '2025.08.11~2026.08.11',
+                      statusLabel: '기한 만료',
+                      statusColor: Colors.black,
+                      statusTextColor: Colors.white,
+                    ),
                   ),
                 ],
               ),
