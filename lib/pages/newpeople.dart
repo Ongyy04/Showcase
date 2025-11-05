@@ -1,7 +1,7 @@
 // lib/pages/newpeople.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../database.dart';
+import '../services/database.dart';
 import '../models/friend.dart';
 import '../services/directory_service.dart';
 

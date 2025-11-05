@@ -1,19 +1,20 @@
-// lib/database.dart
+// lib/services/database.dart
 import 'package:hive_flutter/hive_flutter.dart';
-import 'models/user.dart';
-import 'models/gifticon.dart';
-import 'models/login_event.dart';
-import 'models/friend.dart';
+import '../models/user.dart';
+import '../models/gifticon.dart';
+import '../models/login_event.dart';
+import '../models/friend.dart';
+import '../models/purchase.dart';
 
 class DatabaseService {
   static const int starPerLogin = 100;
   static bool _initialized = false;
+  static late Box<Purchase> purchases;
 
   static Future<void> init() async {
-    if (_initialized) return; // 중복 호출 가드
+    if (_initialized) return;
     await Hive.initFlutter();
 
-    // 안전 등록 헬퍼
     void safeRegister<T>(TypeAdapter<T> adapter) {
       if (!Hive.isAdapterRegistered(adapter.typeId)) {
         Hive.registerAdapter<T>(adapter);
@@ -24,8 +25,8 @@ class DatabaseService {
     safeRegister<Gifticon>(GifticonAdapter());
     safeRegister<LoginEvent>(LoginEventAdapter());
     safeRegister<Friend>(FriendAdapter());
+    safeRegister<Purchase>(PurchaseAdapter());
 
-    // 안전 오픈 헬퍼
     Future<void> openBoxSafe<T>(String name) async {
       if (!Hive.isBoxOpen(name)) {
         await Hive.openBox<T>(name);
@@ -36,10 +37,13 @@ class DatabaseService {
     await openBoxSafe<Gifticon>('gifticons');
     await openBoxSafe<LoginEvent>('login_events');
     await openBoxSafe<Friend>('friends');
+    await openBoxSafe<Purchase>('purchases');
 
     if (!Hive.isBoxOpen('session')) {
       await Hive.openBox('session');
     }
+
+    purchases = Hive.box<Purchase>('purchases');
 
     _initialized = true;
   }
@@ -49,6 +53,7 @@ class DatabaseService {
   static Box<Gifticon> get gifticons => Hive.box<Gifticon>('gifticons');
   static Box<LoginEvent> get loginEvents => Hive.box<LoginEvent>('login_events');
   static Box<Friend> get friends => Hive.box<Friend>('friends');
+  static Box<Purchase> get purchase => Hive.box<Purchase>('purchases');
 
   static Future<void> setCurrentUserKey(int key) =>
       session.put('currentUserKey', key);
@@ -62,6 +67,32 @@ class DatabaseService {
   }
 
   static Future<void> signOut() => session.delete('currentUserKey');
+
+  static Future<void> addPurchase({
+    required String userId,
+    required String productId,
+    required int quantity,
+  }) async {
+    final purchase = Purchase(
+      userId: userId,
+      productId: productId,
+      purchaseDate: DateTime.now(),
+      quantity: quantity,
+    );
+    await purchases.add(purchase);
+  }
+
+  static Future<void> deleteGifticon(int key) async {
+    await gifticons.delete(key);
+  }
+
+  static List<Gifticon> gifticonsOfCurrentUser() {
+    final userKey = currentUserKey();
+    if (userKey == null) {
+      return [];
+    }
+    return gifticons.values.where((g) => g.ownerUserKey == userKey).toList();
+  }
 
   static bool usernameExists(String username) =>
       users.values.any((u) => u.username == username);
@@ -97,7 +128,7 @@ class DatabaseService {
 
   static Future<void> deleteFriend(int key) async =>
       await friends.delete(key);
-
+  
   static List<Friend> friendsOfCurrentUser({bool favoritesOnly = false}) {
     final owner = currentUserKey();
     if (owner == null) return [];

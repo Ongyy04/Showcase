@@ -1,7 +1,7 @@
 // lib/pages/people_page.dart
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../database.dart';
+import '../services/database.dart';
 import '../models/friend.dart';
 import 'myinfo.dart'; // MyInfo 페이지 import 유지
 

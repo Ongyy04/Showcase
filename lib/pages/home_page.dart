@@ -147,56 +147,52 @@ class _HomePageState extends State<HomePage> {
 
           // 탭 행
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: ['홈', '검색', '구매내역', '내 기프티콘'].map((tab) {
-                final isSelected = selectedTab == tab;
-                return GestureDetector(
-                  onTap: () {
-                    if (tab == '홈') {
-                      setState(() => selectedTab = tab);
-                    } else if (tab == '검색') {
-                      Navigator.pushNamed(context, '/search');
-                    } else if (tab == '구매내역') {
-                      Navigator.pushNamed(context, '/purchase_list');
-                    } else {
-                      Navigator.pushNamed(context, '/my_coupons');
-                    }
-                  },
-                  child: Column(
-                    children: [
-                      Text(
-                        tab,
-                        style: TextStyle(
-                          color: isSelected ? Colors.black : const Color(0xFF878C93),
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: ['홈', '검색', '구매내역', '내 기프티콘'].map((tab) {
+                      final bool isSelected = selectedTab == tab;
+                      return GestureDetector(
+                        onTap: () {
+                          if (tab == '검색') {
+                            Navigator.pushNamed(context, '/search');
+                          } else if (tab == '구매내역') {
+                            Navigator.pushNamed(context, '/purchase_list');
+                          } else if (tab == '내 기프티콘') {
+                            Navigator.pushNamed(context, '/my_coupons');
+                          }
+                          setState(() {
+                            selectedTab = tab;
+                          });
+                        },
+                        child: Column(
+                          children: [
+                            Text(
+                              tab,
+                              style: TextStyle(
+                                color: isSelected ? Colors.black : const Color(0xFF878C93),
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 2),
+                              height: 2,
+                              width: 30,
+                              color: isSelected ? Colors.black : Colors.transparent,
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '────────',
-                        style: TextStyle(color: isSelected ? Colors.black : Colors.transparent),
-                      ),
-                    ],
+                      );
+                    }).toList(),
                   ),
-                );
-              }).toList(),
+                ],
+              ),
             ),
-          ),
 
-          // 배너 섹션
-          _GoToMarketBanner(
-            onPressed: () {
-              // 실제 연동 전 임시 동작
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('국민마켓으로 이동 (연동 예정)')),
-              );
-              // 혹은 연결할 페이지가 있다면:
-              // Navigator.pushNamed(context, '/market');
-            },
-          ),
+       
 
           // 그리드
           Expanded(

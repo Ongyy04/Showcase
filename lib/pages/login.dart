@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../database.dart';
+import '../services/database.dart';
 import '../models/user.dart';
 import '../utils/security.dart';
 
@@ -66,7 +66,14 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset('assets/images/kb.png', width: 180),
+                const Text(
+                  'gifcon',
+                  style: TextStyle(
+                    color: Colors.white, // 텍스트 색상을 흰색으로 설정
+                    fontSize: 40,        // 크기를 적절히 조정 (로고 크기만큼)
+                    fontWeight: FontWeight.bold, // 글꼴 두께 설정 (선택 사항)
+                  ),
+                ),
                 const SizedBox(height: 32),
                 TextField(
                   controller: _idController,

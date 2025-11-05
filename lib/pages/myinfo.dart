@@ -1,4 +1,12 @@
+// lib/pages/myinfo.dart
+
 import 'package:flutter/material.dart';
+import 'package:my_app/services/recommendation_service.dart';
+import 'package:my_app/models/gifticon.dart';
+import 'package:my_app/services/database.dart';
+import 'package:my_app/models/user.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+// GifticonDetailPage는 별도의 파일에 있거나 여기에 포함되어야 합니다.
 
 class MyInfo extends StatefulWidget {
   const MyInfo({super.key});
@@ -8,7 +16,28 @@ class MyInfo extends StatefulWidget {
 }
 
 class _MyInfoState extends State<MyInfo> {
+  final RecommendationService recommendationService = RecommendationService();
+  List<Gifticon> recommendedGifticons = [];
+  bool isLoading = true;
   String selectedPrivacy = '비공개';
+
+  User? get currentUser => DatabaseService.currentUser();
+  
+  @override
+  void initState() {
+    super.initState();
+    _fetchRecommendations();
+  }
+
+  Future<void> _fetchRecommendations() async {
+    const String userId = 'arin73';
+    final recommendations = await recommendationService.getRecommendations(userId);
+    
+    setState(() {
+      recommendedGifticons = recommendations;
+      isLoading = false;
+    });
+  }
 
   void _showPlaceDialog(BuildContext context) {
     showModalBottomSheet(
@@ -147,6 +176,8 @@ class _MyInfoState extends State<MyInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final userName = currentUser?.username ?? "사용자";
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
@@ -175,226 +206,260 @@ class _MyInfoState extends State<MyInfo> {
           )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, '/people'),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 14),
-                      child: Text('친구', style: TextStyle(color: Colors.grey)),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                    child: Text('내 정보', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(height: 1),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  const Text('내 정보 공개 범위 설정', style: TextStyle(fontWeight: FontWeight.w500)),
-                  const SizedBox(width: 6),
-                  GestureDetector(
-                    onTap: () => _showPrivacyInfo(context),
-                    child: Image.asset('assets/images/info.png', width: 12),
-                  ),
-                  const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF383C59),
-                      borderRadius: BorderRadius.circular(20),
+                    color: Colors.white,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.pushNamed(context, '/people'),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 14),
+                            child: Text('친구', style: TextStyle(color: Colors.grey)),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 14),
+                          child: Text('내 정보', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                        ),
+                      ],
                     ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: selectedPrivacy,
-                        dropdownColor: const Color(0xFF383C59),
-                        icon: Image.asset('assets/images/down.arrow.png', width: 12, height: 12),
-                        items: ['비공개', '즐겨찾기 공개', '전체공개'].map((value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value, style: const TextStyle(color: Colors.white, fontSize: 12)),
-                          );
-                        }).toList(),
-                        onChanged: (newValue) {
-                          setState(() {
-                            selectedPrivacy = newValue!;
-                          });
-                        },
+                  ),
+                  const Divider(height: 1),
+                  const SizedBox(height: 16),
+                  
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        const Text('내 정보 공개 범위 설정', style: TextStyle(fontWeight: FontWeight.w500)),
+                        const SizedBox(width: 6),
+                        GestureDetector(
+                          onTap: () => _showPrivacyInfo(context),
+                          child: Image.asset('assets/images/info.png', width: 12),
+                        ),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF383C59),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: selectedPrivacy,
+                              dropdownColor: const Color(0xFF383C59),
+                              icon: Image.asset('assets/images/down.arrow.png', width: 12, height: 12),
+                              items: ['비공개', '즐겨찾기 공개', '전체공개'].map((value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value, style: const TextStyle(color: Colors.white, fontSize: 12)),
+                                );
+                              }).toList(),
+                              onChanged: (newValue) {
+                                setState(() {
+                                  selectedPrivacy = newValue!;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: Text('나의 장소', style: TextStyle(fontWeight: FontWeight.w500)),
+                  ),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF383C59),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: const [
+                          Icon(Icons.school, color: Colors.white),
+                          SizedBox(width: 10),
+                          Text('경희대학교 국제캠퍼스', style: TextStyle(color: Colors.white, fontSize: 14)),
+                        ],
                       ),
                     ),
                   ),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: GestureDetector(
+                      onTap: () => _showPlaceDialog(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade400),
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                        ),
+                        child: const Center(
+                          child: Text('+ 장소 등록하기', style: TextStyle(fontWeight: FontWeight.w500)),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text('KB가 추천해주는 $userName님 맞춤 기프티콘', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  const SizedBox(height: 2),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text('$userName님 근처에서 요즘 인기 있는 기프티콘을 모아봤어요!',
+                        style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                  ),
+                  const SizedBox(height: 10),
+                  _buildRecommendedGifticonList(),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
-            const SizedBox(height: 18),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text('나의 장소', style: TextStyle(fontWeight: FontWeight.w500)),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF383C59),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: const [
-                    Icon(Icons.school, color: Colors.white),
-                    SizedBox(width: 10),
-                    Text('경희대학교 국제캠퍼스', style: TextStyle(color: Colors.white, fontSize: 14)),
+    );
+  }
+
+  // 추천 기프티콘 목록을 빌드하는 메소드
+  Widget _buildRecommendedGifticonList() {
+    if (recommendedGifticons.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text(
+            '추천 상품이 없습니다. 더 많은 구매를 해주세요!',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ),
+      );
+    }
+    
+    return SizedBox(
+      height: 250,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        itemCount: recommendedGifticons.length,
+        itemBuilder: (context, index) {
+          final gifticon = recommendedGifticons[index];
+          return Container(
+            width: 150,
+            margin: const EdgeInsets.only(right: 16.0),
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => GifticonDetailPage(gifticon: gifticon),
+                    ),
+                  );
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                      // 🔴 수정: gifticon.imagePath 사용
+                      child: CachedNetworkImage(
+                        imageUrl: gifticon.imagePath,
+                        width: 150,
+                        height: 120,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            gifticon.name,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${gifticon.price}원',
+                            style: TextStyle(color: Colors.green[700]),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: GestureDetector(
-                onTap: () => _showPlaceDialog(context),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade400),
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.white,
-                  ),
-                  child: const Center(
-                    child: Text('+ 장소 등록하기', style: TextStyle(fontWeight: FontWeight.w500)),
-                  ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// 기프티콘 상세 페이지 위젯
+class GifticonDetailPage extends StatelessWidget {
+  final Gifticon gifticon;
+  const GifticonDetailPage({super.key, required this.gifticon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(gifticon.name),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                // 🔴 수정: gifticon.imagePath 사용
+                child: CachedNetworkImage(
+                  imageUrl: gifticon.imagePath,
+                  width: double.infinity,
+                  height: 250,
+                  fit: BoxFit.cover,
                 ),
               ),
-            ),
-            const SizedBox(height: 22),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text('KB가 추천해주는 아무개님 맞춤 기프티콘', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            const SizedBox(height: 2),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text('아무개님 근처에서 요즘 인기 있는 기프티콘을 모아봤어요!',
-                  style: TextStyle(color: Colors.grey, fontSize: 12)),
-            ),
-            const SizedBox(height: 10),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: ResponsiveGiftGrid(itemCount: 3),
-            ),
-            const SizedBox(height: 6),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text('아무개님이 자주 구매한 브랜드, 이런 건 어때요?',
-                  style: TextStyle(color: Colors.grey, fontSize: 12)),
-            ),
-            const SizedBox(height: 8),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: ResponsiveGiftGrid(itemCount: 3),
-            ),
-            const SizedBox(height: 20),
-          ],
+              const SizedBox(height: 16),
+              Text(
+                '브랜드: ${gifticon.brand}',
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '가격: ${gifticon.price}원',
+                style: const TextStyle(fontSize: 18, color: Colors.green),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                '상품 설명: 이 기프티콘은 전국 모든 매장에서 사용 가능합니다.',
+                style: TextStyle(fontSize: 16, height: 1.5),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-}
-
-class ResponsiveGiftGrid extends StatelessWidget {
-  final int itemCount;
-  const ResponsiveGiftGrid({super.key, required this.itemCount});
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final width = constraints.maxWidth;
-        int crossAxisCount;
-        if (width >= 900) {
-          crossAxisCount = 5;
-        } else if (width >= 600) {
-          crossAxisCount = 4;
-        } else if (width >= 360) {
-          crossAxisCount = 3;
-        } else {
-          crossAxisCount = 2;
-        }
-        const spacing = 10.0;
-        final itemWidth = (width - spacing * (crossAxisCount - 1)) / crossAxisCount;
-        final itemHeight = itemWidth * 1.12;
-
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: itemCount,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              crossAxisSpacing: spacing,
-              mainAxisSpacing: spacing,
-              mainAxisExtent: itemHeight,
-            ),
-            itemBuilder: (_, __) => const GiftItem(),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class GiftItem extends StatelessWidget {
-  const GiftItem({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          )
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          _GiftImage(),
-          SizedBox(height: 6),
-          Text('카페라떼(ICE)', style: TextStyle(fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
-          SizedBox(height: 2),
-          Text('3,900원', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
-        ],
-      ),
-    );
-  }
-}
-
-class _GiftImage extends StatelessWidget {
-  const _GiftImage();
-
-  @override
-  Widget build(BuildContext context) {
-    return Image.asset('assets/images/cafe.png', width: 46, height: 46);
-    }
 }

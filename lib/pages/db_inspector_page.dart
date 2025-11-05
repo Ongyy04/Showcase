@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../database.dart';
+import '../services/database.dart';
 import '../models/user.dart';
 //gg
 class DbInspectorPage extends StatelessWidget {
