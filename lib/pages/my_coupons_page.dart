@@ -181,13 +181,13 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: ['홈', '검색', '구매내역', '내 기프티콘'].map((tab) {
+                  children: ['홈', '선물하기', '구매내역', '내 기프티콘'].map((tab) {
                     final bool isSelected = selectedTab == tab;
                     return GestureDetector(
                       onTap: () {
                         if (tab == '홈') {
                           Navigator.pushNamed(context, '/home');
-                        } else if (tab == '검색') {
+                        } else if (tab == '선물하기') {
                           Navigator.pushNamed(context, '/search');
                         } else if (tab == '구매내역') {
                           Navigator.pushNamed(context, '/purchase_list');

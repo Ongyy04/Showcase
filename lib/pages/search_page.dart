@@ -8,7 +8,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  String selectedTab = '검색';
+  String selectedTab = '선물하기';
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -82,7 +82,7 @@ class _SearchPageState extends State<SearchPage> {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: ['홈', '검색', '구매내역', '내 기프티콘'].map((tab) {
+                    children: ['홈', '선물하기', '구매내역', '내 기프티콘'].map((tab) {
                       final bool isSelected = selectedTab == tab;
                       return GestureDetector(
                         onTap: () {

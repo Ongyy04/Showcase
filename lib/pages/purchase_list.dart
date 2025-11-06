@@ -150,13 +150,13 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
             color: Colors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: ['홈', '검색', '구매내역', '내 기프티콘'].map((tab) {
+              children: ['홈', '선물하기', '구매내역', '내 기프티콘'].map((tab) {
                 final bool isSelected = tab == '구매내역';
                 return GestureDetector(
                   onTap: () {
                     if (tab == '홈') {
                       Navigator.pushNamed(context, '/home');
-                    } else if (tab == '검색') {
+                    } else if (tab == '선물하기') {
                       Navigator.pushNamed(context, '/search');
                     } else if (tab == '내 기프티콘') {
                       Navigator.pushNamed(context, '/my_coupons');

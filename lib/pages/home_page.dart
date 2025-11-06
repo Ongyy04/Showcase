@@ -153,11 +153,11 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: ['홈', '검색', '구매내역', '내 기프티콘'].map((tab) {
+                    children: ['홈', '선물하기', '구매내역', '내 기프티콘'].map((tab) {
                       final bool isSelected = selectedTab == tab;
                       return GestureDetector(
                         onTap: () {
-                          if (tab == '검색') {
+                          if (tab == '선물하기') {
                             Navigator.pushNamed(context, '/search');
                           } else if (tab == '구매내역') {
                             Navigator.pushNamed(context, '/purchase_list');
