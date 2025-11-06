@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 GestureDetector(
                   onTap: () => Navigator.pushNamed(context, '/people'),
-                  child: Image.asset('assets/images/people.png', width: 24, height: 14),
+                  child: Image.asset('assets/images/people.png', width: 24, height: 24),
                 ),
                 const SizedBox(width: 16),
                 GestureDetector(
