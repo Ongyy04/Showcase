@@ -67,10 +67,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
+  return Scaffold(
+    backgroundColor: Colors.white, // 🔥 전체 배경 흰색으로 변경
+    appBar: AppBar(
+      backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
           icon: Image.asset('assets/images/arrow.png', width: 24, height: 24),
@@ -82,19 +82,14 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           // 테스트 이동 아이콘 추가
-          IconButton(
-            icon: const Icon(Icons.card_giftcard, color: Colors.black),
-            onPressed: () {
-              Navigator.pushNamed(context, '/catalog');
-            },
-          ),
+          
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: Row(
               children: [
                 GestureDetector(
                   onTap: () => Navigator.pushNamed(context, '/people'),
-                  child: Image.asset('assets/images/people.png', width: 24, height: 24),
+                  child: Image.asset('assets/images/people.png', width: 24, height: 14),
                 ),
                 const SizedBox(width: 16),
                 GestureDetector(
@@ -230,12 +225,12 @@ class _ProductCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -310,49 +305,3 @@ class _ProductCard extends StatelessWidget {
   }
 }
 
-// ===== 배너 위젯 =====
-class _GoToMarketBanner extends StatelessWidget {
-  final VoidCallback onPressed;
-  const _GoToMarketBanner({required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-      child: Column(
-        children: [
-          const Text(
-            '더 많은 상품은 국민마켓에서!!',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Colors.black87, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: double.infinity,
-            height: 42,
-            child: ElevatedButton(
-              onPressed: onPressed,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF9DB63),
-                foregroundColor: Colors.black,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                elevation: 0,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Icon(Icons.card_giftcard, size: 18),
-                  SizedBox(width: 8),
-                  Text('국민마켓으로 이동하기', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
-                  SizedBox(width: 6),
-                  Icon(Icons.arrow_forward_ios, size: 14),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

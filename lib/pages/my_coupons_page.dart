@@ -181,13 +181,11 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: ['홈', '선물하기', '구매내역', '내 기프티콘'].map((tab) {
+                  children: [ '선물하기', '구매내역', '내 기프티콘'].map((tab) {
                     final bool isSelected = selectedTab == tab;
                     return GestureDetector(
                       onTap: () {
-                        if (tab == '홈') {
-                          Navigator.pushNamed(context, '/home');
-                        } else if (tab == '선물하기') {
+                        if (tab == '선물하기') {
                           Navigator.pushNamed(context, '/search');
                         } else if (tab == '구매내역') {
                           Navigator.pushNamed(context, '/purchase_list');
@@ -278,7 +276,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     name: '베리베리에이드 (ICE)',
                     period: '2025.08.11~2026.08.11',
                     statusLabel: '미사용',
-                    statusColor: Color.fromARGB(255, 247, 150, 31),
+                    statusColor: Color(0xFFFFE96A),
                     statusTextColor: Colors.black,
                   ),
                   const CouponCard(
@@ -298,7 +296,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                       name: '아이스아메리카노 (ICE)',
                       period: '2025.08.11~2026.08.11',
                       statusLabel: '기한 만료',
-                      statusColor: Colors.black,
+                      statusColor: Color(0xFF2F2C46),
                       statusTextColor: Colors.white,
                     ),
                   ),

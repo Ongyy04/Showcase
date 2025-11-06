@@ -10,13 +10,13 @@ class PurchaseHistoryPage extends StatefulWidget {
 
 class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
   String selectedPurchaseButton = '전체';
-  final List<String> purchaseOptions = ['전체', '구매내역', '선물내역'];
+  final List<String> purchaseOptions = ['전체', '나에게 선물한 내역', '친구에게 선물한 내역'];
 
   final List<Map<String, String>> purchases = [
     {
       'brand': '컴포즈커피',
       'name': '카페 아메리카노 Tall',
-      'store': 'CASHLOOP',
+      'store': '구로 스타벅스점',
       'date': '2025-02-03 14:34',
       'price': '₩4,500',
       'status': '결제완료',
@@ -27,7 +27,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
     {
       'brand': '메가커피',
       'name': '콜드브루 라떼',
-      'store': 'CASHLOOP',
+      'store': '강남 메가커피점',
       'date': '2025-01-27 12:10',
       'price': '₩4,800',
       'status': '결제완료',
@@ -38,7 +38,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
     {
       'brand': '스타벅스',
       'name': '카페라떼 Tall',
-      'store': 'CASHLOOP',
+      'store': '수원역점',
       'date': '2025-01-11 09:45',
       'price': '₩5,000',
       'status': '결제완료',
@@ -55,6 +55,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
       'status': '선물보냄',
       'type': '선물',
       'message': '시험 잘 봐~!',
+      'method': '포인트 결제',
       'image': 'assets/images/ventimango.jpg',
     },
     {
@@ -66,6 +67,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
       'status': '선물보냄',
       'type': '선물',
       'message': '고생했어 ☕',
+      'method': '포인트 결제',
       'image': 'assets/images/megeamericaco.jpg',
     },
   ];
@@ -74,11 +76,12 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
   Widget build(BuildContext context) {
     final filteredPurchases = selectedPurchaseButton == '전체'
         ? purchases
-        : selectedPurchaseButton == '구매내역'
+        : selectedPurchaseButton == '나에게 선물한 내역'
             ? purchases.where((p) => p['type'] == '구매').toList()
             : purchases.where((p) => p['type'] == '선물').toList();
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -117,7 +120,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
           ),
         ],
       ),
-      backgroundColor: const Color(0xFFF5F5F5),
+
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -144,74 +147,85 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
             ),
           ),
 
-          // 하단 탭
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: ['홈', '선물하기', '구매내역', '내 기프티콘'].map((tab) {
-                final bool isSelected = tab == '구매내역';
-                return GestureDetector(
-                  onTap: () {
-                    if (tab == '홈') {
-                      Navigator.pushNamed(context, '/home');
-                    } else if (tab == '선물하기') {
-                      Navigator.pushNamed(context, '/search');
-                    } else if (tab == '내 기프티콘') {
-                      Navigator.pushNamed(context, '/my_coupons');
-                    }
-                  },
-                  child: Column(
-                    children: [
-                      Text(
-                        tab,
-                        style: TextStyle(
-                          color: isSelected ? Colors.black : const Color(0xFF878C93),
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text('────────',
-                          style: TextStyle(color: isSelected ? Colors.black : Colors.transparent)),
-                    ],
-                  ),
-                );
-              }).toList(),
+        // 하단 탭
+Container(
+  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+  color: Colors.white,
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceAround,
+    children: ['선물하기', '구매내역', '내 기프티콘'].map((tab) {
+      final bool isSelected = tab == '구매내역';
+      return GestureDetector(
+        onTap: () {
+          if (tab == '선물하기') {
+            Navigator.pushNamed(context, '/search');
+          } else if (tab == '내 기프티콘') {
+            Navigator.pushNamed(context, '/my_coupons');
+          }
+        },
+        child: Column(
+          children: [
+            Text(
+              tab,
+              style: TextStyle(
+                color: isSelected ? Colors.black : const Color(0xFF878C93),
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
             ),
-          ),
+            const SizedBox(height: 2),
+            Text(
+              '────────',
+              style: TextStyle(color: isSelected ? Colors.black : Colors.transparent),
+            ),
+          ],
+        ),
+      );
+    }).toList(),
+  ),
+),
 
-          // 구매 / 선물 탭
+          // 드롭다운
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             color: Colors.white,
-            child: Row(
-              children: purchaseOptions.map((option) {
-                final bool isSelected = selectedPurchaseButton == option;
-                return Expanded(
-                  child: GestureDetector(
-                    onTap: () => setState(() => selectedPurchaseButton = option),
-                    child: Container(
-                      margin: EdgeInsets.only(right: option == '선물내역' ? 0 : 8),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFFFDAF17) : Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: isSelected ? null : Border.all(color: const Color(0xFF878C93)),
-                      ),
-                      child: Text(
-                        option,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : const Color(0xFF878C93),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+            child: DropdownButtonHideUnderline(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF383C59),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: DropdownButton<String>(
+                  value: selectedPurchaseButton,
+                  icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+                  dropdownColor: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedPurchaseButton = value!;
+                    });
+                  },
+                  items: purchaseOptions.map((String option) {
+                    return DropdownMenuItem<String>(
+                      value: option,
+                      child: Text(option,
+                          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                    );
+                  }).toList(),
+                  selectedItemBuilder: (BuildContext context) {
+                    return purchaseOptions.map((String option) {
+                      return Center(
+                        child: Text(
+                          option,
+                          style: const TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
                         ),
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
+                      );
+                    }).toList();
+                  },
+                ),
+              ),
             ),
           ),
 
@@ -231,79 +245,142 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
               itemCount: filteredPurchases.length,
               itemBuilder: (context, index) {
                 final item = filteredPurchases[index];
+                final isGift = item['type'] == '선물';
+                final isPurchase = item['type'] == '구매';
+
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 6,
-                        offset: const Offset(0, 4),
-                      )
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
                     ],
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(
-                          item['image'] ?? 'assets/images/cafe.png',
-                            width: 70, height: 70, fit: BoxFit.cover),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [ // ✅ 이 줄이 꼭 있어야 함
+                          Padding(
+                            padding: const EdgeInsets.all(12), // ✅ 사진 여백 추가
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.asset(
+                                item['image'] ?? 'assets/images/cafe.png',
+                                height: 130, // ✅ 기존보다 작게
+                                width: double.infinity,
+                                fit: BoxFit.contain, // ✅ 비율 유지하며 여백 생김
+                              ),
+                            ),
+                          ),
+                        
+
+                      Padding(
+                        padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(item['brand'] ?? '',
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.w500)),
-                            const SizedBox(height: 4),
-                            Text(item['name'] ?? '',
-                                style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 6),
-                            Text(
-                              item['type'] == '구매'
-                                  ? '${item['store']} • ${item['date']} • ${item['method']}'
-                                  : '${item['recipient']}님에게 선물함 • ${item['date']}',
-                              style: const TextStyle(fontSize: 14, color: Colors.black54),
-                              maxLines: 2,
+                            // 브랜드 + 가격
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(item['brand'] ?? '',
+                                    style: const TextStyle(
+                                        fontSize: 18, fontWeight: FontWeight.bold)),
+                                Text(item['price'] ?? '',
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.orange,
+                                        fontWeight: FontWeight.bold)),
+                              ],
                             ),
-                            if (item['type'] == '선물') ...[
-                              const SizedBox(height: 6),
-                              Text('메시지: ${item['message'] ?? ''}',
-                                  style: const TextStyle(
-                                      fontSize: 13, color: Colors.black54)),
-                            ],
+                            const SizedBox(height: 6),
+
+                            // 상세 설명 (CASHLOOP 제거)
+                            Text(
+                              (item['name'] ?? '').replaceAll('CASHLOOP', ''),
+                              style: const TextStyle(fontSize: 15, color: Colors.black87),
+                            ),
                             const SizedBox(height: 10),
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+
+                            // 시간 / 지점 구분
+                            if (item['date'] != null || item['store'] != null)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(item['date'] ?? '',
+                                      style: const TextStyle(
+                                          color: Colors.grey, fontSize: 13)),
+                                  if (item['store'] != null)
+                                    Text(item['store'] ?? '',
+                                        style: const TextStyle(
+                                            color: Colors.grey, fontSize: 13)),
+                                ],
+                              ),
+                            const SizedBox(height: 10),
+
+                            // 노란 결제창
+                            if (isPurchase)
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 12),
                                 decoration: BoxDecoration(
-                                  color: item['type'] == '구매'
-                                      ? const Color(0xFFFEDC56)
-                                      : const Color(0xFFFFE96A),
-                                  borderRadius: BorderRadius.circular(8),
+                                  color: const Color(0xFFFFE266),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Text(
-                                  '${item['price']} (${item['status']})',
-                                  style: const TextStyle(
-                                      fontSize: 12, color: Colors.black, fontWeight: FontWeight.w500),
+                                child: Center(
+                                  child: Text(
+                                    item['method'] ?? '네이버페이 결제',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                        fontSize: 14),
+                                  ),
                                 ),
                               ),
-                            )
+
+                            // 선물 내역일 때 문구
+                            if (isGift) ...[
+                              const SizedBox(height: 8),
+                              Text(
+                                '${item['recipient'] ?? ''}님에게 선물함',
+                                style: const TextStyle(color: Colors.black54, fontSize: 13),
+                              ),
+                              if (item['message'] != null)
+                                Text(
+                                  '메시지: ${item['message']}',
+                                  style: const TextStyle(color: Colors.black54, fontSize: 13),
+                                ),
+
+                              // ✅ 여기가 새로 추가된 “노란 결제창” 부분
+                              const SizedBox(height: 10),
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFFE266), // 노란 배경색
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    item['method'] ?? '네이버페이 결제',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ]
+
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 );

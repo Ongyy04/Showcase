@@ -82,20 +82,15 @@ class _SearchPageState extends State<SearchPage> {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: ['홈', '선물하기', '구매내역', '내 기프티콘'].map((tab) {
-                      final bool isSelected = selectedTab == tab;
+                    children: ['선물하기', '구매내역', '내 기프티콘'].map((tab) {
+                      final bool isSelected = tab == '선물하기'; // 현재 페이지 기준
                       return GestureDetector(
                         onTap: () {
-                          if (tab == '홈') {
-                            Navigator.pushNamed(context, '/home');
-                          } else if (tab == '구매내역') {
+                          if (tab == '구매내역') {
                             Navigator.pushNamed(context, '/purchase_list');
                           } else if (tab == '내 기프티콘') {
                             Navigator.pushNamed(context, '/my_coupons');
                           }
-                          setState(() {
-                            selectedTab = tab;
-                          });
                         },
                         child: Column(
                           children: [
@@ -106,17 +101,17 @@ class _SearchPageState extends State<SearchPage> {
                                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                               ),
                             ),
-                            Container(
-                              margin: const EdgeInsets.only(top: 2),
-                              height: 2,
-                              width: 30,
-                              color: isSelected ? Colors.black : Colors.transparent,
+                            const SizedBox(height: 2),
+                            Text(
+                              '────────',
+                              style: TextStyle(color: isSelected ? Colors.black : Colors.transparent),
                             ),
                           ],
                         ),
                       );
                     }).toList(),
                   ),
+
                 ],
               ),
             ),
