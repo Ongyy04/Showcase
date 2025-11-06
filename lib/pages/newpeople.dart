@@ -1,9 +1,9 @@
 // lib/pages/newpeople.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../services/database.dart';
-import '../models/friend.dart';
-import '../services/directory_service.dart';
+import 'package:my_app/services/database.dart';
+import 'package:my_app/models/friend.dart';
+import 'package:my_app/services/directory_service.dart';
 
 class NewPeoplePage extends StatefulWidget {
   const NewPeoplePage({super.key});

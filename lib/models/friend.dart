@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'friend.g.dart';
 
-@HiveType(typeId: 2) // 기존과 동일한 typeId 사용
+@HiveType(typeId: 4) // 기존과 동일한 typeId 사용
 class Friend extends HiveObject {
   @HiveField(0)
   int ownerUserKey;

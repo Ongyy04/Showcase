@@ -37,7 +37,7 @@ class _MyInfoState extends State<MyInfo> {
       'distance': '30m',
       'price': '3,900원',
       'status': '사용 가능',
-      'image': 'assets/images/megeamericaco.jpg', 
+      'image': 'assets/images/megamericano.png', 
     },
     {
       'name': '스타벅스 라떼 Tall',
@@ -45,7 +45,7 @@ class _MyInfoState extends State<MyInfo> {
       'distance': '150m',
       'price': '5,000원',
       'status': '사용 가능',
-      'image': 'assets/images/sblatte.jpg', 
+      'image': 'assets/images/starcafe.png', 
     },
     {
       'name': '더벤티 망고 에이드',

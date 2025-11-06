@@ -16,6 +16,7 @@ import 'package:my_app/pages/signup.dart';
 import 'package:my_app/pages/db_inspector_page.dart';
 import 'package:my_app/pages/newpeople.dart';
 import 'package:my_app/services/directory_service.dart';
+import 'package:my_app/pages/payment_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,7 +49,8 @@ class MyApp extends StatelessWidget {
         '/db': (context) => const DbInspectorPage(),
         '/newpeople': (_) => const NewPeoplePage(),
         '/settings': (context) => const SettingsPage(),
-        '/product_detail': (context) => const ProductDetailPage(), // ✅ 추가
+        '/product_detail': (context) => const ProductDetailPage(),
+        '/payment': (_) => const PaymentPage(),
       },
     );
   }

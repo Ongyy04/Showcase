@@ -22,7 +22,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
       'status': '결제완료',
       'type': '구매',
       'method': '포인트 결제',
-      'image': 'assets/images/composeame.jpg',
+      'image': 'assets/images/composeamericano.png',
     },
     {
       'brand': '메가커피',
@@ -44,7 +44,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
       'status': '결제완료',
       'type': '구매',
       'method': '포인트 + 카카오페이 결제',
-      'image': 'assets/images/sblatte.jpg',
+      'image': 'assets/images/starcafe.png',
     },
     {
       'brand': '더벤티',
@@ -68,7 +68,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
       'type': '선물',
       'message': '고생했어 ☕',
       'method': '포인트 결제',
-      'image': 'assets/images/megeamericaco.jpg',
+      'image': 'assets/images/megamericano.png',
     },
   ];
 

@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'purchase.g.dart';
 
-@HiveType(typeId: 1) // User 모델의 typeId와 겹치지 않게 1로 설정
+@HiveType(typeId: 3) // User 모델의 typeId와 겹치지 않게 1로 설정
 class Purchase extends HiveObject {
   @HiveField(0)
   final String userId;
