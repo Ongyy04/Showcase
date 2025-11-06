@@ -57,7 +57,7 @@ class _SearchPageState extends State<SearchPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('gifcon', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                  const Text('CASHLOOP', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                   Row(
                     children: const [
                       Icon(Icons.monetization_on, color: Color(0xFF383C59)),
@@ -135,10 +135,10 @@ class _SearchPageState extends State<SearchPage> {
                   TextField(
                     controller: _searchController,
                     decoration: const InputDecoration(
-                      hintText: '스타벅스 아메리카노T 10% 할인',
+                      hintText: '  스타벅스 아메리카노T 10% 할인',
                       hintStyle: TextStyle(color: Colors.grey),
                       filled: false,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                       suffixIcon: Icon(Icons.search, color: Colors.black),
                       border: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
@@ -176,25 +176,25 @@ class _SearchPageState extends State<SearchPage> {
                       childAspectRatio: 0.7,
                       children: const [
                         RecommendedItemCard(
-                          imageAsset: 'assets/images/cafe.png',
+                          imageAsset: 'assets/images/sblatte.jpg',
                           brand: '스타벅스',
                           name: '카페라떼 (ICE)',
                           price: '4,500원',
                         ),
                         RecommendedItemCard(
-                          imageAsset: 'assets/images/cafe.png',
+                          imageAsset: 'assets/images/bery.jpg',
                           brand: '이디야커피',
-                          name: '베리베리 에이드 (ICE)',
+                          name: '후르츠베리 에이드 (ICE)',
                           price: '4,800원',
                         ),
                         RecommendedItemCard(
-                          imageAsset: 'assets/images/cafe.png',
+                          imageAsset: 'assets/images/megeamericaco.jpg',
                           brand: '메가커피',
                           name: '아이스 아메리카노 (ICE)',
                           price: '2,000원',
                         ),
                         RecommendedItemCard(
-                          imageAsset: 'assets/images/cafe.png',
+                          imageAsset: 'assets/images/composeame.jpg',
                           brand: '컴포즈커피',
                           name: '아이스 아메리카노 (ICE)',
                           price: '1,500원',

@@ -37,7 +37,7 @@ class _MyInfoState extends State<MyInfo> {
       'distance': '30m',
       'price': '3,900원',
       'status': '사용 가능',
-      'image': 'assets/images/cafe.png', 
+      'image': 'assets/images/megeamericaco.jpg', 
     },
     {
       'name': '스타벅스 라떼 Tall',
@@ -45,15 +45,15 @@ class _MyInfoState extends State<MyInfo> {
       'distance': '150m',
       'price': '5,000원',
       'status': '사용 가능',
-      'image': 'assets/images/cafe.png', 
+      'image': 'assets/images/sblatte.jpg', 
     },
     {
-      'name': '이디야 커피 콤보',
-      'store': '이디야커피 인근점',
+      'name': '더벤티 망고 에이드',
+      'store': '더벤티 수원경희대점',
       'distance': '50m',
       'price': '6,500원',
       'status': '사용 가능',
-      'image': 'assets/images/cafe.png', 
+      'image': 'assets/images/ventimango.jpg', 
     },
   ];
 
@@ -207,7 +207,7 @@ class _MyInfoState extends State<MyInfo> {
     final userName = currentUser?.username ?? "사용자";
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -266,7 +266,7 @@ class _MyInfoState extends State<MyInfo> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       children: [
-                        const Text('내 정보 공개 범위 설정', style: TextStyle(fontWeight: FontWeight.w500)),
+                        const Text('내 정보 공개 범위 설정', style: TextStyle(fontWeight: FontWeight.w600)),
                         const SizedBox(width: 6),
                         GestureDetector(
                           onTap: () => _showPrivacyInfo(context),
@@ -274,13 +274,14 @@ class _MyInfoState extends State<MyInfo> {
                         ),
                         const Spacer(),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 10,vertical:3),
                           decoration: BoxDecoration(
                             color: const Color(0xFF383C59),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
+                              isDense: true,
                               value: selectedPrivacy,
                               dropdownColor: const Color(0xFF383C59),
                               icon: Image.asset('assets/images/down.arrow.png', width: 12, height: 12),
@@ -301,11 +302,11 @@ class _MyInfoState extends State<MyInfo> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 12),
                   
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Text('나의 장소', style: TextStyle(fontWeight: FontWeight.w500)),
+                    child: Text('나의 장소', style: TextStyle(fontWeight: FontWeight.w600)),
                   ),
                   const SizedBox(height: 10),
                   Padding(
@@ -347,13 +348,14 @@ class _MyInfoState extends State<MyInfo> {
                   
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text('KB가 추천해주는 $userName님 맞춤 기프티콘', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    child: Text('KB가 추천해주는 $userName님 맞춤 기프티콘',
+                      style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 18)),
                   ),
                   const SizedBox(height: 2),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text('$userName님 근처에서 요즘 인기 있는 기프티콘을 모아봤어요!',
-                        style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                        style: const TextStyle(color: Color.fromARGB(128, 31, 30, 30), fontSize: 15)),
                   ),
                   const SizedBox(height: 10),
                   _buildRecommendedGifticonList(),
@@ -551,6 +553,7 @@ class _VerticalGiftCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Row(

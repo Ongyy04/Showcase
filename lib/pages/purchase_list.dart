@@ -16,32 +16,35 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
     {
       'brand': '컴포즈커피',
       'name': '카페 아메리카노 Tall',
-      'store': 'gifcon',
+      'store': 'CASHLOOP',
       'date': '2025-02-03 14:34',
       'price': '₩4,500',
       'status': '결제완료',
       'type': '구매',
       'method': '포인트 결제',
+      'image': 'assets/images/composeame.jpg',
     },
     {
       'brand': '메가커피',
       'name': '콜드브루 라떼',
-      'store': 'gifcon',
+      'store': 'CASHLOOP',
       'date': '2025-01-27 12:10',
       'price': '₩4,800',
       'status': '결제완료',
       'type': '구매',
-      'method': '카드 결제',
+      'method': '네이버페이 결제',
+      'image': 'assets/images/megalatte.jpg',
     },
     {
       'brand': '스타벅스',
       'name': '카페라떼 Tall',
-      'store': 'gifcon',
+      'store': 'CASHLOOP',
       'date': '2025-01-11 09:45',
       'price': '₩5,000',
       'status': '결제완료',
       'type': '구매',
-      'method': '포인트 + 카드 결제',
+      'method': '포인트 + 카카오페이 결제',
+      'image': 'assets/images/sblatte.jpg',
     },
     {
       'brand': '더벤티',
@@ -52,6 +55,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
       'status': '선물보냄',
       'type': '선물',
       'message': '시험 잘 봐~!',
+      'image': 'assets/images/ventimango.jpg',
     },
     {
       'brand': '메가커피',
@@ -62,6 +66,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
       'status': '선물보냄',
       'type': '선물',
       'message': '고생했어 ☕',
+      'image': 'assets/images/megeamericaco.jpg',
     },
   ];
 
@@ -123,7 +128,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
-                Text('gifcon', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                Text('CASHLOOP', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                 Row(
                   children: [
                     Icon(Icons.monetization_on, color: Color(0xFF383C59)),
@@ -228,7 +233,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
                 final item = filteredPurchases[index];
                 return Container(
                   margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
@@ -245,7 +250,8 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.asset('assets/images/cafe.png',
+                        child: Image.asset(
+                          item['image'] ?? 'assets/images/cafe.png',
                             width: 70, height: 70, fit: BoxFit.cover),
                       ),
                       const SizedBox(width: 16),
@@ -255,26 +261,27 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
                           children: [
                             Text(item['brand'] ?? '',
                                 style: const TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 14,
                                     color: Colors.grey,
                                     fontWeight: FontWeight.w500)),
                             const SizedBox(height: 4),
                             Text(item['name'] ?? '',
                                 style: const TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold)),
                             const SizedBox(height: 6),
                             Text(
                               item['type'] == '구매'
                                   ? '${item['store']} • ${item['date']} • ${item['method']}'
                                   : '${item['recipient']}님에게 선물함 • ${item['date']}',
-                              style: const TextStyle(fontSize: 12, color: Colors.black54),
+                              style: const TextStyle(fontSize: 14, color: Colors.black54),
+                              maxLines: 2,
                             ),
                             if (item['type'] == '선물') ...[
                               const SizedBox(height: 6),
                               Text('메시지: ${item['message'] ?? ''}',
                                   style: const TextStyle(
-                                      fontSize: 12, color: Colors.black54)),
+                                      fontSize: 13, color: Colors.black54)),
                             ],
                             const SizedBox(height: 10),
                             Align(

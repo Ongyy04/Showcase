@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
-                Text('gifcon', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                Text('CASHLOOP', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                 Row(
                   children: [
                     Icon(Icons.monetization_on, color: Color(0xFF383C59)),
@@ -288,7 +288,7 @@ class _ProductCard extends StatelessWidget {
                       style: const TextStyle(
                         color: Color(0xFFFF7A00),
                         fontWeight: FontWeight.w700,
-                        fontSize: 12,
+                        fontSize: 14,
                       ),
                     ),
                   if (p.discount > 0) const SizedBox(width: 6),

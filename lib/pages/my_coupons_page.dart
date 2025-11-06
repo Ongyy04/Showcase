@@ -163,7 +163,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('gifcon', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                const Text('CASHLOOP', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                 Row(
                   children: [
                     const Icon(Icons.monetization_on, color: Color(0xFF383C59)),
@@ -278,7 +278,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     name: '베리베리에이드 (ICE)',
                     period: '2025.08.11~2026.08.11',
                     statusLabel: '미사용',
-                    statusColor: Color(0xFFFEDC56),
+                    statusColor: Color.fromARGB(255, 247, 150, 31),
                     statusTextColor: Colors.black,
                   ),
                   const CouponCard(
