@@ -28,6 +28,34 @@ class _MyInfoState extends State<MyInfo> {
     super.initState();
     _fetchRecommendations();
   }
+  
+  // 1. ☕️ 플레이스홀더 기프티콘 더미 데이터 정의
+  final List<Map<String, String>> placeholderGifts = [
+    {
+      'name': '메가커피 아메리카노',
+      'store': '메가커피 경희대점',
+      'distance': '30m',
+      'price': '3,900원',
+      'status': '사용 가능',
+      'image': 'assets/images/cafe.png', 
+    },
+    {
+      'name': '스타벅스 라떼 Tall',
+      'store': '스타벅스 영통점',
+      'distance': '150m',
+      'price': '5,000원',
+      'status': '사용 가능',
+      'image': 'assets/images/cafe.png', 
+    },
+    {
+      'name': '이디야 커피 콤보',
+      'store': '이디야커피 인근점',
+      'distance': '50m',
+      'price': '6,500원',
+      'status': '사용 가능',
+      'image': 'assets/images/cafe.png', 
+    },
+  ];
 
   Future<void> _fetchRecommendations() async {
     const String userId = 'arin73';
@@ -336,20 +364,57 @@ class _MyInfoState extends State<MyInfo> {
     );
   }
 
-  // 추천 기프티콘 목록을 빌드하는 메소드
   Widget _buildRecommendedGifticonList() {
     if (recommendedGifticons.isEmpty) {
-      return const Center(
+      return Center(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text(
-            '추천 상품이 없습니다. 더 많은 구매를 해주세요!',
-            style: TextStyle(fontSize: 16, color: Colors.grey),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0), // 좌우 패딩 추가
+          child: Column(
+            mainAxisSize: MainAxisSize.min, 
+            children: <Widget>[
+              // 1. mapping.png 이미지
+              Image.asset(
+                'assets/images/mapping.png', 
+                width: 350, 
+                height: 350,
+              ),
+              
+              const SizedBox(height: 7), // 이미지와 카드 목록 사이의 간격
+
+              // ⭐ 요청하신 세로 목록 카드 3개 추가 ⭐
+              ListView.builder(
+                shrinkWrap: true, // Column 안에 ListView를 넣을 때 필수
+                physics: const NeverScrollableScrollPhysics(), // 외부 SingleChildScrollView에 의존
+                itemCount: placeholderGifts.length,
+                itemBuilder: (context, index) {
+                  final gift = placeholderGifts[index];
+                  // 새로운 세로 카드 위젯 사용
+                  return _VerticalGiftCard(
+                    name: gift['name']!,
+                    store: gift['store']!,
+                    distance: gift['distance']!,
+                    price: gift['price']!,
+                    imagePath: gift['image']!,
+                  );
+                },
+              ),
+              const SizedBox(height: 15),
+              // ⭐ 세로 목록 카드 3개 추가 끝 ⭐
+              
+              // 2. 원래 텍스트
+              const Text(
+                '지금 있는 곳 근처의 추천 기프티콘 사용 가능 매장이에요.',
+                style: TextStyle(fontSize: 13, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20), // 하단 여백 추가
+            ],
           ),
         ),
       );
     }
-    
+      
+    // (기존 recommendedGifticons가 있을 때의 ListView.builder 로직은 그대로 유지)
     return SizedBox(
       height: 250,
       child: ListView.builder(
@@ -377,7 +442,6 @@ class _MyInfoState extends State<MyInfo> {
                   children: [
                     ClipRRect(
                       borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                      // 🔴 수정: gifticon.imagePath 사용
                       child: CachedNetworkImage(
                         imageUrl: gifticon.imagePath,
                         width: 150,
@@ -414,7 +478,7 @@ class _MyInfoState extends State<MyInfo> {
   }
 }
 
-// 기프티콘 상세 페이지 위젯
+// 기프티콘 상세 페이지 위젯 (기존 유지)
 class GifticonDetailPage extends StatelessWidget {
   final Gifticon gifticon;
   const GifticonDetailPage({super.key, required this.gifticon});
@@ -433,7 +497,6 @@ class GifticonDetailPage extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                // 🔴 수정: gifticon.imagePath 사용
                 child: CachedNetworkImage(
                   imageUrl: gifticon.imagePath,
                   width: double.infinity,
@@ -458,6 +521,106 @@ class GifticonDetailPage extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// 3. 🆕 새로운 세로 기프티콘 카드 위젯 정의
+class _VerticalGiftCard extends StatelessWidget {
+  final String name;
+  final String store;
+  final String distance;
+  final String price;
+  final String imagePath;
+
+  const _VerticalGiftCard({
+    required this.name,
+    required this.store,
+    required this.distance,
+    required this.price,
+    required this.imagePath,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 임시 이미지
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                imagePath,
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(width: 12),
+            // 기프티콘 정보
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on_outlined, size: 14, color: Colors.grey),
+                      const SizedBox(width: 4),
+                      Text(
+                        '$store · $distance 이내',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Text(
+                        price,
+                        style: TextStyle(
+                          color: Colors.green[700],
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const Spacer(),
+                      const Text(
+                        '사용 가능',
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
