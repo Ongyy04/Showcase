@@ -7,6 +7,7 @@ import 'package:my_app/pages/order_page.dart';
 import 'package:my_app/pages/my_coupons_page.dart';
 import 'package:my_app/pages/people.dart';
 import 'package:my_app/pages/coupon_detail_page.dart';
+import 'package:my_app/pages/product_detail_page.dart';
 import 'package:my_app/pages/purchase_list.dart';
 import 'package:my_app/pages/login.dart';
 import 'package:my_app/pages/myinfo.dart';
@@ -17,15 +18,9 @@ import 'package:my_app/pages/newpeople.dart';
 import 'package:my_app/services/directory_service.dart';
 
 Future<void> main() async {
-  // Flutter 앱을 시작하기 전에 위젯 바인딩을 초기화합니다.
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Hive 데이터베이스를 초기화합니다.
   await DatabaseService.init();
-
-  // 디렉토리 서비스를 초기화합니다.
   await DirectoryService.init();
-
   runApp(const MyApp());
 }
 
@@ -37,9 +32,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Pretendard'),
-      // 앱의 시작 화면을 로그인 페이지로 설정합니다.
       initialRoute: '/login',
-      // 앱 내의 모든 화면에 대한 라우트를 정의합니다.
       routes: {
         '/login': (context) => const LoginPage(),
         '/home': (context) => const HomePage(),
@@ -55,6 +48,7 @@ class MyApp extends StatelessWidget {
         '/db': (context) => const DbInspectorPage(),
         '/newpeople': (_) => const NewPeoplePage(),
         '/settings': (context) => const SettingsPage(),
+        '/product_detail': (context) => const ProductDetailPage(), // ✅ 추가
       },
     );
   }

@@ -46,7 +46,7 @@ class _SearchPageState extends State<SearchPage> {
           )
         ],
       ),
-      backgroundColor: Colors.white, // 전체 배경을 흰색으로 유지
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,7 +83,7 @@ class _SearchPageState extends State<SearchPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: ['선물하기', '구매내역', '내 기프티콘'].map((tab) {
-                      final bool isSelected = tab == '선물하기'; // 현재 페이지 기준
+                      final bool isSelected = tab == '선물하기';
                       return GestureDetector(
                         onTap: () {
                           if (tab == '구매내역') {
@@ -111,11 +111,9 @@ class _SearchPageState extends State<SearchPage> {
                       );
                     }).toList(),
                   ),
-
                 ],
               ),
             ),
-            // 이 부분을 회색 경계가 있는 Container로 감싸서 배경을 구분합니다.
             Container(
               color: Colors.white,
               padding: const EdgeInsets.all(16),
@@ -149,9 +147,8 @@ class _SearchPageState extends State<SearchPage> {
                 ],
               ),
             ),
-            // 이 부분이 회색 배경을 가져야 하는 부분입니다.
             Container(
-              color:  Colors.white, 
+              color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Column(
@@ -168,28 +165,31 @@ class _SearchPageState extends State<SearchPage> {
                       crossAxisCount: 2,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
-                      childAspectRatio: 0.7,
-                      children: const [
+                      childAspectRatio: 0.63, // 세로 공간을 더 확보해 텍스트를 아래로
+                      children: [
                         RecommendedItemCard(
-                          imageAsset: 'assets/images/sblatte.jpg',
+                          imageAsset: 'assets/images/starcafe.png',
                           brand: '스타벅스',
                           name: '카페라떼 (ICE)',
                           price: '4,500원',
+                          onTap: () {
+                            Navigator.pushNamed(context, '/product_detail');
+                          },
                         ),
-                        RecommendedItemCard(
-                          imageAsset: 'assets/images/bery.jpg',
+                        const RecommendedItemCard(
+                          imageAsset: 'assets/images/bery.png',
                           brand: '이디야커피',
                           name: '후르츠베리 에이드 (ICE)',
                           price: '4,800원',
                         ),
-                        RecommendedItemCard(
-                          imageAsset: 'assets/images/megeamericaco.jpg',
+                        const RecommendedItemCard(
+                          imageAsset: 'assets/images/megamericano.png',
                           brand: '메가커피',
                           name: '아이스 아메리카노 (ICE)',
                           price: '2,000원',
                         ),
-                        RecommendedItemCard(
-                          imageAsset: 'assets/images/composeame.jpg',
+                        const RecommendedItemCard(
+                          imageAsset: 'assets/images/composeamericano.png',
                           brand: '컴포즈커피',
                           name: '아이스 아메리카노 (ICE)',
                           price: '1,500원',
@@ -212,6 +212,7 @@ class RecommendedItemCard extends StatelessWidget {
   final String brand;
   final String name;
   final String price;
+  final VoidCallback? onTap;
 
   const RecommendedItemCard({
     super.key,
@@ -219,60 +220,73 @@ class RecommendedItemCard extends StatelessWidget {
     required this.brand,
     required this.name,
     required this.price,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12, // 그림자 색상으로 경계 효과 주기
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, 2),
             ),
-            child: Image.asset(
-              imageAsset,
-              height: 120,
-              width: double.infinity,
-              fit: BoxFit.cover,
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 이미지 카드: contain + 넉넉한 높이 + 연한 배경 + 패딩
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+              child: Container(
+                height: 160, // 120 → 160 으로 확대
+                width: double.infinity,
+                color: const Color(0xFFF7F7F7),
+                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                child: Image.asset(
+                  imageAsset,
+                  fit: BoxFit.contain, // 전체 이미지가 보이도록
+                ),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  brand,
-                  style: const TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  name,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  price,
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                ),
-              ],
+            // 텍스트 영역
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    brand,
+                    style: const TextStyle(fontSize: 13, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    price,
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
