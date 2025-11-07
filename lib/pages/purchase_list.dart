@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import '../services/database.dart';
+import '../models/user.dart';
 import 'package:my_app/pages/setting_page.dart';
 
 class PurchaseHistoryPage extends StatefulWidget {
@@ -72,6 +75,42 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
     },
   ];
 
+  int? _currentUserKey;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentUserKey = DatabaseService.currentUserKey();
+  }
+
+  Widget _buildStarPoint() {
+    if (_currentUserKey == null) {
+      return const Text(
+        '-',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+          color: Color(0xFF383C59),
+        ),
+      );
+    }
+    return ValueListenableBuilder<Box<User>>(
+      valueListenable: DatabaseService.users.listenable(keys: [_currentUserKey!]),
+      builder: (_, box, __) {
+        final user = box.get(_currentUserKey!);
+        final point = user?.starPoint ?? 0;
+        return Text(
+          '$point',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Color(0xFF383C59),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final filteredPurchases = selectedPurchaseButton == '전체'
@@ -82,111 +121,153 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Image.asset('assets/images/arrow.png', width: 24, height: 24),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          '모바일 쿠폰마켓',
-          style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w600),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, '/people'),
-                  child: Image.asset('assets/images/people.png', width: 24, height: 24),
-                ),
-                const SizedBox(width: 16),
-                GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, '/home'),
-                  child: Image.asset('assets/images/home.png', width: 24, height: 24),
-                ),
-                const SizedBox(width: 16),
-                GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SettingsPage()),
-                  ),
-                  child: Image.asset('assets/images/more.png', width: 24, height: 24),
-                ),
-              ],
-            ),
+appBar: AppBar(
+  backgroundColor: Colors.white,
+  elevation: 0,
+  leadingWidth: 70,     // 로고가 차지할 영역
+  titleSpacing: 0,      // 텍스트와 로고 간격 최소화
+  leading: Padding(
+    padding: const EdgeInsets.only(left: 12.0), // 왼쪽 벽에서 12px 떨어지게
+    child: IconButton(
+      icon: Image.asset('assets/images/logo.png', width: 40, height: 40),
+      onPressed: () => Navigator.pop(context),
+    ),
+  ),
+  title: const Text(
+    'CASHLOOP',
+    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+  ),
+  actions: [
+    Padding(
+      padding: const EdgeInsets.only(right: 12.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/people'),
+            child: Image.asset('assets/images/people.png', width: 24, height: 24),
+          ),
+          const SizedBox(width: 16),
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/search'),
+            child: Image.asset('assets/images/home.png', width: 24, height: 24),
+          ),
+          const SizedBox(width: 16),
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/settings'),
+            child: Image.asset('assets/images/more.png', width: 24, height: 24),
           ),
         ],
       ),
+    ),
+  ],
+),
+
 
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 상단 잔액
-          Container(
-            padding: const EdgeInsets.all(20),
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text('CASHLOOP', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                Row(
-                  children: [
-                    Icon(Icons.monetization_on, color: Color(0xFF383C59)),
-                    SizedBox(width: 6),
-                    Text('2,300',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Color(0xFF383C59))),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-        // 하단 탭
+          // 상단 포인트 + 프로필 영역
 Container(
-  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+  padding: const EdgeInsets.all(20),
   color: Colors.white,
   child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceAround,
-    children: ['선물하기', '구매내역', '내 기프티콘'].map((tab) {
-      final bool isSelected = tab == '구매내역';
-      return GestureDetector(
-        onTap: () {
-          if (tab == '선물하기') {
-            Navigator.pushNamed(context, '/search');
-          } else if (tab == '내 기프티콘') {
-            Navigator.pushNamed(context, '/my_coupons');
-          }
-        },
-        child: Column(
-          children: [
-            Text(
-              tab,
-              style: TextStyle(
-                color: isSelected ? Colors.black : const Color(0xFF878C93),
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      ValueListenableBuilder<Box<User>>(
+        valueListenable: DatabaseService.users.listenable(keys: [_currentUserKey!]),
+        builder: (context, box, _) {
+          final user = box.get(_currentUserKey!);
+          final userName = user?.username ?? '사용자';
+          final profileImage = 'assets/images/hello.png';
+
+          return Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.asset(
+                  profileImage,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              '────────',
-              style: TextStyle(color: isSelected ? Colors.black : Colors.transparent),
-            ),
-          ],
-        ),
-      );
-    }).toList(),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$userName님',
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                  ),
+                  Text(
+                    '반가워요 $userName님, 추천 상품을 확인하세요!',
+                    style: TextStyle(fontSize: 14, color: Color.fromARGB(255, 22, 22, 22)),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+      Row(
+        children: [
+          Image.asset(
+            'assets/images/point.png',
+            width: 20,
+            height: 20,
+            color: const Color(0xFF383C59),
+          ),
+          const SizedBox(width: 6),
+          _buildStarPoint(),
+        ],
+      ),
+    ],
   ),
 ),
 
+          // 하단 탭
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            color: Colors.white,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: ['선물하기', '구매내역', '내 기프티콘'].map((tab) {
+                final bool isSelected = tab == '구매내역';
+                return GestureDetector(
+                  onTap: () {
+                    if (tab == '선물하기') {
+                      Navigator.pushNamed(context, '/search');
+                    } else if (tab == '내 기프티콘') {
+                      Navigator.pushNamed(context, '/my_coupons');
+                    }
+                  },
+                  child: Column(
+                    children: [
+                      Text(
+                        tab,
+                        style: TextStyle(
+                          color: isSelected ? Colors.black : const Color(0xFF878C93),
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '────────',
+                        style: TextStyle(color: isSelected ? Colors.black : Colors.transparent),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+
           // 드롭다운
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             color: Colors.white,
             child: DropdownButtonHideUnderline(
               child: Container(
@@ -194,7 +275,7 @@ Container(
                   color: const Color(0xFF383C59),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 0),
                 child: DropdownButton<String>(
                   value: selectedPurchaseButton,
                   icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
@@ -261,29 +342,26 @@ Container(
                       ),
                     ],
                   ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [ // ✅ 이 줄이 꼭 있어야 함
-                          Padding(
-                            padding: const EdgeInsets.all(12), // ✅ 사진 여백 추가
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.asset(
-                                item['image'] ?? 'assets/images/cafe.png',
-                                height: 130, // ✅ 기존보다 작게
-                                width: double.infinity,
-                                fit: BoxFit.contain, // ✅ 비율 유지하며 여백 생김
-                              ),
-                            ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            item['image'] ?? 'assets/images/cafe.png',
+                            height: 130,
+                            width: double.infinity,
+                            fit: BoxFit.contain,
                           ),
-                        
-
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // 브랜드 + 가격
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -298,15 +376,11 @@ Container(
                               ],
                             ),
                             const SizedBox(height: 6),
-
-                            // 상세 설명 (CASHLOOP 제거)
                             Text(
                               (item['name'] ?? '').replaceAll('CASHLOOP', ''),
                               style: const TextStyle(fontSize: 15, color: Colors.black87),
                             ),
                             const SizedBox(height: 10),
-
-                            // 시간 / 지점 구분
                             if (item['date'] != null || item['store'] != null)
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -321,8 +395,6 @@ Container(
                                 ],
                               ),
                             const SizedBox(height: 10),
-
-                            // 노란 결제창
                             if (isPurchase)
                               Container(
                                 width: double.infinity,
@@ -342,8 +414,6 @@ Container(
                                   ),
                                 ),
                               ),
-
-                            // 선물 내역일 때 문구
                             if (isGift) ...[
                               const SizedBox(height: 8),
                               Text(
@@ -355,14 +425,12 @@ Container(
                                   '메시지: ${item['message']}',
                                   style: const TextStyle(color: Colors.black54, fontSize: 13),
                                 ),
-
-                              // ✅ 여기가 새로 추가된 “노란 결제창” 부분
                               const SizedBox(height: 10),
                               Container(
                                 width: double.infinity,
                                 padding: const EdgeInsets.symmetric(vertical: 10),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFFE266), // 노란 배경색
+                                  color: const Color(0xFFFFE266),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Center(
@@ -377,7 +445,6 @@ Container(
                                 ),
                               ),
                             ]
-
                           ],
                         ),
                       ),

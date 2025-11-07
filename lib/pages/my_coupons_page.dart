@@ -13,7 +13,7 @@ class MyCouponsPage extends StatefulWidget {
 
 class _MyCouponsPageState extends State<MyCouponsPage> {
   String selectedTab = '내 기프티콘';
-  String sortOption = '최신순';
+  String selectedSortOption = '최신순';
   final List<String> sortOptions = ['최신순', '오래된순', '가나다순'];
 
   int? _currentUserKey;
@@ -113,146 +113,209 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Image.asset('assets/images/arrow.png', width: 24, height: 24),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          '모바일 쿠폰마켓',
-          style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w600),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, '/people'),
-                  child: Image.asset('assets/images/people.png', width: 24, height: 24),
-                ),
-                const SizedBox(width: 16),
-                GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, '/home'),
-                  child: Image.asset('assets/images/home.png', width: 24, height: 24),
-                ),
-                const SizedBox(width: 16),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SettingsPage()),
-                    );
-                  },
-                  child: Image.asset('assets/images/more.png', width: 24, height: 24),
-                ),
-              ],
-            ),
-          )
+  backgroundColor: Colors.white,
+  elevation: 0,
+  leadingWidth: 70,     // 로고가 차지할 영역
+  titleSpacing: 0,      // 텍스트와 로고 간격 최소화
+  leading: Padding(
+    padding: const EdgeInsets.only(left: 12.0), // 왼쪽 벽에서 12px 떨어지게
+    child: IconButton(
+      icon: Image.asset('assets/images/logo.png', width: 40, height: 40),
+      onPressed: () => Navigator.pop(context),
+    ),
+  ),
+  title: const Text(
+    'CASHLOOP',
+    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+  ),
+  actions: [
+    Padding(
+      padding: const EdgeInsets.only(right: 12.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/people'),
+            child: Image.asset('assets/images/people.png', width: 24, height: 24),
+          ),
+          const SizedBox(width: 16),
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/search'),
+            child: Image.asset('assets/images/home.png', width: 24, height: 24),
+          ),
+          const SizedBox(width: 16),
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/settings'),
+            child: Image.asset('assets/images/more.png', width: 24, height: 24),
+          ),
         ],
       ),
-      backgroundColor: const Color(0xFFF5F5F5),
+    ),
+  ],
+),
+
+
+
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 상단 포인트 + 프로필 영역
           Container(
-            padding: const EdgeInsets.all(20),
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('CASHLOOP', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                Row(
-                  children: [
-                    const Icon(Icons.monetization_on, color: Color(0xFF383C59)),
-                    const SizedBox(width: 6),
-                    _buildStarPoint(),
-                  ],
-                )
-              ],
-            ),
+  padding: const EdgeInsets.all(20),
+  color: Colors.white,
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      ValueListenableBuilder<Box<User>>(
+        valueListenable: DatabaseService.users.listenable(keys: [_currentUserKey!]),
+        builder: (context, box, _) {
+          final user = box.get(_currentUserKey!);
+          final userName = user?.username ?? '사용자';
+          final profileImage = 'assets/images/hello.png';
+
+          return Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.asset(
+                  profileImage,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '$userName님',
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                  ),
+                  Text(
+                    '반가워요 $userName님, 추천 상품을 확인하세요!',
+                    style: TextStyle(fontSize: 14, color: Color.fromARGB(255, 22, 22, 22)),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    Row(
+        children: [
+          Image.asset(
+            'assets/images/point.png',
+            width: 20,
+            height: 20,
+            color: const Color(0xFF383C59),
           ),
+          const SizedBox(width: 6),
+          _buildStarPoint(),
+        ],
+      ),
+    ],
+  ),
+),
+
+          // 하단 탭
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             color: Colors.white,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [ '선물하기', '구매내역', '내 기프티콘'].map((tab) {
-                    final bool isSelected = selectedTab == tab;
-                    return GestureDetector(
-                      onTap: () {
-                        if (tab == '선물하기') {
-                          Navigator.pushNamed(context, '/search');
-                        } else if (tab == '구매내역') {
-                          Navigator.pushNamed(context, '/purchase_list');
-                        } else if (tab == '내 기프티콘') {
-                          setState(() {
-                            selectedTab = tab;
-                          });
-                        }
-                      },
-                      child: Column(
-                        children: [
-                          Text(
-                            tab,
-                            style: TextStyle(
-                              color: isSelected ? Colors.black : const Color(0xFF878C93),
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            '────────',
-                            style: TextStyle(
-                              color: isSelected ? Colors.black : Colors.transparent,
-                            ),
-                          ),
-                        ],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: ['선물하기', '구매내역', '내 기프티콘'].map((tab) {
+                final bool isSelected = selectedTab == tab;
+                return GestureDetector(
+                  onTap: () {
+                    if (tab == '선물하기') {
+                      Navigator.pushNamed(context, '/search');
+                    } else if (tab == '구매내역') {
+                      Navigator.pushNamed(context, '/purchase_list');
+                    } else if (tab == '내 기프티콘') {
+                      setState(() {
+                        selectedTab = tab;
+                      });
+                    }
+                  },
+                  child: Column(
+                    children: [
+                      Text(
+                        tab,
+                        style: TextStyle(
+                          color: isSelected ? Colors.black : const Color(0xFF878C93),
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
                       ),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            color: Colors.white,
-            child: GestureDetector(
-              onTap: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) => SafeArea(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: sortOptions.map((option) {
-                        return ListTile(
-                          title: Text(option),
-                          onTap: () {
-                            Navigator.pop(context);
-                            setState(() {
-                              sortOption = option;
-                            });
-                          },
-                        );
-                      }).toList(),
-                    ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '────────',
+                        style: TextStyle(
+                          color: isSelected ? Colors.black : Colors.transparent,
+                        ),
+                      ),
+                    ],
                   ),
                 );
-              },
-              child: Row(
-                children: [
-                  Text(sortOption, style: const TextStyle(color: Colors.black, fontSize: 14)),
-                  const SizedBox(width: 6),
-                  Image.asset('assets/images/down.arrow.png', width: 16, height: 16),
-                ],
+              }).toList(),
+            ),
+          ),
+
+          // 정렬 드롭다운 버튼 (PurchaseHistoryPage와 동일하게 통일)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: DropdownButtonHideUnderline(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF383C59),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: DropdownButton<String>(
+                  value: selectedSortOption,
+                  icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                  dropdownColor: const Color(0xFF383C59),
+                  borderRadius: BorderRadius.circular(12),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedSortOption = newValue!;
+                    });
+                  },
+                  items: sortOptions.map((String option) {
+                    return DropdownMenuItem<String>(
+                      value: option,
+                      child: Text(option, style: const TextStyle(color: Colors.white)),
+                    );
+                  }).toList(),
+                  selectedItemBuilder: (BuildContext context) {
+                    return sortOptions.map((String option) {
+                      return Center(
+                        child: Text(
+                          option,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      );
+                    }).toList();
+                  },
+                ),
               ),
             ),
           ),
+
+          // 쿠폰 리스트
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -340,9 +403,9 @@ class CouponCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 6,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.1),
+            blurRadius:10,
+            offset: const Offset(0, 5),
           )
         ],
       ),

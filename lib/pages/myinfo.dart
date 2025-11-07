@@ -226,7 +226,7 @@ class _MyInfoState extends State<MyInfo> {
                 Image.asset('assets/images/people.png', width: 24, height: 24),
                 const SizedBox(width: 16),
                 GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, '/home'),
+                  onTap: () => Navigator.pushNamed(context, '/search'),
                   child: Image.asset('assets/images/home.png', width: 24, height: 24),
                 ),
               ],

@@ -15,11 +15,13 @@ class User extends HiveObject {
 
   @HiveField(3)
   int starPoint;
-
+  @HiveField(4)
+  String avatar;  
   User({
     required this.username,
     required this.passwordHash,
     required this.phone,
+    required this.avatar,
     this.starPoint = 0,
   });
 }

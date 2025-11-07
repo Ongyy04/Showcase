@@ -309,6 +309,7 @@ class _SignUpPageState extends State<SignUpPage> {
       username: username,
       passwordHash: hashPassword(pw),
       phone: phone,
+      avatar: 'assets/images/hello.png',
     );
     final key = await DatabaseService.addUser(newUser);
     await DatabaseService.setCurrentUserKey(key);
