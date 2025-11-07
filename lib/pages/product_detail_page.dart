@@ -16,7 +16,6 @@ class ProductDetailPage extends StatelessWidget {
     final int salePrice = args['salePrice'] ?? 4050;
     final int discountPercent = args['discountPercent'] ?? 10;
 
-    const primary = Color(0xFF383C59);
     const divider = Color(0xFFE7E8EC);
 
     return Scaffold(
@@ -49,7 +48,9 @@ class ProductDetailPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))],
+                boxShadow: const [
+                  BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 4))
+                ],
                 border: Border.all(color: divider),
               ),
               child: SizedBox(
@@ -73,22 +74,31 @@ class ProductDetailPage extends StatelessWidget {
             children: [
               Text(
                 '${_money(originalPrice)}원',
-                style: const TextStyle(color: Colors.grey, decoration: TextDecoration.lineThrough, fontSize: 13),
+                style: const TextStyle(
+                    color: Colors.grey,
+                    decoration: TextDecoration.lineThrough,
+                    fontSize: 13),
               ),
               const SizedBox(width: 12),
-              Text('$discountPercent% ', style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14)),
-              Text('${_money(salePrice)}원', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+              Text('$discountPercent%',
+                  style: const TextStyle(
+                      color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14)),
+              const SizedBox(width: 6),
+              Text('${_money(salePrice)}원',
+                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
             ],
           ),
           const SizedBox(height: 16),
           const Divider(height: 1, color: divider),
           const SizedBox(height: 16),
-          const Text('상품 설명', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+          const Text('상품 설명',
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
           const _BulletLine('부드러운 우유가 들어있는 커피로 전세계적으로 스타벅스에서 가장 인기있는 음료중 하나입니다.'),
           const _BulletLine('Only ICE'),
           const SizedBox(height: 20),
-          const Text('이용 안내', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+          const Text('이용 안내',
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
           const SizedBox(height: 8),
           const _BulletLine('상기 이미지는 연출된 컷으로 실제와 다를 수 있습니다.'),
           const _BulletLine('일부 매장 재고, 상황에 따라 동일 상품으로 교환이 불가능할 수 있습니다.'),
@@ -103,7 +113,9 @@ class ProductDetailPage extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
-            boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 6))],
+            boxShadow: const [
+              BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 6))
+            ],
             border: Border.all(color: divider),
           ),
           child: Row(
@@ -111,27 +123,29 @@ class ProductDetailPage extends StatelessWidget {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('나에게 선물하기')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('나에게 선물하기')));
                   },
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: divider),
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
                   ),
-                  child: const Text('나에게 선물', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
+                  child: const Text('나에게 선물',
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.w600)),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
                   onPressed: () async {
-                    // 바텀시트에서 friend + qty 함께 받기
                     final result = await _openFriendPicker(context);
                     if (result != null && context.mounted) {
                       final friend = result['friend'] as Friend;
                       final qty = result['qty'] as int;
 
-                      // 결제 페이지로 이동
                       Navigator.pushNamed(
                         context,
                         '/payment',
@@ -147,13 +161,15 @@ class ProductDetailPage extends StatelessWidget {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF9DB63), // 노랑
-                    foregroundColor: Colors.black,             // 글자색
+                    backgroundColor: const Color(0xFFF9DB63),
+                    foregroundColor: Colors.black,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
                   ),
-                  child: const Text('친구에게 선물', style: TextStyle(fontWeight: FontWeight.w700)),
+                  child: const Text('친구에게 선물',
+                      style: TextStyle(fontWeight: FontWeight.w700)),
                 ),
               ),
             ],
@@ -179,7 +195,9 @@ class _BulletLine extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('• ', style: TextStyle(height: 1.35)),
-          Expanded(child: Text(text, style: const TextStyle(fontSize: 14, height: 1.35))),
+          Expanded(
+              child: Text(text,
+                  style: const TextStyle(fontSize: 14, height: 1.35))),
         ],
       ),
     );
@@ -191,10 +209,10 @@ class _BulletLine extends StatelessWidget {
 Future<Map<String, dynamic>?> _openFriendPicker(BuildContext context) async {
   final owner = DatabaseService.currentUserKey();
   if (owner == null) {
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('로그인이 필요합니다')));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('로그인이 필요합니다')));
     return null;
   }
-  // Map(friend, qty) 반환
   return showModalBottomSheet<Map<String, dynamic>>(
     context: context,
     isScrollControlled: true,
@@ -222,7 +240,8 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
     super.dispose();
   }
 
-  Future<List<Friend>> _load() async => DatabaseService.getFriends(widget.ownerUserKey);
+  Future<List<Friend>> _load() async =>
+      DatabaseService.getFriends(widget.ownerUserKey);
 
   @override
   Widget build(BuildContext context) {
@@ -236,13 +255,24 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
         return Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 20, offset: const Offset(0, -6))],
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(24)),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 20,
+                  offset: const Offset(0, -6))
+            ],
           ),
           child: Column(
             children: [
               const SizedBox(height: 8),
-              Container(width: 44, height: 4, decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(2))),
+              Container(
+                  width: 44,
+                  height: 4,
+                  decoration: BoxDecoration(
+                      color: Colors.black12,
+                      borderRadius: BorderRadius.circular(2))),
               const SizedBox(height: 12),
 
               // 제목 + 친구추가
@@ -250,15 +280,26 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
-                    const Expanded(child: Text('친구 선택', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700))),
+                    const Expanded(
+                        child: Text('친구 선택',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w700))),
                     TextButton.icon(
                       onPressed: () async {
-                        final ok = await Navigator.push<bool>(context, MaterialPageRoute(builder: (_) => const NewPeoplePage()));
+                        final ok = await Navigator.push<bool>(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const NewPeoplePage()));
                         if (ok == true && mounted) setState(() {});
                       },
-                      style: TextButton.styleFrom(foregroundColor: const Color(0xFF383C59)),
-                      icon: const Icon(Icons.person_add_alt_1, size: 18, color: Color(0xFF383C59)),
-                      label: const Text('친구추가', style: TextStyle(color: Color(0xFF383C59), fontWeight: FontWeight.w600)),
+                      style: TextButton.styleFrom(
+                          foregroundColor: const Color(0xFF383C59)),
+                      icon: const Icon(Icons.person_add_alt_1,
+                          size: 18, color: Color(0xFF383C59)),
+                      label: const Text('친구추가',
+                          style: TextStyle(
+                              color: Color(0xFF383C59),
+                              fontWeight: FontWeight.w600)),
                     ),
                   ],
                 ),
@@ -273,9 +314,12 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                   decoration: const InputDecoration(
                     hintText: '이름으로 검색',
                     suffixIcon: Icon(Icons.search, color: Colors.black),
-                    border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                    border: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
+                    focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black)),
                   ),
                 ),
               ),
@@ -287,24 +331,30 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                   future: _load(),
                   builder: (context, snap) {
                     if (snap.connectionState != ConnectionState.done) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(
+                          child: CircularProgressIndicator());
                     }
                     if (snap.hasError) {
                       return Center(child: Text('불러오기 실패: ${snap.error}'));
                     }
                     var list = snap.data ?? [];
                     final q = _search.text.trim();
-                    if (q.isNotEmpty) list = list.where((f) => f.name.contains(q)).toList();
+                    if (q.isNotEmpty)
+                      list = list.where((f) => f.name.contains(q)).toList();
 
                     if (list.isEmpty) {
-                      return const Center(child: Text('등록된 친구가 없습니다.\n오른쪽 상단에서 추가하세요.', textAlign: TextAlign.center));
+                      return const Center(
+                          child: Text('등록된 친구가 없습니다.\n오른쪽 상단에서 추가하세요.',
+                              textAlign: TextAlign.center));
                     }
 
                     return ListView.separated(
                       controller: controller,
                       itemCount: list.length,
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                      separatorBuilder: (_, __) => const SizedBox(height: 10),
+                      padding:
+                          const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                      separatorBuilder: (_, __) =>
+                          const SizedBox(height: 10),
                       itemBuilder: (_, i) {
                         final f = list[i];
                         final isSelected = identical(selected, f);
@@ -312,12 +362,21 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                           borderRadius: BorderRadius.circular(16),
                           onTap: () => setState(() => selected = f),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 10),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(16),
-                              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 12, offset: const Offset(0, 6))],
-                              border: Border.all(color: isSelected ? Colors.black : divider),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.black.withOpacity(0.06),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 6))
+                              ],
+                              border: Border.all(
+                                  color: isSelected
+                                      ? Colors.black
+                                      : divider),
                             ),
                             child: Row(
                               children: [
@@ -326,17 +385,29 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                                 Expanded(
                                   child: Row(
                                     children: [
-                                      const SizedBox(width: 0),
-                                      Text(f.name, style: const TextStyle(fontSize: 16, color: Colors.black87)),
+                                      Text(f.name,
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black87)),
                                       const SizedBox(width: 8),
-                                      const Text('｜', style: TextStyle(color: Colors.black87)),
+                                      const Text('｜',
+                                          style: TextStyle(
+                                              color: Colors.black87)),
                                       const SizedBox(width: 8),
-                                      Text(f.birthday, style: const TextStyle(fontSize: 16, color: Colors.black87)),
+                                      Text(f.birthday,
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black87)),
                                     ],
                                   ),
                                 ),
-                                Icon(isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-                                    color: isSelected ? Colors.black : Colors.black26),
+                                Icon(
+                                    isSelected
+                                        ? Icons.radio_button_checked
+                                        : Icons.radio_button_off,
+                                    color: isSelected
+                                        ? Colors.black
+                                        : Colors.black26),
                               ],
                             ),
                           ),
@@ -347,72 +418,96 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                 ),
               ),
 
-              // 수량 선택
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
-                child: Container(
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: divider),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 10, offset: const Offset(0, 4))],
+              // 친구 선택 후에만 수량 + 버튼 표시
+              if (selected != null) ...[
+                Padding(
+                  padding:
+                      const EdgeInsets.fromLTRB(16, 10, 16, 8),
+                  child: Container(
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: divider),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(0.06),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4))
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                      children: [
+                        _QtyIconButton(
+                          icon: Icons.remove,
+                          onTap: _qty > 1
+                              ? () => setState(() => _qty--)
+                              : null,
+                        ),
+                        Text('$_qty',
+                            style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600)),
+                        _QtyIconButton(
+                          icon: Icons.add,
+                          onTap: () => setState(() => _qty++),
+                        ),
+                      ],
+                    ),
                   ),
+                ),
+
+                Padding(
+                  padding:
+                      const EdgeInsets.fromLTRB(16, 10, 16, 16),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _QtyIconButton(
-                        icon: Icons.remove,
-                        onTap: _qty > 1 ? () => setState(() => _qty--) : null,
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(
+                                color: Color(0xFFE7E8EC)),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 14),
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(14)),
+                          ),
+                          child: const Text('닫기',
+                              style:
+                                  TextStyle(color: Colors.black)),
+                        ),
                       ),
-                      Text('$_qty', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                      _QtyIconButton(
-                        icon: Icons.add,
-                        onTap: () => setState(() => _qty++),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pop(context, {
+                            'friend': selected,
+                            'qty': _qty,
+                          }),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color(0xFFF9DB63),
+                            foregroundColor: Colors.black,
+                            padding:
+                                const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(14)),
+                            elevation: 0,
+                          ),
+                          child: const Text('선물하기',
+                              style:
+                                  TextStyle(color: Colors.black)),
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ),
-
-              // 하단 버튼
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Color(0xFFE7E8EC)),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                        ),
-                        child: const Text('닫기', style: TextStyle(color: Colors.black)),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: selected == null
-                            ? null
-                            : () => Navigator.pop(context, {
-                                  'friend': selected,
-                                  'qty': _qty,
-                                }),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFF9DB63),
-                          foregroundColor: Colors.black,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                          elevation: 0,
-                        ),
-                        child: const Text('선물하기', style: TextStyle(color: Colors.black)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              ],
             ],
           ),
         );
@@ -438,10 +533,16 @@ class _QtyIconButton extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: enabled ? const Color(0xFF383C59) : Colors.black12,
+            color: enabled
+                ? const Color(0xFF383C59)
+                : Colors.black12,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: enabled ? Colors.white : Colors.black38, size: 22),
+          child: Icon(icon,
+              color: enabled
+                  ? Colors.white
+                  : Colors.black38,
+              size: 22),
         ),
       ),
     );
