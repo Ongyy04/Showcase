@@ -1,4 +1,8 @@
+import 'dart:io'; // ✅ Directory 사용을 위해 필요
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart'; // ✅ 경로 사용을 위해 필요
+
 import 'package:my_app/pages/setting_page.dart';
 import 'package:my_app/services/database.dart';
 import 'package:my_app/pages/home_page.dart';
@@ -18,10 +22,25 @@ import 'package:my_app/pages/newpeople.dart';
 import 'package:my_app/services/directory_service.dart';
 import 'package:my_app/pages/payment_page.dart';
 
+import 'package:my_app/models/user.dart'; // ✅ UserAdapter 등록을 위해 필요
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final dir = await getApplicationDocumentsDirectory();
+
+  // ✅ Hive 데이터 초기화 (손상된 Box 제거)
+  final hiveDir = Directory('${dir.path}/hive');
+  if (hiveDir.existsSync()) {
+    hiveDir.deleteSync(recursive: true);
+  }
+
+  await Hive.initFlutter('hive'); // ✅ Hive 경로 지정
+  Hive.registerAdapter(UserAdapter()); // ✅ User 모델 등록
+
   await DatabaseService.init();
   await DirectoryService.init();
+
   runApp(const MyApp());
 }
 

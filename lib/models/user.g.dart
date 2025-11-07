@@ -21,7 +21,6 @@ class UserAdapter extends TypeAdapter<User> {
       passwordHash: fields[1] as String,
       phone: fields[2] as String,
       starPoint: fields[3] as int,
-      avatar: fields[4] as String,
     );
   }
 

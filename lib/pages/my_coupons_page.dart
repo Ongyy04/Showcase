@@ -197,7 +197,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                         fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                   ),
                   Text(
-                    '반가워요 $userName님, 추천 상품을 확인하세요!',
+                    '반가워요 $userName님, 내 기프티콘을 확인하세요!',
                     style: TextStyle(fontSize: 14, color: Color.fromARGB(255, 22, 22, 22)),
                   ),
                 ],

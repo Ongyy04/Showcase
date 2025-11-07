@@ -17,8 +17,6 @@ class DatabaseService {
   static Future<void> init() async {
     if (_initialized) return;
 
-    await Hive.initFlutter();
-
     // 안전 등록 헬퍼
     void safeRegister<T>(TypeAdapter<T> adapter) {
       if (!Hive.isAdapterRegistered(adapter.typeId)) {
