@@ -69,7 +69,7 @@ class _SearchPageState extends State<SearchPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.black : Colors.grey[200],
+          color: isSelected ? const Color(0xFF383C59) : Colors.grey[200],
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
@@ -85,7 +85,6 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    // 친구 목록 동기 호출
     final friends = DatabaseService.friendsOfCurrentUser();
 
     return Scaffold(
@@ -130,7 +129,6 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ],
       ),
-
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
@@ -265,7 +263,8 @@ class _SearchPageState extends State<SearchPage> {
                 }).toList(),
               ),
             ),
-  // ✅ 추천상품 / 친구추천 버튼
+
+            // ✅ 추천상품 / 친구추천 버튼
             Container(
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -278,6 +277,7 @@ class _SearchPageState extends State<SearchPage> {
                 ],
               ),
             ),
+
             // 검색
             Container(
               color: Colors.white,
@@ -308,8 +308,6 @@ class _SearchPageState extends State<SearchPage> {
                 ],
               ),
             ),
-
-          
 
             // ✅ 섹션 전환
             if (selectedSection == '나에게 맞춤 추천') ...[
@@ -404,11 +402,24 @@ class _SearchPageState extends State<SearchPage> {
                             children: [
                               Row(
                                 children: [
-                                  Image.asset(
-                                    'assets/images/chick_${f.type}${f.level}.png',
+                                  // ✅ 친구 프로필 이미지 남색 배경 적용
+                                  Container(
                                     width: 40,
                                     height: 40,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF383C59),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    padding: const EdgeInsets.all(2),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Image.asset(
+                                        'assets/images/chick_${f.type}${f.level}.png',
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
                                   ),
+
                                   const SizedBox(width: 12),
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -420,7 +431,7 @@ class _SearchPageState extends State<SearchPage> {
                                       ),
                                       const SizedBox(height: 6),
                                       Text(
-                                        '${f.name}님이 추천한 맞춤 상품이에요!',
+                                        '${f.name}님이 동의한 정보로 추천한 맞춤 상품이에요!',
                                         style: const TextStyle(fontSize: 13, color: Colors.black),
                                       ),
                                     ],
@@ -430,8 +441,7 @@ class _SearchPageState extends State<SearchPage> {
                                     f.isFavorite
                                         ? Icons.star_rounded
                                         : Icons.star_border_rounded,
-                                    color:
-                                        f.isFavorite ? Colors.amber : Colors.grey,
+                                    color: f.isFavorite ? Colors.amber : Colors.grey,
                                   ),
                                 ],
                               ),
