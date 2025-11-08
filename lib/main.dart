@@ -1,7 +1,6 @@
-import 'dart:io'; // ✅ Directory 사용을 위해 필요
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart'; // ✅ 경로 사용을 위해 필요
+import 'package:path_provider/path_provider.dart';
 
 import 'package:my_app/pages/setting_page.dart';
 import 'package:my_app/services/database.dart';
@@ -22,21 +21,17 @@ import 'package:my_app/pages/newpeople.dart';
 import 'package:my_app/services/directory_service.dart';
 import 'package:my_app/pages/payment_page.dart';
 
-import 'package:my_app/models/user.dart'; // ✅ UserAdapter 등록을 위해 필요
+import 'package:my_app/models/user.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // 앱 전용 저장 경로 준비 (모바일/데스크톱)
   final dir = await getApplicationDocumentsDirectory();
 
-  // ✅ Hive 데이터 초기화 (손상된 Box 제거)
-  final hiveDir = Directory('${dir.path}/hive');
-  if (hiveDir.existsSync()) {
-    hiveDir.deleteSync(recursive: true);
-  }
-
-  await Hive.initFlutter('hive'); // ✅ Hive 경로 지정
-  Hive.registerAdapter(UserAdapter()); // ✅ User 모델 등록
+  // ✅ 데이터 삭제 금지: 아래 두 줄만으로 충분
+  await Hive.initFlutter('${dir.path}/hive');
+  Hive.registerAdapter(UserAdapter()); // 다른 어댑터들은 DatabaseService.init()에서 안전 등록됨
 
   await DatabaseService.init();
   await DirectoryService.init();
@@ -52,8 +47,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Pretendard'),
-      initialRoute: '/login',
+      // ✅ 스플래시에서 자동 라우팅
+      initialRoute: '/splash',
       routes: {
+        '/splash': (context) => const _SplashGate(),
         '/login': (context) => const LoginPage(),
         '/home': (context) => const HomePage(),
         '/search': (context) => const SearchPage(),
@@ -71,6 +68,37 @@ class MyApp extends StatelessWidget {
         '/product_detail': (context) => const ProductDetailPage(),
         '/payment': (_) => const PaymentPage(),
       },
+    );
+  }
+}
+
+/// 현재 세션을 보고 자동으로 라우팅
+class _SplashGate extends StatefulWidget {
+  const _SplashGate({super.key});
+  @override
+  State<_SplashGate> createState() => _SplashGateState();
+}
+
+class _SplashGateState extends State<_SplashGate> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final key = DatabaseService.currentUserKey();
+      if (!mounted) return;
+      if (key != null) {
+        Navigator.pushReplacementNamed(context, '/my_coupons');
+      } else {
+        Navigator.pushReplacementNamed(context, '/login');
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(child: CircularProgressIndicator()),
     );
   }
 }
