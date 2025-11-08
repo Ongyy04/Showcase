@@ -31,8 +31,8 @@ class Transaction {
 
 class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
   // 🔧 수정: 구매 옵션 대신 정렬 옵션으로 변경
-  String selectedSortOption = '최신순'; // 기본값 최신순
-  final List<String> sortOptions = ['최신순', '오래된 순', '가나다 순'];
+  String selectedSortOption = '나에게 선물'; // 기본값 최신순
+  final List<String> sortOptions = ['나에게 선물', '친구에게 선물', '적립'];
   
   Widget _buildStarPoint() {
     if (_currentUserKey == null) {
@@ -253,6 +253,31 @@ Widget _detailRow(IconData icon, String label, String value) {
       barcodePath: 'assets/images/barcode.png', 
     ),
     Transaction(
+  date: '2025-11-04',
+  description: '메가커피 아메리카노 2잔 김민수님께[선물]',
+  amount: -5000,
+  balance: 85000,
+  imagePath: 'assets/images/americano.png',
+  barcodePath: 'assets/images/barcode.png',
+),
+Transaction(
+  date: '2025-11-03',
+  description: '스타벅스 1만원권 박지영님께[선물]',
+  amount: -10000,
+  balance: 90000,
+  imagePath: 'assets/images/sb10000.png',
+  barcodePath: 'assets/images/barcode.png',
+),
+Transaction(
+  date: '2025-10-30',
+  description: 'CU 편의점 5천원권 이승현님께[선물]',
+  amount: -5000,
+  balance: 95000,
+  imagePath: 'assets/images/cu5000.png',
+  barcodePath: 'assets/images/barcode.png',
+),
+
+    Transaction(
       date: '2025-11-03',
       description: '890포인트 전환[적립]',
       amount: 890,
@@ -263,7 +288,7 @@ Widget _detailRow(IconData icon, String label, String value) {
     ),
     Transaction(
       date: '2025-10-31',
-      description: '1만 포인트[충전]',
+      description: '1만 포인트[적립]',
       amount: 10000,
       balance: 102132,
       imagePath: 'assets/images/coffee.png',
@@ -309,21 +334,30 @@ String formatAmount(int amount) {
     _currentUserKey = DatabaseService.currentUserKey();
   }
 
-  List<Transaction> _getSortedTransactions() {
-    final sorted = [...transactions];
-    switch (selectedSortOption) {
-      case '오래된 순':
-        sorted.sort((a, b) => a.date.compareTo(b.date));
-        break;
-      case '가나다 순':
-        sorted.sort((a, b) => a.description.compareTo(b.description));
-        break;
-      case '최신순':
-      default:
-        sorted.sort((a, b) => b.date.compareTo(a.date));
-    }
-    return sorted;
+List<Transaction> _getSortedTransactions() {
+  final filtered = [...transactions];
+  
+  switch (selectedSortOption) {
+    case '친구에게 선물':
+      // 친구에게 선물인 거래만 필터링
+      filtered.retainWhere((tx) => tx.description.contains('님께[선물]'));
+      break;
+    case '적립':
+      // 적립 거래만 필터링
+      filtered.retainWhere((tx) => tx.description.contains('[적립]'));
+      break;
+    case '구매':
+    default:
+      // 구매 거래만 필터링 (선물, 적립 제외)
+      filtered.retainWhere((tx) => tx.description.contains('[구매]'));
   }
+  
+  // 날짜 기준 내림차순
+  filtered.sort((a, b) => b.date.compareTo(a.date));
+  return filtered;
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -535,16 +569,18 @@ String formatAmount(int amount) {
               ),
             ),
           ),
+
+
           // 총 개수
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            child: Text(
-              '총 ${transactions.length}건',
-              style: const TextStyle(
-                  fontSize: 14, fontWeight: FontWeight.bold),
-            ),
-          ),
+Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+  child: Text(
+    '총 ${sortedTransactions.length}건', // 여기만 변경
+    style: const TextStyle(
+        fontSize: 14, fontWeight: FontWeight.bold),
+  ),
+),
+
 
           // 거래 내역 리스트
           Expanded(

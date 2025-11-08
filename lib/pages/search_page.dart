@@ -69,7 +69,7 @@ class _SearchPageState extends State<SearchPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.black : Colors.grey[200],
+          color: isSelected ?const Color(0xFF383C59) : Colors.grey[200],
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
@@ -420,7 +420,7 @@ class _SearchPageState extends State<SearchPage> {
                                       ),
                                       const SizedBox(height: 6),
                                       Text(
-                                        '${f.name}님이 추천한 맞춤 상품이에요!',
+                                        '${f.name}님이 동의한 정보로 추천한 맞춤 상품이에요!',
                                         style: const TextStyle(fontSize: 13, color: Colors.black),
                                       ),
                                     ],
