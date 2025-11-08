@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import '../services/database.dart';
+import '../models/user.dart';
+
+
+
 
 class CouponDetailPage extends StatefulWidget {
   const CouponDetailPage({super.key});
@@ -115,14 +120,29 @@ class _CouponDetailPageState extends State<CouponDetailPage> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            usableAmount = 0;
-                            pointAmount = 0;
-                            switchIcon = 'assets/images/switch.png'; // 회색 아이콘으로 변경
-                          });
-                          Navigator.pop(context);
-                        },
+                      onTap: () async {
+                      // 1️⃣ Hive User 포인트 업데이트
+                      final userBox = DatabaseService.users;
+                      final currentUserKey = DatabaseService.currentUserKey();
+                      if (currentUserKey != null) {
+                        final user = userBox.get(currentUserKey);
+                        if (user != null) {
+                          user.starPoint += pointAmount; // 전환한 포인트 추가
+                          await user.save();             // Hive에 저장
+                        }
+                      }
+
+                      // 2️⃣ 쿠폰 UI 업데이트
+                      setState(() {
+                        usableAmount = 0;
+                        pointAmount = 0;
+                        switchIcon = 'assets/images/switch.png'; // 회색 아이콘으로 변경
+                      });
+
+                      // 3️⃣ 다이얼로그 닫기
+                      Navigator.pop(context);
+                    },
+
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(

@@ -59,6 +59,9 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    // 친구 목록 동기 호출
+    final friends = DatabaseService.friendsOfCurrentUser();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -134,7 +137,7 @@ class _SearchPageState extends State<SearchPage> {
                             Text(
                               '게스트님',
                               style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                                  fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                             ),
                             Text(
                               '로그인하고 추천 상품을 확인하세요!',
@@ -171,7 +174,7 @@ class _SearchPageState extends State<SearchPage> {
                                 Text(
                                   '$userName님',
                                   style: const TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                                      fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                                 ),
                                 Text(
                                   '반가워요 $userName님, 추천 상품을 확인하세요!',
@@ -258,8 +261,10 @@ class _SearchPageState extends State<SearchPage> {
                       contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                       suffixIcon: Icon(Icons.search, color: Colors.black),
                       border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                      enabledBorder:
+                          UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                      focusedBorder:
+                          UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                     ),
                   ),
                 ],
@@ -371,36 +376,84 @@ class _SearchPageState extends State<SearchPage> {
 
                   const SizedBox(height: 32),
                   const Text(
-                    '내 친구 목록',
+                    ' 내 친구 맞춤 추천 상품',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
-                  FutureBuilder(
-                    future: Future.value(DatabaseService.friendsOfCurrentUser()),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      final friends = snapshot.data!;
-                      if (friends.isEmpty) {
-                        return const Center(
-                          child: Text(
-                            '저장된 친구가 없습니다.',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                        );
-                      }
-                      return Column(
-                        children: friends.map((f) {
-                          return _FriendTile(
-                            name: f.name,
-                            type: f.type,
-                            level: f.level,
-                            isFavorite: f.isFavorite,
-                          );
-                        }).toList(),
+
+                  // ⭐ 친구 목록 동기 처리
+                  Column(
+                    children: friends.map((f) {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: const [
+                            BoxShadow(
+                                color: Colors.black12, blurRadius: 3, offset: Offset(0, 1)),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Image.asset(
+                                  'assets/images/chick_${f.type}${f.level}.png',
+                                  width: 40,
+                                  height: 40,
+                                ),
+                                const SizedBox(width: 12),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      f.name,
+                                      style: const TextStyle(
+                                          fontSize: 16, fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      '${f.name}님이 동의한 정보로 추천한 맞춤 상품이에요!',
+                                      style: TextStyle(fontSize: 13, color: Colors.black),
+                                    ),
+                                  ],
+                                ),
+                                const Spacer(),
+                                Icon(
+                                  f.isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
+                                  color: f.isFavorite ? Colors.amber : Colors.grey,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: const [
+                                Expanded(
+                                  child: RecommendedItemCard(
+                                    imageAsset: 'assets/images/starcafe.png',
+                                    brand: '스타벅스',
+                                    name: '카페라떼 (ICE)',
+                                    price: '4,500원',
+                                  ),
+                                ),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: RecommendedItemCard(
+                                    imageAsset: 'assets/images/bery.png',
+                                    brand: '이디야커피',
+                                    name: '후르츠베리 에이드 (ICE)',
+                                    price: '4,800원',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       );
-                    },
+                    }).toList(),
                   ),
                 ],
               ),
@@ -411,6 +464,8 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 }
+
+// 나머지 RecommendedItemCard, _FriendTile 클래스는 그대로 사용
 
 class RecommendedItemCard extends StatelessWidget {
   final String imageAsset;
@@ -477,51 +532,6 @@ class RecommendedItemCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _FriendTile extends StatelessWidget {
-  final String name;
-  final String type;
-  final int level;
-  final bool isFavorite;
-
-  const _FriendTile({
-    required this.name,
-    required this.type,
-    required this.level,
-    required this.isFavorite,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 3, offset: Offset(0, 1)),
-        ],
-      ),
-      child: Row(
-        children: [
-          Image.asset('assets/images/chick_${type}${level}.png', width: 40, height: 40),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              name,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-          ),
-          Icon(
-            isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
-            color: isFavorite ? Colors.amber : Colors.grey,
-          ),
-        ],
       ),
     );
   }
