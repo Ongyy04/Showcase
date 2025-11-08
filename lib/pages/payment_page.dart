@@ -1,3 +1,4 @@
+// payment_page.dart
 import 'package:flutter/material.dart';
 import 'package:my_app/models/friend.dart';
 
@@ -58,6 +59,11 @@ class _PaymentPageState extends State<PaymentPage> {
     final int qty = args['qty'] ?? 1;
     final Friend? friend = args['friend'] as Friend?;
 
+    // ▼ 셀프 선물 여부/표시값
+    final bool isSelfGift = (friend == null) || (args['selfGift'] == true);
+    final String avatarPath = isSelfGift ? 'assets/images/hello.png' : (friend!.imagePath);
+    final String recipientLabel = isSelfGift ? '나에게 선물' : '${friend!.name}님에게 선물';
+
     final int itemTotal = price * qty;
     final int pointUse = usePoint ? availablePoint.clamp(0, itemTotal) : 0;
     final int payTotal = (itemTotal - pointUse).clamp(0, 1 << 31);
@@ -111,25 +117,36 @@ class _PaymentPageState extends State<PaymentPage> {
                             children: [
                               Row(
                                 children: [
-                                  Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: const BoxDecoration(
-                                      color: primary,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Center(
+                                  // ▼ 여기만 변경: 셀프 선물일 때는 네이비 원형 없이 hello.png만 크게
+                                  if (isSelfGift)
+                                    SizedBox(
+                                      width: 70,  // 원하는 최종 크기
+                                      height: 70,
                                       child: Image.asset(
-                                        friend?.imagePath ?? 'assets/images/chick_g1.png',
-                                        width: 37,
-                                        height: 37,
+                                        avatarPath,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    )
+                                  else
+                                    Container(
+                                      width: 40,
+                                      height: 40,
+                                      decoration: const BoxDecoration(
+                                        color: primary,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Center(
+                                        child: Image.asset(
+                                          avatarPath,
+                                          width: 37,
+                                          height: 37,
+                                        ),
                                       ),
                                     ),
-                                  ),
                                   const SizedBox(width: 8),
                                   Flexible(
                                     child: Text(
-                                      '${friend?.name ?? ''}님에게 선물',
+                                      recipientLabel,
                                       style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w600,
@@ -170,7 +187,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 // 최종 결제 금액
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  crossAxisAlignment: TextBaseline.alphabetic == null ? CrossAxisAlignment.center : CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     const Text(
@@ -204,7 +221,14 @@ class _PaymentPageState extends State<PaymentPage> {
                       const SnackBar(content: Text('포인트로 결제 완료!')),
                     );
                   } else {
-                    _showPaymentMethodSheet(context);
+                    if (_selectedPayMethod == null) {
+                      _showPaymentMethodSheet(context);
+                    } else {
+                      final label = methodLabels[_selectedPayMethod!] ?? '결제수단';
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('$label로 결제 완료!')),
+                      );
+                    }
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -236,7 +260,6 @@ class _PaymentPageState extends State<PaymentPage> {
       ),
       child: Column(
         children: [
-          // 헤더: 라벨 + 스위치
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -254,13 +277,9 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
             ],
           ),
-
           const SizedBox(height: 8),
           const Divider(height: 1),
-
           const SizedBox(height: 12),
-
-          // 포인트 사용 요약
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -270,7 +289,6 @@ class _PaymentPageState extends State<PaymentPage> {
             ],
           ),
           const SizedBox(height: 8),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -393,80 +411,83 @@ class _PaymentPageState extends State<PaymentPage> {
 
   // 일반 결제 선택 요약 카드
   Widget _buildSelectedMethodTile() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: divider),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              const Text(
-                '일반 결제 (카드 / 간편결제)',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ),
-              const Spacer(),
-              Icon(
-                _selectedPayMethod == null
-                    ? Icons.radio_button_unchecked
-                    : Icons.radio_button_checked,
-                color: primary,
-                size: 18,
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          if (_selectedPayMethod != null)
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.black, width: 2),
-              ),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 80,
-                    height: 40,
-                    child: FittedBox(
-                      fit: BoxFit.contain,
-                      child: Image.asset('assets/images/${_selectedPayMethod!}'),
+    return InkWell(
+      onTap: () => _showPaymentMethodSheet(context),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: divider),
+        ),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                const Text(
+                  '일반 결제 (카드 / 간편결제)',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+                const Spacer(),
+                Text(
+                  _selectedPayMethod == null
+                      ? '선택'
+                      : (methodLabels[_selectedPayMethod!] ?? ''),
+                  style: const TextStyle(color: Colors.black54, fontSize: 12),
+                ),
+                const SizedBox(width: 6),
+                const Icon(Icons.keyboard_arrow_right, size: 18, color: Colors.black54),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (_selectedPayMethod != null)
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.black, width: 2),
+                ),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 80,
+                      height: 40,
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        child: Image.asset('assets/images/${_selectedPayMethod!}'),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      methodLabels[_selectedPayMethod!] ?? '',
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        methodLabels[_selectedPayMethod!] ?? '',
+                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+              )
+            else
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  '결제수단을 선택하세요.',
+                  style: TextStyle(color: Colors.black54),
+                ),
               ),
-            )
-          else
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
+            const SizedBox(height: 8),
+            const Align(
               alignment: Alignment.centerLeft,
-              child: const Text(
-                '결제수단을 선택하세요.',
-                style: TextStyle(color: Colors.black54),
+              child: Text(
+                '* 결제하기 클릭 시 각 서비스의 결제창으로 이동합니다.',
+                style: TextStyle(fontSize: 12, color: Colors.black54),
               ),
             ),
-
-          const SizedBox(height: 8),
-          const Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              '* 결제하기 클릭 시 각 서비스의 결제창으로 이동합니다.',
-              style: TextStyle(fontSize: 12, color: Colors.black54),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

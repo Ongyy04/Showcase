@@ -120,11 +120,23 @@ class ProductDetailPage extends StatelessWidget {
           ),
           child: Row(
             children: [
+              // ▼ 나에게 선물 → 결제 페이지 이동 (friend 미전달 + selfGift 힌트)
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('나에게 선물하기')));
+                    Navigator.pushNamed(
+                      context,
+                      '/payment',
+                      arguments: {
+                        'brand': brand,
+                        'name': name,
+                        'imageAsset': imageAsset,
+                        'salePrice': salePrice,
+                        'qty': 1,
+                        'selfGift': true, // ← 추가(기능 힌트, 동작에는 영향 없음)
+                        // friend 전달하지 않음(나에게 선물)
+                      },
+                    );
                   },
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: divider),
@@ -255,8 +267,7 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
         return Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             boxShadow: [
               BoxShadow(
                   color: Colors.black.withOpacity(0.15),
@@ -331,16 +342,16 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                   future: _load(),
                   builder: (context, snap) {
                     if (snap.connectionState != ConnectionState.done) {
-                      return const Center(
-                          child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
                     if (snap.hasError) {
                       return Center(child: Text('불러오기 실패: ${snap.error}'));
                     }
                     var list = snap.data ?? [];
                     final q = _search.text.trim();
-                    if (q.isNotEmpty)
+                    if (q.isNotEmpty) {
                       list = list.where((f) => f.name.contains(q)).toList();
+                    }
 
                     if (list.isEmpty) {
                       return const Center(
@@ -351,10 +362,8 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                     return ListView.separated(
                       controller: controller,
                       itemCount: list.length,
-                      padding:
-                          const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                      separatorBuilder: (_, __) =>
-                          const SizedBox(height: 10),
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                      separatorBuilder: (_, __) => const SizedBox(height: 10),
                       itemBuilder: (_, i) {
                         final f = list[i];
                         final isSelected = identical(selected, f);
@@ -374,9 +383,7 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                                     offset: const Offset(0, 6))
                               ],
                               border: Border.all(
-                                  color: isSelected
-                                      ? Colors.black
-                                      : divider),
+                                  color: isSelected ? Colors.black : divider),
                             ),
                             child: Row(
                               children: [
@@ -391,8 +398,8 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                                               color: Colors.black87)),
                                       const SizedBox(width: 8),
                                       const Text('｜',
-                                          style: TextStyle(
-                                              color: Colors.black87)),
+                                          style:
+                                              TextStyle(color: Colors.black87)),
                                       const SizedBox(width: 8),
                                       Text(f.birthday,
                                           style: const TextStyle(
@@ -421,8 +428,7 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
               // 친구 선택 후에만 수량 + 버튼 표시
               if (selected != null) ...[
                 Padding(
-                  padding:
-                      const EdgeInsets.fromLTRB(16, 10, 16, 8),
+                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
                   child: Container(
                     height: 56,
                     decoration: BoxDecoration(
@@ -437,19 +443,16 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                       ],
                     ),
                     child: Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _QtyIconButton(
                           icon: Icons.remove,
-                          onTap: _qty > 1
-                              ? () => setState(() => _qty--)
-                              : null,
+                          onTap:
+                              _qty > 1 ? () => setState(() => _qty--) : null,
                         ),
                         Text('$_qty',
                             style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600)),
+                                fontSize: 16, fontWeight: FontWeight.w600)),
                         _QtyIconButton(
                           icon: Icons.add,
                           onTap: () => setState(() => _qty++),
@@ -458,27 +461,22 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                     ),
                   ),
                 ),
-
                 Padding(
-                  padding:
-                      const EdgeInsets.fromLTRB(16, 10, 16, 16),
+                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
                   child: Row(
                     children: [
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () => Navigator.pop(context),
                           style: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                                color: Color(0xFFE7E8EC)),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 14),
+                            side: const BorderSide(color: Color(0xFFE7E8EC)),
+                            padding:
+                                const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(14)),
+                                borderRadius: BorderRadius.circular(14)),
                           ),
                           child: const Text('닫기',
-                              style:
-                                  TextStyle(color: Colors.black)),
+                              style: TextStyle(color: Colors.black)),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -489,19 +487,15 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                             'qty': _qty,
                           }),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color(0xFFF9DB63),
+                            backgroundColor: const Color(0xFFF9DB63),
                             foregroundColor: Colors.black,
-                            padding:
-                                const EdgeInsets.symmetric(vertical: 14),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(14)),
+                                borderRadius: BorderRadius.circular(14)),
                             elevation: 0,
                           ),
                           child: const Text('선물하기',
-                              style:
-                                  TextStyle(color: Colors.black)),
+                              style: TextStyle(color: Colors.black)),
                         ),
                       ),
                     ],
@@ -533,16 +527,11 @@ class _QtyIconButton extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: enabled
-                ? const Color(0xFF383C59)
-                : Colors.black12,
+            color: enabled ? const Color(0xFF383C59) : Colors.black12,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon,
-              color: enabled
-                  ? Colors.white
-                  : Colors.black38,
-              size: 22),
+              color: enabled ? Colors.white : Colors.black38, size: 22),
         ),
       ),
     );

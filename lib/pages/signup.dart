@@ -1,3 +1,4 @@
+// lib/pages/signup.dart
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/user.dart';
@@ -14,7 +15,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  /// 0: ID, 1: PW, 2: Phone, 3: Code, 4: Birthday(+Gender)
+  // 0: ID, 1: PW, 2: Phone, 3: Code, 4: Birthday(+Gender)
   int _step = 0;
 
   final TextEditingController _idController = TextEditingController();
@@ -23,10 +24,11 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _codeController = TextEditingController();
 
   String _verificationCode = '';
-
-  // 새로 추가: 생일/성별
   String _birthdayString = ''; // 'YYYY.MM.DD'
   String _gender = 'g';        // 'g' or 'b'
+
+  static const primary = Color(0xFF383C59);
+  static const accent  = Color(0xFFF9DB63);
 
   @override
   void dispose() {
@@ -69,7 +71,7 @@ class _SignUpPageState extends State<SignUpPage> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFFFFC107),
+              primary: accent,
               onPrimary: Colors.black,
               onSurface: Colors.black,
             ),
@@ -86,24 +88,49 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  Widget _buildAppBar() {
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: _previousStep,
-          child: Image.asset('assets/images/arrow.png', width: 24),
+  // ---------- UI 공통 ----------
+  PreferredSizeWidget _whiteAppBar() => AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: false,
+        title: const Text('회원가입', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: _previousStep,
         ),
-        const SizedBox(width: 8),
-        const Text('회원가입', style: TextStyle(color: Colors.white, fontSize: 20)),
-      ],
-    );
-  }
+      );
 
-  Widget _buildStep() {
+  InputDecoration _inputDeco(String hint) => InputDecoration(
+        hintText: hint,
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Color(0xFFE7E8EC)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Color(0xFFE7E8EC)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: primary, width: 1.2),
+        ),
+      );
+
+  Widget _sectionLabel(String text) => Padding(
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Text(text,
+            style: const TextStyle(fontSize: 14, color: Colors.black87, fontWeight: FontWeight.w600)),
+      );
+
+  // ---------- 스텝별 화면 ----------
+  Widget _buildStepBody() {
     switch (_step) {
       case 0:
         return _buildInputStep(
-          label: 'ID 설정',
+          label: '아이디',
           hint: '아이디',
           controller: _idController,
           buttonText: '중복확인',
@@ -130,7 +157,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
       case 1:
         return _buildInputStep(
-          label: '비밀번호 설정',
+          label: '비밀번호',
           hint: '비밀번호',
           controller: _pwController,
           obscure: true,
@@ -139,7 +166,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
       case 2:
         return _buildInputStep(
-          label: '전화번호 입력',
+          label: '전화번호',
           hint: '숫자만 10~11자리',
           controller: _phoneController,
           buttonText: '인증번호 받기',
@@ -173,7 +200,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
       case 3:
         return _buildInputStep(
-          label: '인증번호 입력',
+          label: '인증번호',
           hint: '인증번호 6자리',
           controller: _codeController,
           buttonText: '다음',
@@ -189,68 +216,115 @@ class _SignUpPageState extends State<SignUpPage> {
         );
 
       case 4:
-        return _buildFinalStep(); // 생일+성별 + 가입완료
+        return _buildFinalStep();
       default:
-        return const SizedBox();
+        return const SizedBox.shrink();
     }
   }
 
+  Widget _buildInputStep({
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    String? buttonText,
+    VoidCallback? onPressed,
+    bool obscure = false,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+    int? maxLength,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _sectionLabel(label),
+          TextField(
+            controller: controller,
+            obscureText: obscure,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
+            maxLength: maxLength,
+            decoration: _inputDeco(hint).copyWith(counterText: maxLength != null ? '' : null),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+              onPressed: onPressed ?? _nextStep,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: accent,
+                foregroundColor: Colors.black,
+                elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: Text(buttonText ?? '다음',
+                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildFinalStep() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildAppBar(),
-        const SizedBox(height: 24),
-        const Text('생년월일 입력', style: TextStyle(color: Colors.white, fontSize: 18)),
-        const SizedBox(height: 8),
-        GestureDetector(
-          onTap: _pickBirthday,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.white),
-            ),
-            child: Row(
-              children: [
-                Text(
-                  _birthdayString.isEmpty ? '생년월일을 선택하세요' : _birthdayString,
-                  style: TextStyle(color: _birthdayString.isEmpty ? Colors.grey : Colors.black),
-                ),
-                const Spacer(),
-                const Icon(Icons.calendar_today, size: 16),
-              ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _sectionLabel('생년월일'),
+          GestureDetector(
+            onTap: _pickBirthday,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFFE7E8EC)),
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    _birthdayString.isEmpty ? '생년월일을 선택하세요' : _birthdayString,
+                    style: TextStyle(color: _birthdayString.isEmpty ? Colors.black45 : Colors.black),
+                  ),
+                  const Spacer(),
+                  const Icon(Icons.calendar_today, size: 16),
+                ],
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 16),
+          const SizedBox(height: 18),
 
-        const Text('성별 선택', style: TextStyle(color: Colors.white, fontSize: 18)),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            _genderChip('여성(g)', 'g'),
-            const SizedBox(width: 8),
-            _genderChip('남성(b)', 'b'),
-          ],
-        ),
-        const SizedBox(height: 20),
-
-        SizedBox(
-          width: double.infinity,
-          height: 48,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFC107),
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            onPressed: _handleSignUp,
-            child: const Text('회원가입 완료'),
+          _sectionLabel('성별'),
+          Row(
+            children: [
+              _genderChip('여성(g)', 'g'),
+              const SizedBox(width: 10),
+              _genderChip('남성(b)', 'b'),
+            ],
           ),
-        ),
-      ],
+          const SizedBox(height: 24),
+
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: accent,
+                foregroundColor: Colors.black,
+                elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              onPressed: _handleSignUp,
+              child: const Text('회원가입 완료',
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -262,9 +336,9 @@ class _SignUpPageState extends State<SignUpPage> {
         duration: const Duration(milliseconds: 120),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFFFFC107) : Colors.white,
+          color: selected ? accent : Colors.white,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: selected ? const Color(0xFFFFC107) : Colors.grey.shade300),
+          border: Border.all(color: selected ? accent : const Color(0xFFE7E8EC)),
         ),
         child: Text(label, style: TextStyle(color: selected ? Colors.black : Colors.black87)),
       ),
@@ -272,7 +346,6 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Future<void> _handleSignUp() async {
-    // 검증
     if (_codeController.text != _verificationCode) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('인증번호가 일치하지 않습니다')),
@@ -290,7 +363,6 @@ class _SignUpPageState extends State<SignUpPage> {
     final phone = _phoneController.text.trim();
     final pw = _pwController.text;
 
-    // 마지막 방어 (중복체크 재확인)
     if (DatabaseService.usernameExists(username)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('이미 사용 중인 아이디입니다')),
@@ -304,7 +376,6 @@ class _SignUpPageState extends State<SignUpPage> {
       return;
     }
 
-    // 1) User 저장
     final newUser = User(
       username: username,
       passwordHash: hashPassword(pw),
@@ -313,18 +384,13 @@ class _SignUpPageState extends State<SignUpPage> {
     final key = await DatabaseService.addUser(newUser);
     await DatabaseService.setCurrentUserKey(key);
 
-    // 2) DirectoryService에 '가입자 정보' 반영 (CSV 대신 override 박스에 저장됨)
     try {
       await DirectoryService.addOrUpdateRecord(
         phone: phone,
         birthday: _birthdayString,
         gender: _gender,
       );
-    } catch (e) {
-      // 실패해도 회원가입은 성공 처리
-      // ignore: avoid_print
-      print('DirectoryService.addOrUpdateRecord failed: $e');
-    }
+    } catch (_) {}
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -334,65 +400,16 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  Widget _buildInputStep({
-    required String label,
-    required String hint,
-    required TextEditingController controller,
-    String? buttonText,
-    VoidCallback? onPressed,
-    bool obscure = false,
-    TextInputType? keyboardType,
-    List<TextInputFormatter>? inputFormatters,
-    int? maxLength,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildAppBar(),
-        const SizedBox(height: 24),
-        Text(label, style: const TextStyle(color: Colors.white, fontSize: 18)),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          obscureText: obscure,
-          keyboardType: keyboardType,
-          inputFormatters: inputFormatters,
-          maxLength: maxLength,
-          decoration: InputDecoration(
-            counterText: maxLength != null ? '' : null,
-            hintText: hint,
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          ),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: double.infinity,
-          height: 48,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFFC107),
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            onPressed: onPressed ?? _nextStep,
-            child: Text(buttonText ?? '다음'),
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF353A60),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
-        child: SingleChildScrollView(child: _buildStep()),
+      backgroundColor: Colors.white,
+      appBar: _whiteAppBar(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(top: 8, bottom: 24),
+          child: _buildStepBody(),
+        ),
       ),
     );
   }

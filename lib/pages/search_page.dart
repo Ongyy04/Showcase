@@ -436,18 +436,33 @@ class _SearchPageState extends State<SearchPage> {
                                 ],
                               ),
                               const SizedBox(height: 12),
+                              // ▼ 여기만 수정: 스타벅스 카드에 onTap 추가
                               Row(
-                                children: const [
+                                children: [
                                   Expanded(
                                     child: RecommendedItemCard(
                                       imageAsset: 'assets/images/starcafe.png',
                                       brand: '스타벅스',
                                       name: '카페라떼 (ICE)',
                                       price: '4,500원',
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          '/product_detail',
+                                          arguments: {
+                                            'brand': '스타벅스',
+                                            'name': '카페라떼 (ICE)',
+                                            'imageAsset': 'assets/images/starcafe.png',
+                                            'originalPrice': 4500,
+                                            'salePrice': 4050,
+                                            'discountPercent': 10,
+                                          },
+                                        );
+                                      },
                                     ),
                                   ),
-                                  SizedBox(width: 12),
-                                  Expanded(
+                                  const SizedBox(width: 12),
+                                  const Expanded(
                                     child: RecommendedItemCard(
                                       imageAsset: 'assets/images/bery.png',
                                       brand: '이디야커피',
