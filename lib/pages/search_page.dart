@@ -13,8 +13,8 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   String selectedTab = '선물하기';
+  String selectedSection = '추천상품'; // ✅ 추천 섹션 상태 추가
   final TextEditingController _searchController = TextEditingController();
-
   int? _currentUserKey;
 
   @override
@@ -54,6 +54,32 @@ class _SearchPageState extends State<SearchPage> {
           ),
         );
       },
+    );
+  }
+
+  // ✅ 추천상품 / 친구추천 버튼 생성 함수
+  Widget _buildSectionButton(String label) {
+    final bool isSelected = selectedSection == label;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedSection = label;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.black : Colors.grey[200],
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.black,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ),
     );
   }
 
@@ -239,7 +265,19 @@ class _SearchPageState extends State<SearchPage> {
                 }).toList(),
               ),
             ),
-
+  // ✅ 추천상품 / 친구추천 버튼
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildSectionButton('나에게 맞춤 추천'),
+                  const SizedBox(width: 12),
+                  _buildSectionButton('친구에게 맞춤 추천'),
+                ],
+              ),
+            ),
             // 검색
             Container(
               color: Colors.white,
@@ -271,193 +309,163 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
 
-            // 추천상품
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    '이 달의 추천상품',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.63,
-                    children: [
-                      RecommendedItemCard(
-                        imageAsset: 'assets/images/starcafe.png',
-                        brand: '스타벅스',
-                        name: '카페라떼 (ICE)',
-                        price: '4,500원',
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/product_detail',
-                            arguments: {
-                              'brand': '스타벅스',
-                              'name': '카페라떼 (ICE)',
-                              'imageAsset': 'assets/images/starcafe.png',
-                              'originalPrice': 4500,
-                              'salePrice': 4050,
-                              'discountPercent': 10,
-                            },
-                          );
-                        },
-                      ),
-                      RecommendedItemCard(
-                        imageAsset: 'assets/images/bery.png',
-                        brand: '이디야커피',
-                        name: '후르츠베리 에이드 (ICE)',
-                        price: '4,800원',
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/product_detail',
-                            arguments: {
-                              'brand': '이디야커피',
-                              'name': '후르츠베리 에이드 (ICE)',
-                              'imageAsset': 'assets/images/bery.png',
-                              'originalPrice': 4800,
-                              'salePrice': 4320,
-                              'discountPercent': 10,
-                            },
-                          );
-                        },
-                      ),
-                      RecommendedItemCard(
-                        imageAsset: 'assets/images/megamericano.png',
-                        brand: '메가커피',
-                        name: '아이스 아메리카노 (ICE)',
-                        price: '2,000원',
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/product_detail',
-                            arguments: {
-                              'brand': '메가커피',
-                              'name': '아이스 아메리카노 (ICE)',
-                              'imageAsset': 'assets/images/megamericano.png',
-                              'originalPrice': 2000,
-                              'salePrice': 1800,
-                              'discountPercent': 10,
-                            },
-                          );
-                        },
-                      ),
-                      RecommendedItemCard(
-                        imageAsset: 'assets/images/composeamericano.png',
-                        brand: '컴포즈커피',
-                        name: '아이스 아메리카노 (ICE)',
-                        price: '1,500원',
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/product_detail',
-                            arguments: {
-                              'brand': '컴포즈커피',
-                              'name': '아이스 아메리카노 (ICE)',
-                              'imageAsset': 'assets/images/composeamericano.png',
-                              'originalPrice': 1500,
-                              'salePrice': 1350,
-                              'discountPercent': 10,
-                            },
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+          
 
-                  const SizedBox(height: 32),
-                  const Text(
-                    ' 내 친구 맞춤 추천 상품',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // ⭐ 친구 목록 동기 처리
-                  Column(
-                    children: friends.map((f) {
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: const [
-                            BoxShadow(
-                                color: Colors.black12, blurRadius: 3, offset: Offset(0, 1)),
-                          ],
+            // ✅ 섹션 전환
+            if (selectedSection == '나에게 맞춤 추천') ...[
+              Container(
+                color: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '이 달의 추천상품',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16),
+                    GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 0.63,
+                      children: [
+                        RecommendedItemCard(
+                          imageAsset: 'assets/images/starcafe.png',
+                          brand: '스타벅스',
+                          name: '카페라떼 (ICE)',
+                          price: '4,500원',
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/product_detail',
+                              arguments: {
+                                'brand': '스타벅스',
+                                'name': '카페라떼 (ICE)',
+                                'imageAsset': 'assets/images/starcafe.png',
+                                'originalPrice': 4500,
+                                'salePrice': 4050,
+                                'discountPercent': 10,
+                              },
+                            );
+                          },
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Image.asset(
-                                  'assets/images/chick_${f.type}${f.level}.png',
-                                  width: 40,
-                                  height: 40,
-                                ),
-                                const SizedBox(width: 12),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      f.name,
-                                      style: const TextStyle(
-                                          fontSize: 16, fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      '${f.name}님이 동의한 정보로 추천한 맞춤 상품이에요!',
-                                      style: TextStyle(fontSize: 13, color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                                const Spacer(),
-                                Icon(
-                                  f.isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
-                                  color: f.isFavorite ? Colors.amber : Colors.grey,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              children: const [
-                                Expanded(
-                                  child: RecommendedItemCard(
-                                    imageAsset: 'assets/images/starcafe.png',
-                                    brand: '스타벅스',
-                                    name: '카페라떼 (ICE)',
-                                    price: '4,500원',
-                                  ),
-                                ),
-                                SizedBox(width: 12),
-                                Expanded(
-                                  child: RecommendedItemCard(
-                                    imageAsset: 'assets/images/bery.png',
-                                    brand: '이디야커피',
-                                    name: '후르츠베리 에이드 (ICE)',
-                                    price: '4,800원',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                        RecommendedItemCard(
+                          imageAsset: 'assets/images/bery.png',
+                          brand: '이디야커피',
+                          name: '후르츠베리 에이드 (ICE)',
+                          price: '4,800원',
                         ),
-                      );
-                    }).toList(),
-                  ),
-                ],
+                        RecommendedItemCard(
+                          imageAsset: 'assets/images/megamericano.png',
+                          brand: '메가커피',
+                          name: '아이스 아메리카노 (ICE)',
+                          price: '2,000원',
+                        ),
+                        RecommendedItemCard(
+                          imageAsset: 'assets/images/composeamericano.png',
+                          brand: '컴포즈커피',
+                          name: '아이스 아메리카노 (ICE)',
+                          price: '1,500원',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ] else ...[
+              Container(
+                color: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      '내 친구 맞춤 추천 상품',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16),
+                    Column(
+                      children: friends.map((f) {
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black12, blurRadius: 3, offset: Offset(0, 1)),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Image.asset(
+                                    'assets/images/chick_${f.type}${f.level}.png',
+                                    width: 40,
+                                    height: 40,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        f.name,
+                                        style: const TextStyle(
+                                            fontSize: 16, fontWeight: FontWeight.bold),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        '${f.name}님이 추천한 맞춤 상품이에요!',
+                                        style: const TextStyle(fontSize: 13, color: Colors.black),
+                                      ),
+                                    ],
+                                  ),
+                                  const Spacer(),
+                                  Icon(
+                                    f.isFavorite
+                                        ? Icons.star_rounded
+                                        : Icons.star_border_rounded,
+                                    color:
+                                        f.isFavorite ? Colors.amber : Colors.grey,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                children: const [
+                                  Expanded(
+                                    child: RecommendedItemCard(
+                                      imageAsset: 'assets/images/starcafe.png',
+                                      brand: '스타벅스',
+                                      name: '카페라떼 (ICE)',
+                                      price: '4,500원',
+                                    ),
+                                  ),
+                                  SizedBox(width: 12),
+                                  Expanded(
+                                    child: RecommendedItemCard(
+                                      imageAsset: 'assets/images/bery.png',
+                                      brand: '이디야커피',
+                                      name: '후르츠베리 에이드 (ICE)',
+                                      price: '4,800원',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -465,8 +473,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 }
 
-// 나머지 RecommendedItemCard, _FriendTile 클래스는 그대로 사용
-
+// 추천 상품 카드
 class RecommendedItemCard extends StatelessWidget {
   final String imageAsset;
   final String brand;
