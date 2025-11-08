@@ -61,60 +61,177 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
       },
     );
   }
-  void _showTransactionDetailDialog(Transaction tx) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          title: Text('거래 상세 정보'),
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            
-            children: [
-              // 이미지 표시
-              Align(
-              alignment: Alignment.center, // 이미지 중앙 정렬
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  tx.imagePath,
-                  width: 200,
-                  height: 200,// 이미지가 잘리거나 늘어나지 않도록 설정
-                ),
+void _showTransactionDetailDialog(Transaction tx) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 15,
+                offset: const Offset(0, 10),
               ),
-            ),
-            const SizedBox(height: 1),
-            if (tx.barcodePath != null) // 바코드 경로가 있는 경우에만 표시
-              Align(
-                alignment: Alignment.center,
-                child: Image.asset(
-                  tx.barcodePath!,
-                  width: 250, // 바코드 특성상 가로가 길게
-                  height: 80,  // 세로는 상대적으로 짧게
-                  fit: BoxFit.contain,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text('날짜: ${tx.date}',style: const TextStyle(fontSize: 16)),
-              Text('설명: ${tx.description}',style: const TextStyle(fontSize: 16)),
-              Text('금액: ${formatAmount(tx.amount)}',style: const TextStyle(fontSize: 16)),
-              Text('잔액: ${formatAmount(tx.balance)}',style: const TextStyle(fontSize: 16)),
             ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('닫기'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 상단 이미지
+             if (tx.imagePath.isNotEmpty)
+  ClipRRect(
+    borderRadius: BorderRadius.circular(16),
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(
+        maxHeight: 300, // 최대 높이만 제한
+      ),
+      child: Image.asset(
+        tx.imagePath,
+        width: double.infinity,
+        fit: BoxFit.contain, // 비율 유지
+      ),
+    ),
+  ),
+
+              const SizedBox(height: 16),
+
+              // 거래 상태 + 금액
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: tx.amount >= 0
+                          ? Colors.green.withOpacity(0.2)
+                          : Colors.red.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      tx.amount >= 0 ? '적립' : '사용',
+                      style: TextStyle(
+                        color: tx.amount >= 0 ? Colors.green[800] : Colors.red[700],
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '${tx.amount >= 0 ? '+' : '-'}${formatAmount(tx.amount.abs())}',
+                    style: TextStyle(
+                      color: tx.amount >= 0 ? Colors.green : Colors.redAccent,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 12),
+
+              // 거래 설명
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  tx.description,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+
+              const Divider(height: 24, thickness: 1.2),
+
+              // 상세 정보 그리드
+              Column(
+                children: [
+                  _detailRow(Icons.calendar_today_outlined, '날짜', tx.date),
+                  const SizedBox(height: 8),
+                  _detailRow(Icons.payment, '결제 수단', '신용카드'),
+                  const SizedBox(height: 8),
+                  _detailRow(Icons.category_outlined, '카테고리', '카페'),
+                  const SizedBox(height: 8),
+                   // 결제 금액 추가
+                  _detailRow(Icons.attach_money, '결제 금액',
+                      '${tx.amount >= 0 ? '+' : '-'}${formatAmount(tx.amount.abs())}'),
+                  const SizedBox(height: 8),
+                  _detailRow(Icons.account_balance_wallet_outlined, '잔액',
+                      formatAmount(tx.balance)),
+                  if (tx.barcodePath != null) ...[
+                    const SizedBox(height: 12),
+                    Center(
+                      child: Image.asset(
+                        tx.barcodePath!,
+                        width: 250,
+                        height: 80,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              // 닫기 버튼
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF383C59),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: const Text(
+                    '닫기',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+// 재사용 가능한 상세 정보 Row
+Widget _detailRow(IconData icon, String label, String value) {
+  return Row(
+    children: [
+      Icon(icon, size: 20, color: Colors.grey[600]),
+      const SizedBox(width: 10),
+      Text(
+        '$label:',
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: Colors.black87,
+        ),
+      ),
+      const SizedBox(width: 6),
+      Expanded(
+        child: Text(
+          value,
+          style: const TextStyle(fontSize: 14, color: Colors.black54),
+        ),
+      ),
+    ],
+  );
+}
+
 
   // 거래내역만 사용
   final List<Transaction> transactions = [
@@ -141,6 +258,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
       amount: 890,
       balance: 95022,
       imagePath: 'assets/images/cafe.png',
+      barcodePath: 'assets/images/barcode.png', 
       
     ),
     Transaction(
