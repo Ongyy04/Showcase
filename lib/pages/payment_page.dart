@@ -1,6 +1,8 @@
 // payment_page.dart
 import 'package:flutter/material.dart';
 import 'package:my_app/models/friend.dart';
+import 'package:my_app/models/user.dart';
+import 'package:my_app/services/database.dart';
 
 class PaymentPage extends StatefulWidget {
   const PaymentPage({super.key});
@@ -12,7 +14,7 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   bool usePoint = false;
   int availablePoint = 6200;
-
+  int? _currentUserKey;
   String? _selectedPayMethod;
 
   final Map<String, double> logoScales = const {
@@ -50,6 +52,16 @@ class _PaymentPageState extends State<PaymentPage> {
   static const divider = Color(0xFFE7E8EC);
 
   @override
+  void initState() {
+    super.initState();
+    _currentUserKey = DatabaseService.currentUserKey();
+    if (_currentUserKey != null) {
+      final user = DatabaseService.users.get(_currentUserKey!);
+      availablePoint = user?.starPoint ?? 0;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final args = (ModalRoute.of(context)?.settings.arguments as Map?) ?? {};
     final String brand = args['brand'] ?? '';
@@ -59,7 +71,6 @@ class _PaymentPageState extends State<PaymentPage> {
     final int qty = args['qty'] ?? 1;
     final Friend? friend = args['friend'] as Friend?;
 
-    // ▼ 셀프 선물 여부/표시값
     final bool isSelfGift = (friend == null) || (args['selfGift'] == true);
     final String avatarPath = isSelfGift ? 'assets/images/hello.png' : (friend!.imagePath);
     final String recipientLabel = isSelfGift ? '나에게 선물' : '${friend!.name}님에게 선물';
@@ -117,10 +128,9 @@ class _PaymentPageState extends State<PaymentPage> {
                             children: [
                               Row(
                                 children: [
-                                  // ▼ 여기만 변경: 셀프 선물일 때는 네이비 원형 없이 hello.png만 크게
                                   if (isSelfGift)
                                     SizedBox(
-                                      width: 70,  // 원하는 최종 크기
+                                      width: 70,
                                       height: 70,
                                       child: Image.asset(
                                         avatarPath,
@@ -172,12 +182,12 @@ class _PaymentPageState extends State<PaymentPage> {
 
                 const SizedBox(height: 12),
 
-                // ▶ 포인트 카드(스위치 + 요약을 한 카드로)
+                // 포인트 카드
                 _buildPointCard(pointUse: pointUse),
 
                 const SizedBox(height: 16),
 
-                // ▶ 일반 결제 선택 요약 카드
+                // 일반 결제 선택
                 _buildSelectedMethodTile(),
 
                 const SizedBox(height: 24),
@@ -187,7 +197,7 @@ class _PaymentPageState extends State<PaymentPage> {
                 // 최종 결제 금액
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: TextBaseline.alphabetic == null ? CrossAxisAlignment.center : CrossAxisAlignment.baseline,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
                   children: [
                     const Text(
@@ -216,6 +226,16 @@ class _PaymentPageState extends State<PaymentPage> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
+                  if (_currentUserKey != null && pointUse > 0) {
+                    final userBox = DatabaseService.users;
+                    final user = userBox.get(_currentUserKey!);
+                    if (user != null) {
+                      user.starPoint = (user.starPoint - pointUse).clamp(0, 1 << 31);
+                      userBox.put(_currentUserKey!, user);
+                      setState(() => availablePoint = user.starPoint);
+                    }
+                  }
+
                   if (payTotal == 0) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('포인트로 결제 완료!')),
@@ -249,7 +269,6 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  // ▼ 포인트 카드(스위치 + 요약 + 구분선)
   Widget _buildPointCard({required int pointUse}) {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -300,7 +319,7 @@ class _PaymentPageState extends State<PaymentPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text('포인트 사용 후', style: TextStyle(color: Colors.black54)),
-              Text('${_fmtPoint(availablePoint - pointUse)}P'),
+              Text('${_fmtPoint((availablePoint - pointUse).clamp(0, 1 << 31))}P'),
             ],
           ),
         ],
@@ -308,7 +327,6 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  // 하단 시트: 결제수단 선택
   void _showPaymentMethodSheet(BuildContext context) {
     final methods = [
       'kakaopay.png',
@@ -365,12 +383,8 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  // 카드 하나 (그리드용). 선택 시 검정 테두리
-  Widget _buildPayMethodIcon(
-    String imagePath, {
-    bool isSelected = false,
-    VoidCallback? onTap,
-  }) {
+  Widget _buildPayMethodIcon(String imagePath,
+      {bool isSelected = false, VoidCallback? onTap}) {
     final fileName = imagePath.split('/').last;
     final double scale = (logoScales[fileName] ?? 0.72).clamp(0.5, 0.95);
 
@@ -409,7 +423,6 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  // 일반 결제 선택 요약 카드
   Widget _buildSelectedMethodTile() {
     return InkWell(
       onTap: () => _showPaymentMethodSheet(context),

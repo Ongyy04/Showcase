@@ -94,6 +94,10 @@ class _NewPeoplePageState extends State<NewPeoplePage> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Container(
             padding: const EdgeInsets.all(20),
+             decoration: BoxDecoration(
+              color: Colors.white, // 여기서 배경색 명시
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
