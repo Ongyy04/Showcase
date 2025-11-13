@@ -320,27 +320,28 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  
+                  const CouponCard(
+                    imageAsset: 'assets/images/starcafe.png',
+                    brand: '스타벅스',
+                    name: '카페라떼 (ICE)',
+                    period: '2025.08.11~2026.08.11',
+                    statusLabel: '미사용',
+                    statusColor: Color(0xFFFFE96A),
+                    statusTextColor: Colors.black,
+                  ),
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () => Navigator.pushNamed(context, '/coupon_detail'),
                     child: const CouponCard(
                       imageAsset: 'assets/images/cafe.png',
-                      brand: '스타벅스',
-                      name: '카페라떼 (ICE)',
+                      brand: '백억커피',
+                      name: '바닐라 라떼 (ICE)',
                       period: '2025.08.11~2026.08.11',
                       statusLabel: '포인트 전환 가능 금액: 250원',
                       statusColor: Color(0xFFFFE96A),
                       statusTextColor: Colors.black,
                     ),
-                  ),
-                  const CouponCard(
-                    imageAsset: 'assets/images/ade.png',
-                    brand: '이디야커피',
-                    name: '베리베리에이드 (ICE)',
-                    period: '2025.08.11~2026.08.11',
-                    statusLabel: '미사용',
-                    statusColor: Color(0xFFFFE96A),
-                    statusTextColor: Colors.black,
                   ),
                   const CouponCard(
                     imageAsset: 'assets/images/americano.png',

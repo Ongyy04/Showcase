@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import '../services/database.dart';
 import '../models/user.dart';
 
-
-
-
 class CouponDetailPage extends StatefulWidget {
   const CouponDetailPage({super.key});
 
@@ -15,8 +12,8 @@ class CouponDetailPage extends StatefulWidget {
 class _CouponDetailPageState extends State<CouponDetailPage> {
   // 상태 변수
   String imageAsset = 'assets/images/cafe.png';
-  String brand = '스타벅스';
-  String name = '카페라떼 (ICE)';
+  String brand = '백억커피';
+  String name = '바닐라 라떼 (ICE)';
   String barcode = '784531358451234123';
   int usableAmount = 250;
   String expireDate = '2026년 07월 31일';
@@ -120,29 +117,28 @@ class _CouponDetailPageState extends State<CouponDetailPage> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: GestureDetector(
-                      onTap: () async {
-                      // 1️⃣ Hive User 포인트 업데이트
-                      final userBox = DatabaseService.users;
-                      final currentUserKey = DatabaseService.currentUserKey();
-                      if (currentUserKey != null) {
-                        final user = userBox.get(currentUserKey);
-                        if (user != null) {
-                          user.starPoint += pointAmount; // 전환한 포인트 추가
-                          await user.save();             // Hive에 저장
-                        }
-                      }
+                        onTap: () async {
+                          // 1️⃣ Hive User 포인트 업데이트
+                          final userBox = DatabaseService.users;
+                          final currentUserKey = DatabaseService.currentUserKey();
+                          if (currentUserKey != null) {
+                            final user = userBox.get(currentUserKey);
+                            if (user != null) {
+                              user.starPoint += pointAmount; // 전환한 포인트 추가
+                              await user.save();             // Hive에 저장
+                            }
+                          }
 
-                      // 2️⃣ 쿠폰 UI 업데이트
-                      setState(() {
-                        usableAmount = 0;
-                        pointAmount = 0;
-                        switchIcon = 'assets/images/switch.png'; // 회색 아이콘으로 변경
-                      });
+                          // 2️⃣ 쿠폰 UI 업데이트
+                          setState(() {
+                            usableAmount = 0;
+                            pointAmount = 0;
+                            switchIcon = 'assets/images/switch.png'; // 회색 아이콘으로 변경
+                          });
 
-                      // 3️⃣ 다이얼로그 닫기
-                      Navigator.pop(context);
-                    },
-
+                          // 3️⃣ 다이얼로그 닫기
+                          Navigator.pop(context);
+                        },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(
@@ -265,8 +261,7 @@ class _CouponDetailPageState extends State<CouponDetailPage> {
               const SizedBox(height: 16),
 
               // 사용가능금액
-              Container
-              (
+              Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
                 padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                 decoration: BoxDecoration(
