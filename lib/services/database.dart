@@ -39,7 +39,6 @@ class DatabaseService {
       try {
         return await Hive.openBox<T>(name);
       } catch (_) {
-        // 깨진 박스 삭제 후 재생성
         final dir = await getApplicationDocumentsDirectory();
         final file = File('${dir.path}/hive/$name.hive');
         if (await file.exists()) await file.delete();
@@ -95,6 +94,11 @@ class DatabaseService {
       u.starPoint += starPerLogin;
       await u.save();
     }
+
+    DatabaseTriggers.runTrigger("login", {
+      "userKey": userKey,
+      "addedPoint": starPerLogin,
+    });
   }
 
   static int starPointOfUser(int userKey) =>
@@ -117,6 +121,12 @@ class DatabaseService {
       quantity: quantity,
     );
     await purchases.add(purchase);
+
+    DatabaseTriggers.runTrigger("purchase", {
+      "userId": userId,
+      "productId": productId,
+      "quantity": quantity,
+    });
   }
 
   static Future<void> deleteGifticon(int key) async => gifticons.delete(key);
@@ -152,5 +162,74 @@ class DatabaseService {
         .toList()
       ..sort((a, b) => a.name.compareTo(b.name));
     return list;
+  }
+
+  // ----------------------------------------------------------
+  // 🔥 거래내역 / 구매내역 기록
+  // ----------------------------------------------------------
+  static Future<void> addTransaction({
+    required int userKey,
+    required String actionType, // "나에게 선물하기" 등
+    required String brand,
+    required String itemName,
+    required int price,
+    required int balanceBefore,
+    required int balanceAfter,
+    required String useStore,
+    required String paymentMethod,
+    required String paymentDetails,
+  }) async {
+    final user = users.get(userKey);
+    if (user == null) return;
+
+    List<Map<String, dynamic>> history = user.transactionHistory;
+
+    history.add({
+      "actionType": actionType,
+      "brand": brand,
+      "itemName": itemName,
+      "price": price,
+      "balanceBefore": balanceBefore,
+      "balanceAfter": balanceAfter,
+      "useStore": useStore,
+      "paymentMethod": paymentMethod,
+      "paymentDetails": paymentDetails,
+      "timestamp": DateTime.now().toIso8601String(),
+    });
+
+    user.transactionHistory = history;
+    await user.save();
+
+    DatabaseTriggers.runTrigger("transaction", {
+      "userKey": userKey,
+      "actionType": actionType,
+      "brand": brand,
+      "itemName": itemName,
+      "price": price,
+    });
+  }
+}
+
+// ----------------------------------------------------------
+// 🔥 INTERNAL TRIGGER SYSTEM
+// ----------------------------------------------------------
+
+extension DatabaseTriggers on DatabaseService {
+  static final Map<String, List<Function(dynamic)>> _triggers = {};
+
+  static void registerTrigger(
+      String eventName, Function(dynamic payload) callback) {
+    if (!_triggers.containsKey(eventName)) {
+      _triggers[eventName] = [];
+    }
+    _triggers[eventName]!.add(callback);
+  }
+
+  static Future<void> runTrigger(String eventName, dynamic payload) async {
+    if (!_triggers.containsKey(eventName)) return;
+
+    for (final cb in _triggers[eventName]!) {
+      await cb(payload);
+    }
   }
 }

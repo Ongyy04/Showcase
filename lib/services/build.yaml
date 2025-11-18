@@ -1,0 +1,7 @@
+targets:
+  $default:
+    builders:
+      hive_generator:
+        generate_for:
+          include:
+            - lib/models/*.dart  # 모델 폴더만 빌드 대상으로 지정

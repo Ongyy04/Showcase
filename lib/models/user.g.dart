@@ -21,13 +21,19 @@ class UserAdapter extends TypeAdapter<User> {
       passwordHash: fields[1] as String,
       phone: fields[2] as String,
       starPoint: fields[3] as int,
+      purchaseHistory: (fields[4] as List)
+          .map((dynamic e) => (e as Map).cast<String, dynamic>())
+          .toList(),
+      transactionHistory: (fields[5] as List)
+          .map((dynamic e) => (e as Map).cast<String, dynamic>())
+          .toList(),
     );
   }
 
   @override
   void write(BinaryWriter writer, User obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.username)
       ..writeByte(1)
@@ -35,7 +41,11 @@ class UserAdapter extends TypeAdapter<User> {
       ..writeByte(2)
       ..write(obj.phone)
       ..writeByte(3)
-      ..write(obj.starPoint);
+      ..write(obj.starPoint)
+      ..writeByte(4)
+      ..write(obj.purchaseHistory)
+      ..writeByte(5)
+      ..write(obj.transactionHistory);
   }
 
   @override

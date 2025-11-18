@@ -61,6 +61,64 @@ class _PaymentPageState extends State<PaymentPage> {
     }
   }
 
+  Future<void> _showPaymentResultDialog(String label) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  '결제 완료',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 15),
+                Image.asset('assets/images/smile.png', width: 150, height: 150),
+                const SizedBox(height: 15),
+                Text(
+                  '$label(으)로 결제 완료되었습니다.',
+                  style: const TextStyle(fontSize: 14, color: Colors.black),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEDC56),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      '확인',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final args = (ModalRoute.of(context)?.settings.arguments as Map?) ?? {};
@@ -98,7 +156,6 @@ class _PaymentPageState extends State<PaymentPage> {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               children: [
-                // 상품·수신자 요약
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: Row(
@@ -182,19 +239,16 @@ class _PaymentPageState extends State<PaymentPage> {
 
                 const SizedBox(height: 12),
 
-                // 포인트 카드
                 _buildPointCard(pointUse: pointUse),
 
                 const SizedBox(height: 16),
 
-                // 일반 결제 선택
                 _buildSelectedMethodTile(),
 
                 const SizedBox(height: 24),
                 const Divider(height: 1),
                 const SizedBox(height: 16),
 
-                // 최종 결제 금액
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -218,14 +272,13 @@ class _PaymentPageState extends State<PaymentPage> {
             ),
           ),
 
-          // 결제 버튼
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: SizedBox(
               height: 48,
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_currentUserKey != null && pointUse > 0) {
                     final userBox = DatabaseService.users;
                     final user = userBox.get(_currentUserKey!);
@@ -237,18 +290,31 @@ class _PaymentPageState extends State<PaymentPage> {
                   }
 
                   if (payTotal == 0) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('포인트로 결제 완료!')),
-                    );
+                    await _showPaymentResultDialog('포인트'); // 포인트 결제 완료
                   } else {
                     if (_selectedPayMethod == null) {
                       _showPaymentMethodSheet(context);
                     } else {
                       final label = methodLabels[_selectedPayMethod!] ?? '결제수단';
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('$label로 결제 완료!')),
-                      );
+                      await _showPaymentResultDialog(label); // 일반 결제 완료
                     }
+                  }
+
+                  if (_currentUserKey != null) {
+                    DatabaseService.addTransaction(
+                      userKey: _currentUserKey!,
+                      actionType: isSelfGift ? "나에게 선물하기" : "선물하기",
+                      brand: brand,
+                      itemName: name,
+                      price: itemTotal,
+                      balanceBefore: 0,
+                      balanceAfter: 0,
+                      useStore: "",
+                      paymentMethod: _selectedPayMethod != null
+                          ? (methodLabels[_selectedPayMethod!] ?? "결제")
+                          : "포인트결제",
+                      paymentDetails: "",
+                    );
                   }
                 },
                 style: ElevatedButton.styleFrom(
