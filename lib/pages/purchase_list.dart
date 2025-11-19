@@ -78,7 +78,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
           backgroundColor: Colors.transparent,
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: const Color(0xFFF7F7F7),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
@@ -283,8 +283,7 @@ final List<Transaction> transactions = [
     amount: 0,
     pointAmount: 890,
     balance: 8151, // 이전 잔액 + pointAmount
-    imagePath: 'assets/images/cafe.png',
-    barcodePath: 'assets/images/barcode.png',
+    imagePath: 'assets/images/병아리.png',
   ),
   Transaction(
     date: '2025-10-31',
