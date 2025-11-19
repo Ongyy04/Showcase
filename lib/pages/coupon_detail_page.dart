@@ -11,7 +11,7 @@ class CouponDetailPage extends StatefulWidget {
 
 class _CouponDetailPageState extends State<CouponDetailPage> {
   // 상태 변수
-  String imageAsset = 'assets/images/cafe.png';
+  String imageAsset = 'assets/images/백억.png';
   String brand = '백억커피';
   String name = '바닐라 라떼 (ICE)';
   String barcode = '784531358451234123';
@@ -116,41 +116,43 @@ class _CouponDetailPageState extends State<CouponDetailPage> {
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: GestureDetector(
-                        onTap: () async {
-                          // 1️⃣ Hive User 포인트 업데이트
-                          final userBox = DatabaseService.users;
-                          final currentUserKey = DatabaseService.currentUserKey();
-                          if (currentUserKey != null) {
-                            final user = userBox.get(currentUserKey);
-                            if (user != null) {
-                              user.starPoint += pointAmount; // 전환한 포인트 추가
-                              await user.save();             // Hive에 저장
-                            }
-                          }
+  child: TextButton(
+    style: TextButton.styleFrom(
+      backgroundColor: const Color(0xFFF9DB63),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      padding: const EdgeInsets.symmetric(vertical: 12),
+    ),
+    onPressed: () async {
+      final userBox = DatabaseService.users;
+      final currentUserKey = DatabaseService.currentUserKey();
+      if (currentUserKey != null) {
+        final user = userBox.get(currentUserKey);
+        if (user != null) {
+          print("🔍 before: ${user.starPoint}");
+user.starPoint += pointAmount;
+await DatabaseService.users.put(user.key, user);
+print("🔍 after: ${DatabaseService.users.get(user.key)!.starPoint}");
 
-                          // 2️⃣ 쿠폰 UI 업데이트
-                          setState(() {
-                            usableAmount = 0;
-                            pointAmount = 0;
-                            switchIcon = 'assets/images/switch.png'; // 회색 아이콘으로 변경
-                          });
+        }
+      }
 
-                          // 3️⃣ 다이얼로그 닫기
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF9DB63),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Text('예',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-                              textAlign: TextAlign.center),
-                        ),
-                      ),
-                    ),
+      setState(() {
+        usableAmount = 0;
+        pointAmount = 0;
+        switchIcon = 'assets/images/switch.png';
+      });
+
+      Navigator.pop(context, true);
+    },
+    child: const Text(
+      '예',
+      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+      textAlign: TextAlign.center,
+
+    ),
+  ),
+),
+
                   ],
                 ),
               ],

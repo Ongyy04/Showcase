@@ -79,19 +79,26 @@ class _SplashGate extends StatefulWidget {
   State<_SplashGate> createState() => _SplashGateState();
 }
 
+
 class _SplashGateState extends State<_SplashGate> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      final key = DatabaseService.currentUserKey();
-      if (!mounted) return;
-      if (key != null) {
-        Navigator.pushReplacementNamed(context, '/my_coupons');
-      } else {
-        Navigator.pushReplacementNamed(context, '/login');
-      }
-    });
+    _route();
+  }
+
+  Future<void> _route() async {
+    // 🔥 DatabaseService.init()이 실제로 완료될 때까지 기다림
+    await Future.delayed(const Duration(milliseconds: 100));
+    await DatabaseService.session.clear();//이게 앱 다시 시작 할 때마다 캐시 삭제해주는 거임 그래서 다시 회원가입 해야됨
+    final key = DatabaseService.currentUserKey();
+    if (!mounted) return;
+
+    if (key != null) {
+      Navigator.pushReplacementNamed(context, '/my_coupons');
+    } else {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
   }
 
   @override
@@ -102,3 +109,4 @@ class _SplashGateState extends State<_SplashGate> {
     );
   }
 }
+

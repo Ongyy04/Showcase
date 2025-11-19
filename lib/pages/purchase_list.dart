@@ -126,7 +126,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
                       ),
                     ),
                     Text(
-                      '${tx.pointAmount >= 0 ? '+' : '-'}${formatAmount(tx.amount.abs())}',
+                      '${tx.pointAmount >= 0 ? '+' : '-'}${formatAmount(tx.pointAmount.abs())}',
                       style: TextStyle(
                         color: tx.pointAmount >= 0 ? Colors.green : Colors.redAccent,
                         fontWeight: FontWeight.bold,
@@ -224,12 +224,21 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
   }
 final List<Transaction> transactions = [
   Transaction(
+    date: '2025-11-20',
+    description: '스타벅스 카페라떼(ICE) khj님께[선물]',
+    amount: 4500,
+    pointAmount: -250,
+    balance: 0, 
+    imagePath: 'assets/images/starcafe.png',
+    barcodePath: 'assets/images/barcode.png',
+  ),
+  Transaction(
     date: '2025-11-06',
     description: '메가커피 아메리카노[구매]',
     amount: 2500,
     pointAmount: -1144,
     balance: 0, // 이전 balance 1028에서 pointAmount 반영
-    imagePath: 'assets/images/americano.png',
+    imagePath: 'assets/images/megamericano.png',
     barcodePath: 'assets/images/barcode.png',
   ),
   Transaction(

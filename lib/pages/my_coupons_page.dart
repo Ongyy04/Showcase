@@ -34,7 +34,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: const Color(0xFFF7F7F7),  
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -94,20 +94,20 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
       );
     }
     return ValueListenableBuilder<Box<User>>(
-      valueListenable: DatabaseService.users.listenable(keys: [_currentUserKey!]),
-      builder: (_, box, __) {
-        final user = box.get(_currentUserKey!);
-        final point = user?.starPoint ?? 0;
-        return Text(
-          '$point',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Color(0xFF383C59),
-          ),
-        );
-      },
+  valueListenable: DatabaseService.users.listenable(),
+  builder: (context, box, _) {
+    final user = box.get(_currentUserKey);
+    final point = user?.starPoint ?? 0;
+    return Text(
+      '$point',
+      style: const TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+        color: Color(0xFF383C59),
+      ),
     );
+  },
+);
   }
 
   @override
@@ -334,7 +334,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     behavior: HitTestBehavior.opaque,
                     onTap: () => Navigator.pushNamed(context, '/coupon_detail'),
                     child: const CouponCard(
-                      imageAsset: 'assets/images/cafe.png',
+                      imageAsset: 'assets/images/백억.png',
                       brand: '백억커피',
                       name: '바닐라 라떼 (ICE)',
                       period: '2025.08.11~2026.08.11',
@@ -344,7 +344,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     ),
                   ),
                   const CouponCard(
-                    imageAsset: 'assets/images/americano.png',
+                    imageAsset: 'assets/images/megamericano.png',
                     brand: '메가커피',
                     name: '아이스아메리카노 (ICE)',
                     period: '2025.08.11~2026.08.11',
@@ -355,7 +355,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                   GestureDetector(
                     onTap: _showExpiredDialog,
                     child: const CouponCard(
-                      imageAsset: 'assets/images/americano.png',
+                      imageAsset: 'assets/images/cp.png',
                       brand: '컴포즈커피',
                       name: '아이스아메리카노 (ICE)',
                       period: '2025.08.11~2026.08.11',
