@@ -346,23 +346,26 @@ class _SearchPageState extends State<SearchPage> {
                                 'originalPrice': 4500,
                                 'salePrice': 4050,
                                 'discountPercent': 10,
+                                'description':
+                                    '부드러운 우유와 에스프레소가 조화를 이루는 스타벅스의 대표 라떼 음료입니다.',
+                                'subDescription': 'Only ICE',
                               },
                             );
                           },
                         ),
-                        RecommendedItemCard(
+                        const RecommendedItemCard(
                           imageAsset: 'assets/images/bery.png',
                           brand: '이디야커피',
                           name: '후르츠베리 에이드 (ICE)',
                           price: '4,800원',
                         ),
-                        RecommendedItemCard(
+                        const RecommendedItemCard(
                           imageAsset: 'assets/images/megamericano.png',
                           brand: '메가커피',
                           name: '아이스 아메리카노 (ICE)',
                           price: '2,000원',
                         ),
-                        RecommendedItemCard(
+                        const RecommendedItemCard(
                           imageAsset: 'assets/images/composeamericano.png',
                           brand: '컴포즈커피',
                           name: '아이스 아메리카노 (ICE)',
@@ -446,26 +449,29 @@ class _SearchPageState extends State<SearchPage> {
                                 ],
                               ),
                               const SizedBox(height: 12),
-                              // ▼ 여기만 수정: 스타벅스 카드에 onTap 추가
+                              // ▼ 스타벅스 카드에 onTap + description 추가
                               Row(
                                 children: [
                                   Expanded(
                                     child: RecommendedItemCard(
-                                      imageAsset: 'assets/images/starcafe.png',
+                                      imageAsset: 'assets/images/starhoneytea.png',
                                       brand: '스타벅스',
-                                      name: '카페라떼 (ICE)',
-                                      price: '4,500원',
+                                      name: '자몽 허니 블랙티',
+                                      price: '6,300원',
                                       onTap: () {
                                         Navigator.pushNamed(
                                           context,
                                           '/product_detail',
                                           arguments: {
                                             'brand': '스타벅스',
-                                            'name': '카페라떼 (ICE)',
-                                            'imageAsset': 'assets/images/starcafe.png',
-                                            'originalPrice': 4500,
-                                            'salePrice': 4050,
+                                            'name': '자몽 허니 블랙티',
+                                            'imageAsset': 'assets/images/starhoneytea.png',
+                                            'originalPrice': 6300,
+                                            'salePrice': 5670,
                                             'discountPercent': 10,
+                                            'description':
+                                                '자몽의 상큼함과 허니의 달콤함, 그리고 블랙티의 깊은 맛이 어우러진 티 음료입니다.',
+                                            'subDescription': 'HOT, ICE 선택 가능',
                                           },
                                         );
                                       },
@@ -474,10 +480,10 @@ class _SearchPageState extends State<SearchPage> {
                                   const SizedBox(width: 12),
                                   const Expanded(
                                     child: RecommendedItemCard(
-                                      imageAsset: 'assets/images/bery.png',
-                                      brand: '이디야커피',
-                                      name: '후르츠베리 에이드 (ICE)',
-                                      price: '4,800원',
+                                      imageAsset: 'assets/images/gongchabubble.png',
+                                      brand: '공차',
+                                      name: '제주 그린 밀크티',
+                                      price: '5,500원',
                                     ),
                                   ),
                                 ],

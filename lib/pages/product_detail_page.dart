@@ -16,6 +16,11 @@ class ProductDetailPage extends StatelessWidget {
     final int salePrice = args['salePrice'] ?? 4050;
     final int discountPercent = args['discountPercent'] ?? 10;
 
+    // ✅ 상품별 설명을 arguments에서 받기
+    final String description = args['description'] ??
+        '부드러운 우유가 들어있는 커피로 전세계적으로 스타벅스에서 가장 인기있는 음료중 하나입니다.';
+    final String subDescription = args['subDescription'] ?? 'Only ICE';
+
     const divider = Color(0xFFE7E8EC);
 
     return Scaffold(
@@ -29,7 +34,6 @@ class ProductDetailPage extends StatelessWidget {
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
 
-        // ▼ 여기만 변경됨
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 8),
@@ -99,25 +103,37 @@ class ProductDetailPage extends StatelessWidget {
                     fontSize: 13),
               ),
               const SizedBox(width: 12),
-              Text('$discountPercent%',
-                  style: const TextStyle(
-                      color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14)),
+              Text(
+                '$discountPercent%',
+                style: const TextStyle(
+                    color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14),
+              ),
               const SizedBox(width: 6),
-              Text('${_money(salePrice)}원',
-                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+              Text(
+                '${_money(salePrice)}원',
+                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+              ),
             ],
           ),
           const SizedBox(height: 16),
           const Divider(height: 1, color: divider),
           const SizedBox(height: 16),
-          const Text('상품 설명',
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+
+          const Text(
+            '상품 설명',
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+          ),
           const SizedBox(height: 8),
-          const _BulletLine('부드러운 우유가 들어있는 커피로 전세계적으로 스타벅스에서 가장 인기있는 음료중 하나입니다.'),
-          const _BulletLine('Only ICE'),
+
+          // ✅ 여기부터는 하드코딩 대신 arguments 사용
+          _BulletLine(description),
+          _BulletLine(subDescription),
+
           const SizedBox(height: 20),
-          const Text('이용 안내',
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+          const Text(
+            '이용 안내',
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+          ),
           const SizedBox(height: 8),
           const _BulletLine('상기 이미지는 연출된 컷으로 실제와 다를 수 있습니다.'),
           const _BulletLine('일부 매장 재고, 상황에 따라 동일 상품으로 교환이 불가능할 수 있습니다.'),
@@ -162,9 +178,11 @@ class ProductDetailPage extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14)),
                   ),
-                  child: const Text('나에게 선물',
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.w600)),
+                  child: const Text(
+                    '나에게 선물',
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -198,8 +216,10 @@ class ProductDetailPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
                   ),
-                  child: const Text('친구에게 선물',
-                      style: TextStyle(fontWeight: FontWeight.w700)),
+                  child: const Text(
+                    '친구에게 선물',
+                    style: TextStyle(fontWeight: FontWeight.w700),
+                  ),
                 ),
               ),
             ],
@@ -226,8 +246,11 @@ class _BulletLine extends StatelessWidget {
         children: [
           const Text('• ', style: TextStyle(height: 1.35)),
           Expanded(
-              child: Text(text,
-                  style: const TextStyle(fontSize: 14, height: 1.35))),
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 14, height: 1.35),
+            ),
+          ),
         ],
       ),
     );
@@ -286,20 +309,23 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
-                  blurRadius: 20,
-                  offset: const Offset(0, -6))
+                color: Colors.black.withOpacity(0.15),
+                blurRadius: 20,
+                offset: const Offset(0, -6),
+              )
             ],
           ),
           child: Column(
             children: [
               const SizedBox(height: 8),
               Container(
-                  width: 44,
-                  height: 4,
-                  decoration: BoxDecoration(
-                      color: Colors.black12,
-                      borderRadius: BorderRadius.circular(2))),
+                width: 44,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.black12,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
               const SizedBox(height: 12),
 
               Padding(
@@ -307,25 +333,36 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                 child: Row(
                   children: [
                     const Expanded(
-                        child: Text('친구 선택',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w700))),
+                      child: Text(
+                        '친구 선택',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w700),
+                      ),
+                    ),
                     TextButton.icon(
                       onPressed: () async {
                         final ok = await Navigator.push<bool>(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const NewPeoplePage()));
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const NewPeoplePage(),
+                          ),
+                        );
                         if (ok == true && mounted) setState(() {});
                       },
                       style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFF383C59)),
-                      icon: const Icon(Icons.person_add_alt_1,
-                          size: 18, color: Color(0xFF383C59)),
-                      label: const Text('친구추가',
-                          style: TextStyle(
-                              color: Color(0xFF383C59),
-                              fontWeight: FontWeight.w600)),
+                        foregroundColor: const Color(0xFF383C59),
+                      ),
+                      icon: const Icon(
+                        Icons.person_add_alt_1,
+                        size: 18,
+                        color: Color(0xFF383C59),
+                      ),
+                      label: const Text(
+                        '친구추가',
+                        style: TextStyle(
+                            color: Color(0xFF383C59),
+                            fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ],
                 ),
@@ -368,8 +405,11 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
 
                     if (list.isEmpty) {
                       return const Center(
-                          child: Text('등록된 친구가 없습니다.\n오른쪽 상단에서 추가하세요.',
-                              textAlign: TextAlign.center));
+                        child: Text(
+                          '등록된 친구가 없습니다.\n오른쪽 상단에서 추가하세요.',
+                          textAlign: TextAlign.center,
+                        ),
+                      );
                     }
 
                     return ListView.separated(
@@ -405,29 +445,36 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                                 Expanded(
                                   child: Row(
                                     children: [
-                                      Text(f.name,
-                                          style: const TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.black87)),
+                                      Text(
+                                        f.name,
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.black87),
+                                      ),
                                       const SizedBox(width: 8),
-                                      const Text('｜',
-                                          style:
-                                              TextStyle(color: Colors.black87)),
+                                      const Text(
+                                        '｜',
+                                        style: TextStyle(
+                                            color: Colors.black87),
+                                      ),
                                       const SizedBox(width: 8),
-                                      Text(f.birthday,
-                                          style: const TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.black87)),
+                                      Text(
+                                        f.birthday,
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.black87),
+                                      ),
                                     ],
                                   ),
                                 ),
                                 Icon(
-                                    isSelected
-                                        ? Icons.radio_button_checked
-                                        : Icons.radio_button_off,
-                                    color: isSelected
-                                        ? Colors.black
-                                        : Colors.black26),
+                                  isSelected
+                                      ? Icons.radio_button_checked
+                                      : Icons.radio_button_off,
+                                  color: isSelected
+                                      ? Colors.black
+                                      : Colors.black26,
+                                ),
                               ],
                             ),
                           ),
@@ -462,9 +509,11 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                           onTap:
                               _qty > 1 ? () => setState(() => _qty--) : null,
                         ),
-                        Text('$_qty',
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600)),
+                        Text(
+                          '$_qty',
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
                         _QtyIconButton(
                           icon: Icons.add,
                           onTap: () => setState(() => _qty++),
@@ -487,8 +536,10 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14)),
                           ),
-                          child: const Text('닫기',
-                              style: TextStyle(color: Colors.black)),
+                          child: const Text(
+                            '닫기',
+                            style: TextStyle(color: Colors.black),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -506,8 +557,10 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                                 borderRadius: BorderRadius.circular(14)),
                             elevation: 0,
                           ),
-                          child: const Text('선물하기',
-                              style: TextStyle(color: Colors.black)),
+                          child: const Text(
+                            '선물하기',
+                            style: TextStyle(color: Colors.black),
+                          ),
                         ),
                       ),
                     ],
@@ -542,8 +595,11 @@ class _QtyIconButton extends StatelessWidget {
             color: enabled ? const Color(0xFF383C59) : Colors.black12,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon,
-              color: enabled ? Colors.white : Colors.black38, size: 22),
+          child: Icon(
+            icon,
+            color: enabled ? Colors.white : Colors.black38,
+            size: 22,
+          ),
         ),
       ),
     );
