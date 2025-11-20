@@ -1,8 +1,8 @@
+// my_coupons_page.dart
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../services/database.dart';
 import '../models/user.dart';
-import 'package:my_app/pages/setting_page.dart';
 
 class MyCouponsPage extends StatefulWidget {
   const MyCouponsPage({super.key});
@@ -17,6 +17,9 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
   final List<String> sortOptions = ['최신순', '오래된순', '가나다순'];
 
   int? _currentUserKey;
+
+  // 백억커피 쿠폰이 포인트로 전환됐는지 여부
+  bool _isBaeokConverted = false;
 
   @override
   void initState() {
@@ -34,7 +37,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: const Color(0xFFF7F7F7),  
+              color: const Color(0xFFF7F7F7),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -94,20 +97,20 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
       );
     }
     return ValueListenableBuilder<Box<User>>(
-  valueListenable: DatabaseService.users.listenable(),
-  builder: (context, box, _) {
-    final user = box.get(_currentUserKey);
-    final point = user?.starPoint ?? 0;
-    return Text(
-      '$point',
-      style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 16,
-        color: Color(0xFF383C59),
-      ),
+      valueListenable: DatabaseService.users.listenable(),
+      builder: (context, box, _) {
+        final user = box.get(_currentUserKey);
+        final point = user?.starPoint ?? 0;
+        return Text(
+          '$point',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Color(0xFF383C59),
+          ),
+        );
+      },
     );
-  },
-);
   }
 
   @override
@@ -115,112 +118,116 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-  backgroundColor: Colors.white,
-  elevation: 0,
-  leadingWidth: 70,     // 로고가 차지할 영역
-  titleSpacing: 0,      // 텍스트와 로고 간격 최소화
-  leading: Padding(
-    padding: const EdgeInsets.only(left: 12.0), // 왼쪽 벽에서 12px 떨어지게
-    child: IconButton(
-      icon: Image.asset('assets/images/logo.png', width: 40, height: 40),
-      onPressed: () => Navigator.pop(context),
-    ),
-  ),
-  title: const Text(
-    'CASHLOOP',
-    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-  ),
-  actions: [
-    Padding(
-      padding: const EdgeInsets.only(right: 12.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            onTap: () => Navigator.pushNamed(context, '/people'),
-            child: Image.asset('assets/images/people.png', width: 24, height: 24),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leadingWidth: 70,
+        titleSpacing: 0,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12.0),
+          child: IconButton(
+            icon: Image.asset('assets/images/logo.png', width: 40, height: 40),
+            onPressed: () => Navigator.pop(context),
           ),
-          const SizedBox(width: 16),
-          GestureDetector(
-            onTap: () => Navigator.pushNamed(context, '/search'),
-            child: Image.asset('assets/images/home.png', width: 24, height: 24),
-          ),
-          const SizedBox(width: 16),
-          GestureDetector(
-            onTap: () => Navigator.pushNamed(context, '/settings'),
-            child: Image.asset('assets/images/more.png', width: 24, height: 24),
+        ),
+        title: const Text(
+          'CASHLOOP',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onTap: () => Navigator.pushNamed(context, '/people'),
+                  child: Image.asset('assets/images/people.png', width: 24, height: 24),
+                ),
+                const SizedBox(width: 16),
+                GestureDetector(
+                  onTap: () => Navigator.pushNamed(context, '/search'),
+                  child: Image.asset('assets/images/home.png', width: 24, height: 24),
+                ),
+                const SizedBox(width: 16),
+                GestureDetector(
+                  onTap: () => Navigator.pushNamed(context, '/settings'),
+                  child: Image.asset('assets/images/more.png', width: 24, height: 24),
+                ),
+              ],
+            ),
           ),
         ],
       ),
-    ),
-  ],
-),
-
-
-
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 상단 포인트 + 프로필 영역
           Container(
-  padding: const EdgeInsets.all(20),
-  color: Colors.white,
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      ValueListenableBuilder<Box<User>>(
-        valueListenable: DatabaseService.users.listenable(keys: [_currentUserKey!]),
-        builder: (context, box, _) {
-          final user = box.get(_currentUserKey!);
-          final userName = user?.username ?? '사용자';
-          final profileImage = 'assets/images/hello.png';
+            padding: const EdgeInsets.all(20),
+            color: Colors.white,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (_currentUserKey != null)
+                  ValueListenableBuilder<Box<User>>(
+                    valueListenable:
+                        DatabaseService.users.listenable(keys: [_currentUserKey!]),
+                    builder: (context, box, _) {
+                      final user = box.get(_currentUserKey!);
+                      final userName = user?.username ?? '사용자';
+                      final profileImage = 'assets/images/hello.png';
 
-          return Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.asset(
-                  profileImage,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
+                      return Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Image.asset(
+                              profileImage,
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '$userName님',
+                                style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                              ),
+                              Text(
+                                '반가워요 $userName님, 내 기프티콘을 확인하세요!',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Color.fromARGB(255, 22, 22, 22),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                Row(
+                  children: [
+                    Image.asset(
+                      'assets/images/point.png',
+                      width: 20,
+                      height: 20,
+                      color: const Color(0xFF383C59),
+                    ),
+                    const SizedBox(width: 6),
+                    _buildStarPoint(),
+                  ],
                 ),
-              ),
-              const SizedBox(width: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '$userName님',
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
-                  ),
-                  Text(
-                    '반가워요 $userName님, 내 기프티콘을 확인하세요!',
-                    style: TextStyle(fontSize: 14, color: Color.fromARGB(255, 22, 22, 22)),
-                  ),
-                ],
-              ),
-            ],
-          );
-        },
-      ),
-    Row(
-        children: [
-          Image.asset(
-            'assets/images/point.png',
-            width: 20,
-            height: 20,
-            color: const Color(0xFF383C59),
+              ],
+            ),
           ),
-          const SizedBox(width: 6),
-          _buildStarPoint(),
-        ],
-      ),
-    ],
-  ),
-),
 
           // 하단 탭
           Container(
@@ -248,7 +255,8 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                         tab,
                         style: TextStyle(
                           color: isSelected ? Colors.black : const Color(0xFF878C93),
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.normal,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -265,12 +273,12 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
             ),
           ),
 
-          // 정렬 드롭다운 버튼 (PurchaseHistoryPage와 동일하게 통일)
+          // 정렬 드롭다운
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: DropdownButtonHideUnderline(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
                   color: const Color(0xFF383C59),
                   borderRadius: BorderRadius.circular(20),
@@ -293,7 +301,8 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                   items: sortOptions.map((String option) {
                     return DropdownMenuItem<String>(
                       value: option,
-                      child: Text(option, style: const TextStyle(color: Colors.white)),
+                      child:
+                          Text(option, style: const TextStyle(color: Colors.white)),
                     );
                   }).toList(),
                   selectedItemBuilder: (BuildContext context) {
@@ -320,7 +329,6 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  
                   const CouponCard(
                     imageAsset: 'assets/images/starcafe.png',
                     brand: '스타벅스',
@@ -330,19 +338,41 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     statusColor: Color(0xFFFFE96A),
                     statusTextColor: Colors.black,
                   ),
+
+                  // 포인트 전환 가능한 백억커피 쿠폰
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onTap: () => Navigator.pushNamed(context, '/coupon_detail'),
-                    child: const CouponCard(
+                    onTap: _isBaeokConverted
+                        ? null
+                        : () async {
+                            final result = await Navigator.pushNamed(
+                              context,
+                              '/coupon_detail',
+                            );
+
+                            // 상세 페이지에서 true를 보내주면 사용완료로 전환
+                            if (result == true && mounted) {
+                              setState(() {
+                                _isBaeokConverted = true;
+                              });
+                            }
+                          },
+                    child: CouponCard(
                       imageAsset: 'assets/images/백억.png',
                       brand: '백억커피',
                       name: '바닐라 라떼 (ICE)',
                       period: '2025.08.11~2026.08.11',
-                      statusLabel: '포인트 전환 가능 금액: 250원',
-                      statusColor: Color(0xFFFFE96A),
-                      statusTextColor: Colors.black,
+                      statusLabel: _isBaeokConverted
+                          ? '사용완료'
+                          : '포인트 전환 가능 금액: 250원',
+                      statusColor: _isBaeokConverted
+                          ? const Color(0xFF2F2C46)
+                          : const Color(0xFFFFE96A),
+                      statusTextColor:
+                          _isBaeokConverted ? Colors.white : Colors.black,
                     ),
                   ),
+
                   const CouponCard(
                     imageAsset: 'assets/images/megamericano.png',
                     brand: '메가커피',
@@ -405,7 +435,7 @@ class CouponCard extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius:10,
+            blurRadius: 10,
             offset: const Offset(0, 5),
           )
         ],
@@ -414,26 +444,40 @@ class CouponCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.asset(imageAsset, width: 50, height: 100, fit: BoxFit.cover),
+            child: Image.asset(
+              imageAsset,
+              width: 50,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(brand, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                Text(brand,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey)),
                 const SizedBox(height: 4),
-                Text(name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                Text(name,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                Text('사용기한: $period', style: const TextStyle(fontSize: 12, color: Colors.black54)),
+                Text('사용기한: $period',
+                    style: const TextStyle(
+                        fontSize: 12, color: Colors.black54)),
                 const SizedBox(height: 10),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: statusColor,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(statusLabel, style: TextStyle(color: statusTextColor, fontSize: 12)),
+                  child: Text(
+                    statusLabel,
+                    style: TextStyle(color: statusTextColor, fontSize: 12),
+                  ),
                 )
               ],
             ),

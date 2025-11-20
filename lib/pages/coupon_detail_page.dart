@@ -22,7 +22,12 @@ class _CouponDetailPageState extends State<CouponDetailPage> {
   // 전환 아이콘 상태
   String switchIcon = 'assets/images/switch_yellow.png';
 
-  // 포인트 전환 약관 안내 팝업
+  // 포인트 전환 완료 여부 (뒤로가기 할 때 상위 페이지로 넘길 값)
+  bool _converted = false;
+
+  // ---------------------------
+  //  포인트 전환 약관 안내 팝업
+  // ---------------------------
   void _showPointInfoDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -39,9 +44,11 @@ class _CouponDetailPageState extends State<CouponDetailPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('포인트 전환 약관 안내',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center),
+                const Text(
+                  '포인트 전환 약관 안내',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 26),
                 const Text(
                   '「상품권 표준약관」 제7조 및 「소비자분쟁해결기준(공정거래위원회 고시)」에 의거하여, '
@@ -61,9 +68,11 @@ class _CouponDetailPageState extends State<CouponDetailPage> {
                       color: const Color(0xFFF9DB63),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Text('확인',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-                        textAlign: TextAlign.center),
+                    child: const Text(
+                      '확인',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ],
@@ -74,11 +83,13 @@ class _CouponDetailPageState extends State<CouponDetailPage> {
     );
   }
 
-  // 포인트 전환 팝업
+  // ---------------------------
+  //  포인트 전환 팝업
+  // ---------------------------
   void _showPointConvertDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogCtx) {
         return Dialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Container(
@@ -90,69 +101,84 @@ class _CouponDetailPageState extends State<CouponDetailPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('스타포인트로 전환하기',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const Text(
+                  '스타포인트로 전환하기',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 16),
-                Text('${pointAmount}P를 포인트로 전환하시겠습니까?',
-                    style: const TextStyle(fontSize: 14, color: Colors.black87)),
+                Text(
+                  '${pointAmount}P를 포인트로 전환하시겠습니까?',
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                ),
                 const SizedBox(height: 24),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    // 취소 버튼
                     Expanded(
                       child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
+                        onTap: () => Navigator.pop(dialogCtx),
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(
                             color: const Color(0xFFD9D9D9),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Text('취소',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-                              textAlign: TextAlign.center),
+                          child: const Text(
+                            '취소',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(width: 12),
+                    // 확인 버튼
                     Expanded(
-  child: TextButton(
-    style: TextButton.styleFrom(
-      backgroundColor: const Color(0xFFF9DB63),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      padding: const EdgeInsets.symmetric(vertical: 12),
-    ),
-    onPressed: () async {
-      final userBox = DatabaseService.users;
-      final currentUserKey = DatabaseService.currentUserKey();
-      if (currentUserKey != null) {
-        final user = userBox.get(currentUserKey);
-        if (user != null) {
-          print("🔍 before: ${user.starPoint}");
-user.starPoint += pointAmount;
-await DatabaseService.users.put(user.key, user);
-print("🔍 after: ${DatabaseService.users.get(user.key)!.starPoint}");
+                      child: TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: const Color(0xFFF9DB63),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        onPressed: () async {
+                          // 1) 유저 포인트 증가
+                          final userBox = DatabaseService.users;
+                          final currentUserKey = DatabaseService.currentUserKey();
+                          if (currentUserKey != null) {
+                            final user = userBox.get(currentUserKey);
+                            if (user != null) {
+                              user.starPoint += pointAmount;
+                              await userBox.put(user.key, user);
+                            }
+                          }
 
-        }
-      }
+                          // 2) 쿠폰 상태 / 아이콘 변경 (이 화면에서만 반영)
+                          setState(() {
+                            usableAmount = 0;
+                            pointAmount = 0;
+                            switchIcon = 'assets/images/switch.png';
+                            _converted = true; // 전환 완료 표시
+                          });
 
-      setState(() {
-        usableAmount = 0;
-        pointAmount = 0;
-        switchIcon = 'assets/images/switch.png';
-      });
-
-      Navigator.pop(context, true);
-    },
-    child: const Text(
-      '예',
-      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-      textAlign: TextAlign.center,
-
-    ),
-  ),
-),
-
+                          // 다이얼로그만 닫고 상세페이지는 유지
+                          Navigator.pop(dialogCtx);
+                        },
+                        child: const Text(
+                          '예',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -163,10 +189,15 @@ print("🔍 after: ${DatabaseService.users.get(user.key)!.starPoint}");
     );
   }
 
+  // --------------------------------------
+  //                UI
+  // --------------------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
+      // ----- 상단 AppBar -----
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56),
         child: AppBar(
@@ -175,11 +206,14 @@ print("🔍 after: ${DatabaseService.users.get(user.key)!.starPoint}");
           centerTitle: false,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 18),
-            onPressed: () => Navigator.pop(context),
+            // 뒤로가기 누를 때, 전환 여부(_converted)를 결과로 넘김
+            onPressed: () => Navigator.pop(context, _converted),
           ),
           titleSpacing: 0,
-          title: const Text('모바일 쿠폰마켓',
-              style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w600)),
+          title: const Text(
+            '모바일 쿠폰마켓',
+            style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w600),
+          ),
           actions: [
             Image.asset('assets/images/people.png', width: 24, height: 24),
             const SizedBox(width: 16),
@@ -193,146 +227,190 @@ print("🔍 after: ${DatabaseService.users.get(user.key)!.starPoint}");
           ],
         ),
       ),
+
+      // ----- 본문 -----
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 프로필 + 선물 문구
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 18,
-                      backgroundColor: const Color(0xFF383C59),
-                      child: const CircleAvatar(
-                        radius: 16,
-                        backgroundImage: AssetImage('assets/images/chick_g3.png'),
-                        backgroundColor: Colors.transparent,
-                      ),
+        padding: const EdgeInsets.only(bottom: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 1) 프로필 문구
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 18,
+                    backgroundColor: const Color(0xFF383C59),
+                    child: const CircleAvatar(
+                      radius: 16,
+                      backgroundImage: AssetImage('assets/images/chick_g3.png'),
+                      backgroundColor: Colors.transparent,
                     ),
-                    const SizedBox(width: 8),
-                    const Text('김지안님의 선물', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    '김지안님의 선물',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            // 2) 상품 이미지
+            Center(
+              child: Container(
+                width: 300,
+                height: 300,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 6,
+                      offset: const Offset(0, 4),
+                    ),
                   ],
                 ),
+                child: Center(
+                  child: Image.asset(
+                    imageAsset,
+                    width: 200,
+                    height: 200,
+                    fit: BoxFit.contain,
+                  ),
+                ),
               ),
-              const SizedBox(height: 8),
+            ),
+            const SizedBox(height: 12),
 
-              // 상품 이미지
-              Center(
-                child: Container(
-                  width: 300,
-                  height: 300,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 6,
-                        offset: const Offset(0, 4),
-                      )
+            // 3) 상품명
+            Center(
+              child: Text(
+                '[$brand] $name',
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // 4) 바코드
+            Center(
+              child: Column(
+                children: [
+                  Image.asset('assets/images/barcode.png', width: 280, height: 70),
+                  const SizedBox(height: 6),
+                  Text(
+                    barcode,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      letterSpacing: 2,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 5) 사용가능금액
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF9DB63),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('사용가능금액', style: TextStyle(fontSize: 14)),
+                  Text(
+                    '$usableAmount원',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // 6) 유효기간 + 포인트 전환 가능 금액
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF383C59),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                children: [
+                  // 유효기간
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        '유효기간',
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                      ),
+                      Text(
+                        expireDate,
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 14),
+                      ),
                     ],
                   ),
-                  child: Center(
-                    child: Image.asset(imageAsset, width: 200, height: 200, fit: BoxFit.contain),
+                  const SizedBox(height: 14),
+
+                  // 포인트 전환 가능 금액 + 아이콘
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Text(
+                            '포인트 전환 가능 금액',
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                          ),
+                          const SizedBox(width: 4),
+                          GestureDetector(
+                            onTap: () => _showPointInfoDialog(context),
+                            child: Image.asset(
+                              'assets/images/info.png',
+                              width: 12,
+                              height: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            '$pointAmount원',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          GestureDetector(
+                            onTap: () => _showPointConvertDialog(context),
+                            child: Image.asset(
+                              switchIcon,
+                              width: 30,
+                              height: 30,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ),
+                ],
               ),
-              const SizedBox(height: 12),
-
-              // 상품명
-              Center(
-                child: Text('[$brand] $name', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-              ),
-              const SizedBox(height: 12),
-
-              // 바코드
-              Center(
-                child: Column(
-                  children: [
-                    Image.asset('assets/images/barcode.png', width: 280, height: 70, fit: BoxFit.contain),
-                    const SizedBox(height: 6),
-                    Text(barcode,
-                        style: const TextStyle(fontSize: 14, letterSpacing: 2, color: Colors.black)),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // 사용가능금액
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF9DB63),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('사용가능금액', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-                    Text('$usableAmount원',
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                  ],
-                ),
-              ),
-
-              // 유효기간 + 포인트 전환 가능 금액
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
-                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF383C59),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  children: [
-                    // 유효기간
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('유효기간', style: TextStyle(color: Colors.white, fontSize: 14)),
-                        Text(expireDate, style: const TextStyle(color: Colors.white, fontSize: 14)),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-
-                    // 포인트 전환 가능 금액 + 아이콘
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            const Text('포인트 전환 가능 금액',
-                                style: TextStyle(color: Colors.white, fontSize: 14)),
-                            const SizedBox(width: 4),
-                            GestureDetector(
-                              onTap: () => _showPointInfoDialog(context),
-                              child: Image.asset('assets/images/info.png', width: 12, height: 12),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text('$pointAmount원',
-                                style: const TextStyle(color: Colors.white, fontSize: 14)),
-                            const SizedBox(width: 6),
-                            GestureDetector(
-                              onTap: () => _showPointConvertDialog(context),
-                              child: Image.asset(switchIcon, width: 30, height: 30),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

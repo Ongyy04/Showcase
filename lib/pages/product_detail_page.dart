@@ -28,17 +28,36 @@ class ProductDetailPage extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
-        actions: const [
+
+        // ▼ 여기만 변경됨
+        actions: [
           Padding(
-            padding: EdgeInsets.only(right: 8),
-            child: Icon(Icons.person_outline, size: 22),
+            padding: const EdgeInsets.only(right: 8),
+            child: Image.asset(
+              'assets/images/people.png',
+              width: 24,
+              height: 24,
+            ),
           ),
           Padding(
-            padding: EdgeInsets.only(right: 14),
-            child: Icon(Icons.shopping_bag_outlined, size: 22),
+            padding: const EdgeInsets.only(right: 8),
+            child: Image.asset(
+              'assets/images/home.png',
+              width: 24,
+              height: 24,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 14),
+            child: Image.asset(
+              'assets/images/more.png',
+              width: 24,
+              height: 24,
+            ),
           ),
         ],
       ),
+
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         children: [
@@ -106,6 +125,7 @@ class ProductDetailPage extends StatelessWidget {
           const SizedBox(height: 80),
         ],
       ),
+
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: Container(
@@ -120,7 +140,6 @@ class ProductDetailPage extends StatelessWidget {
           ),
           child: Row(
             children: [
-              // ▼ 나에게 선물 → 결제 페이지 이동 (friend 미전달 + selfGift 힌트)
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
@@ -133,8 +152,7 @@ class ProductDetailPage extends StatelessWidget {
                         'imageAsset': imageAsset,
                         'salePrice': salePrice,
                         'qty': 1,
-                        'selfGift': true, // ← 추가(기능 힌트, 동작에는 영향 없음)
-                        // friend 전달하지 않음(나에게 선물)
+                        'selfGift': true,
                       },
                     );
                   },
@@ -216,8 +234,6 @@ class _BulletLine extends StatelessWidget {
   }
 }
 
-/// ====== 친구 선택 바텀시트 ======
-
 Future<Map<String, dynamic>?> _openFriendPicker(BuildContext context) async {
   final owner = DatabaseService.currentUserKey();
   if (owner == null) {
@@ -286,7 +302,6 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                       borderRadius: BorderRadius.circular(2))),
               const SizedBox(height: 12),
 
-              // 제목 + 친구추가
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
@@ -316,7 +331,6 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                 ),
               ),
 
-              // 검색창
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextField(
@@ -336,7 +350,6 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
               ),
               const SizedBox(height: 8),
 
-              // 친구 목록
               Expanded(
                 child: FutureBuilder<List<Friend>>(
                   future: _load(),
@@ -425,7 +438,6 @@ class _FriendPickerSheetState extends State<FriendPickerSheet> {
                 ),
               ),
 
-              // 친구 선택 후에만 수량 + 버튼 표시
               if (selected != null) ...[
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
