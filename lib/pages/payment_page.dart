@@ -316,7 +316,46 @@ class _PaymentPageState extends State<PaymentPage> {
                       paymentDetails: "",
                     );
                   }
-                },
+                    // 10% 할인 쿠폰 발급
+// 10% 할인 쿠폰 발급 알림 (상단)
+void showTopNotification(BuildContext context, String message) {
+  final overlay = Overlay.of(context);
+  final overlayEntry = OverlayEntry(
+    builder: (context) => Positioned(
+      top: 50, // 상단 위치
+      left: 16,
+      right: 16,
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 255, 255, 255),
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: const [
+              BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 3)),
+            ],
+          ),
+          child: Text(
+            message,
+            style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  overlay.insert(overlayEntry);
+
+  // 3초 후 자동 제거
+  Future.delayed(const Duration(seconds: 2), () {
+    overlayEntry.remove();
+  });
+}
+showTopNotification(context, '남은 잔액 ${availablePoint}P에서 사용하면 10% 할인이 가능해요!');
+
+       },
+                
                 style: ElevatedButton.styleFrom(
                   backgroundColor: accent,
                   foregroundColor: Colors.black,

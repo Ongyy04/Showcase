@@ -16,7 +16,10 @@ class DatabaseService {
   // 캐시 박스
   static late Box<User> _userBox;
   static late Box<Purchase> _purchases;
+  static late Box _couponBox;
+  
 
+  static Box get coupons => _couponBox;
   // -------- init --------
   static Future<void> init() async {
     if (_initialized) return;
@@ -45,7 +48,7 @@ class DatabaseService {
         return await Hive.openBox<T>(name);
       }
     }
-
+   _couponBox = await openBoxSafe('coupons'); 
     _userBox = await openBoxSafe<User>('users');
     await openBoxSafe<Gifticon>('gifticons');
     await openBoxSafe<LoginEvent>('login_events');
@@ -89,15 +92,10 @@ class DatabaseService {
 
   static Future<void> logLogin(int userKey) async {
     await loginEvents.add(LoginEvent(userKey: userKey, at: DateTime.now()));
-    final u = users.get(userKey);
-    if (u != null) {
-      u.starPoint += starPerLogin;
-      await u.save();
-    }
+    
 
     DatabaseTriggers.runTrigger("login", {
       "userKey": userKey,
-      "addedPoint": starPerLogin,
     });
   }
 

@@ -363,7 +363,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                       name: '바닐라 라떼 (ICE)',
                       period: '2025.08.11~2026.08.11',
                       statusLabel: _isBaeokConverted
-                          ? '사용완료'
+                          ? '전환완료'
                           : '포인트 전환 가능 금액: 250원',
                       statusColor: _isBaeokConverted
                           ? const Color(0xFF2F2C46)
@@ -385,7 +385,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                   GestureDetector(
                     onTap: _showExpiredDialog,
                     child: const CouponCard(
-                      imageAsset: 'assets/images/cp.png',
+                      imageAsset: 'assets/images/composeamericano.png',
                       brand: '컴포즈커피',
                       name: '아이스아메리카노 (ICE)',
                       period: '2025.08.11~2026.08.11',
