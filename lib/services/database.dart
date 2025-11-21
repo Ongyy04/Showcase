@@ -1,5 +1,6 @@
 // lib/services/database.dart
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -13,18 +14,16 @@ class DatabaseService {
   static const int starPerLogin = 100;
   static bool _initialized = false;
 
-  // 캐시 박스
   static late Box<User> _userBox;
   static late Box<Purchase> _purchases;
   static late Box _couponBox;
-  
 
   static Box get coupons => _couponBox;
-  // -------- init --------
+
   static Future<void> init() async {
     if (_initialized) return;
 
-    // 안전 어댑터 등록
+    // ---- Adapter Safe Register ----
     void safeRegister<T>(TypeAdapter<T> adapter) {
       if (!Hive.isAdapterRegistered(adapter.typeId)) {
         Hive.registerAdapter<T>(adapter);
@@ -37,18 +36,27 @@ class DatabaseService {
     safeRegister<Friend>(FriendAdapter());
     safeRegister<Purchase>(PurchaseAdapter());
 
-    // 안전 박스 열기
+    // ---- Safe Box Open (Web 지원) ----
     Future<Box<T>> openBoxSafe<T>(String name) async {
+      // 🔥 웹에서는 path_provider 사용 금지, 파일 삭제 불가
+      if (kIsWeb) {
+        return await Hive.openBox<T>(name);
+      }
+
+      // 🔥 모바일/데스크탑 전용 코드
       try {
         return await Hive.openBox<T>(name);
       } catch (_) {
         final dir = await getApplicationDocumentsDirectory();
         final file = File('${dir.path}/hive/$name.hive');
-        if (await file.exists()) await file.delete();
+        if (await file.exists()) {
+          await file.delete();
+        }
         return await Hive.openBox<T>(name);
       }
     }
-   _couponBox = await openBoxSafe('coupons'); 
+
+    _couponBox = await openBoxSafe('coupons');
     _userBox = await openBoxSafe<User>('users');
     await openBoxSafe<Gifticon>('gifticons');
     await openBoxSafe<LoginEvent>('login_events');
@@ -59,7 +67,7 @@ class DatabaseService {
     _initialized = true;
   }
 
-  // -------- Box getters --------
+  // ---- Getters ----
   static Box<User> get users => _userBox;
   static Box get session => Hive.box('session');
   static Box<Gifticon> get gifticons => Hive.box<Gifticon>('gifticons');
@@ -67,7 +75,7 @@ class DatabaseService {
   static Box<Friend> get friends => Hive.box<Friend>('friends');
   static Box<Purchase> get purchases => _purchases;
 
-  // -------- Session / User --------
+  // ---- Session ----
   static Future<void> setCurrentUserKey(int key) async =>
       session.put('currentUserKey', key);
 
@@ -81,7 +89,7 @@ class DatabaseService {
 
   static Future<void> signOut() => session.delete('currentUserKey');
 
-  // -------- Users --------
+  // ---- User ----
   static bool usernameExists(String username) =>
       users.values.any((u) => u.username == username);
 
@@ -92,11 +100,8 @@ class DatabaseService {
 
   static Future<void> logLogin(int userKey) async {
     await loginEvents.add(LoginEvent(userKey: userKey, at: DateTime.now()));
-    
 
-    DatabaseTriggers.runTrigger("login", {
-      "userKey": userKey,
-    });
+    DatabaseTriggers.runTrigger("login", {"userKey": userKey});
   }
 
   static int starPointOfUser(int userKey) =>
@@ -106,7 +111,7 @@ class DatabaseService {
       (loginEvents.values.where((e) => e.userKey == userKey).toList()
         ..sort((a, b) => b.at.compareTo(a.at)));
 
-  // -------- Purchases / Gifticons --------
+  // ---- Purchase ----
   static Future<void> addPurchase({
     required String userId,
     required String productId,
@@ -137,7 +142,7 @@ class DatabaseService {
         .toList();
   }
 
-  // -------- Friends --------
+  // ---- Friends ----
   static Future<int> addFriend(Friend f) => friends.add(f);
 
   static Future<void> updateFriend(int key, Friend f) => friends.put(key, f);
@@ -162,12 +167,10 @@ class DatabaseService {
     return list;
   }
 
-  // ----------------------------------------------------------
-  // 🔥 거래내역 / 구매내역 기록
-  // ----------------------------------------------------------
+  // ---- Transaction ----
   static Future<void> addTransaction({
     required int userKey,
-    required String actionType, // "나에게 선물하기" 등
+    required String actionType,
     required String brand,
     required String itemName,
     required int price,
@@ -208,18 +211,13 @@ class DatabaseService {
   }
 }
 
-// ----------------------------------------------------------
-// 🔥 INTERNAL TRIGGER SYSTEM
-// ----------------------------------------------------------
-
+// ---- Trigger System ----
 extension DatabaseTriggers on DatabaseService {
   static final Map<String, List<Function(dynamic)>> _triggers = {};
 
   static void registerTrigger(
       String eventName, Function(dynamic payload) callback) {
-    if (!_triggers.containsKey(eventName)) {
-      _triggers[eventName] = [];
-    }
+    _triggers.putIfAbsent(eventName, () => []);
     _triggers[eventName]!.add(callback);
   }
 

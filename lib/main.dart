@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -26,12 +28,16 @@ import 'package:my_app/models/user.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 앱 전용 저장 경로 준비 (모바일/데스크톱)
-  final dir = await getApplicationDocumentsDirectory();
+  // ⚠️ path_provider는 웹에서 사용 불가 → 분기 필요
+  if (kIsWeb) {
+    // 웹에서는 파일 경로 없음 → 기본 init만
+    await Hive.initFlutter();
+  } else {
+    final dir = await getApplicationDocumentsDirectory();
+    await Hive.initFlutter('${dir.path}/hive');
+  }
 
-  // ✅ 데이터 삭제 금지: 아래 두 줄만으로 충분
-  await Hive.initFlutter('${dir.path}/hive');
-  Hive.registerAdapter(UserAdapter()); // 다른 어댑터들은 DatabaseService.init()에서 안전 등록됨
+  Hive.registerAdapter(UserAdapter());
 
   await DatabaseService.init();
   await DirectoryService.init();
