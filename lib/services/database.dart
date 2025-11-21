@@ -23,7 +23,6 @@ class DatabaseService {
   static Future<void> init() async {
     if (_initialized) return;
 
-    // ---- Adapter Safe Register ----
     void safeRegister<T>(TypeAdapter<T> adapter) {
       if (!Hive.isAdapterRegistered(adapter.typeId)) {
         Hive.registerAdapter<T>(adapter);
@@ -36,14 +35,11 @@ class DatabaseService {
     safeRegister<Friend>(FriendAdapter());
     safeRegister<Purchase>(PurchaseAdapter());
 
-    // ---- Safe Box Open (Web 지원) ----
     Future<Box<T>> openBoxSafe<T>(String name) async {
-      // 🔥 웹에서는 path_provider 사용 금지, 파일 삭제 불가
       if (kIsWeb) {
         return await Hive.openBox<T>(name);
       }
 
-      // 🔥 모바일/데스크탑 전용 코드
       try {
         return await Hive.openBox<T>(name);
       } catch (_) {
@@ -67,7 +63,6 @@ class DatabaseService {
     _initialized = true;
   }
 
-  // ---- Getters ----
   static Box<User> get users => _userBox;
   static Box get session => Hive.box('session');
   static Box<Gifticon> get gifticons => Hive.box<Gifticon>('gifticons');
@@ -88,6 +83,9 @@ class DatabaseService {
   }
 
   static Future<void> signOut() => session.delete('currentUserKey');
+
+  // 추가된 함수
+  static Future<void> clearCurrentUserKey() => signOut();
 
   // ---- User ----
   static bool usernameExists(String username) =>

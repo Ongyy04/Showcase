@@ -22,45 +22,43 @@ class _MyInfoState extends State<MyInfo> {
   String selectedPrivacy = '비공개';
 
   User? get currentUser => DatabaseService.currentUser();
-  
+
   @override
   void initState() {
     super.initState();
     _fetchRecommendations();
   }
-  
-  // 1. ☕️ 플레이스홀더 기프티콘 더미 데이터 정의
+
+  // 1. 플레이스홀더 기프티콘 더미 데이터 정의
   final List<Map<String, String>> placeholderGifts = [
     {
       'name': '메가커피 아메리카노',
-      'store': '메가커피 경희대점',
-      'distance': '30m',
-      'price': '3,900원',
-      'status': '사용 가능',
+      'store': '메가MGC커피 용인서천파크원점',
+      'distance': '580m',
+      'price': '1,900원',
       'image': 'assets/images/megamericano.png', 
     },
     {
       'name': '스타벅스 라떼 Tall',
-      'store': '스타벅스 영통점',
-      'distance': '150m',
+      'store': '스타벅스 경희대국제캠퍼스점',
+      'distance': '830m',
       'price': '5,000원',
-      'status': '사용 가능',
       'image': 'assets/images/starcafe.png', 
     },
     {
-      'name': '더벤티 망고 에이드',
-      'store': '더벤티 수원경희대점',
-      'distance': '50m',
-      'price': '6,500원',
-      'status': '사용 가능',
+      'name': '더벤티 애플망고 에이드',
+      'store': '더벤티 수원영통중앙점',
+      'distance': '1.4km',
+      'price': '3,800원',
       'image': 'assets/images/ventimango.jpg', 
     },
   ];
 
   Future<void> _fetchRecommendations() async {
     const String userId = 'arin73';
-    final recommendations = await recommendationService.getRecommendations(userId);
-    
+    final recommendations =
+        await recommendationService.getRecommendations(userId);
+
     setState(() {
       recommendedGifticons = recommendations;
       isLoading = false;
@@ -81,7 +79,8 @@ class _MyInfoState extends State<MyInfo> {
             children: [
               const Align(
                 alignment: Alignment.centerLeft,
-                child: Text('장소 등록하기', style: TextStyle(fontWeight: FontWeight.bold)),
+                child:
+                    Text('장소 등록하기', style: TextStyle(fontWeight: FontWeight.bold)),
               ),
               const SizedBox(height: 12),
               TextField(
@@ -89,7 +88,9 @@ class _MyInfoState extends State<MyInfo> {
                   hintText: '도로명/000/00로 찾기..',
                   filled: true,
                   fillColor: Colors.white,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none),
                 ),
               ),
               const SizedBox(height: 12),
@@ -98,7 +99,9 @@ class _MyInfoState extends State<MyInfo> {
                   hintText: '장소명',
                   filled: true,
                   fillColor: Colors.white,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none),
                 ),
               ),
               const SizedBox(height: 12),
@@ -119,12 +122,14 @@ class _MyInfoState extends State<MyInfo> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFFDD5D),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
                   ),
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text('확인', style: TextStyle(color: Colors.black)),
+                  child:
+                      const Text('확인', style: TextStyle(color: Colors.black)),
                 ),
               ),
             ],
@@ -140,7 +145,8 @@ class _MyInfoState extends State<MyInfo> {
       builder: (_) {
         return Dialog(
           backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Container(
             width: MediaQuery.of(context).size.width * 0.85,
             padding: const EdgeInsets.all(24),
@@ -149,9 +155,13 @@ class _MyInfoState extends State<MyInfo> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Text('정보 공개 범위 안내',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.black)),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black)),
                 const SizedBox(height: 20),
-                const Text('기프티콘 추천 기능은 집 주소 및 결제 내역을 기반으로 개인 맞춤형 선물을 추천해드립니다.',
+                const Text(
+                    '기프티콘 추천 기능은 집 주소 및 결제 내역을 기반으로 개인 맞춤형 선물을 추천해드립니다.',
                     style: TextStyle(fontSize: 14, color: Colors.black)),
                 const SizedBox(height: 16),
                 const Text('정보 공개 범위를 아래 중에서 선택하실 수 있어요:',
@@ -169,7 +179,8 @@ class _MyInfoState extends State<MyInfo> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
-                    Text('프라이버시는 안전하게 보호됩니다.', style: TextStyle(fontSize: 14, color: Colors.grey)),
+                    Text('프라이버시는 안전하게 보호됩니다.',
+                        style: TextStyle(fontSize: 14, color: Colors.grey)),
                     SizedBox(width: 8),
                     Icon(Icons.lock_outline, size: 18, color: Colors.grey),
                   ],
@@ -189,9 +200,11 @@ class _MyInfoState extends State<MyInfo> {
                     onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFFDD5D),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: const Text('확인', style: TextStyle(color: Colors.black)),
+                    child:
+                        const Text('확인', style: TextStyle(color: Colors.black)),
                   ),
                 ),
               ],
@@ -216,7 +229,10 @@ class _MyInfoState extends State<MyInfo> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text('모바일 쿠폰마켓',
-            style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w600)),
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 17,
+                fontWeight: FontWeight.w600)),
         centerTitle: true,
         actions: [
           Padding(
@@ -227,7 +243,8 @@ class _MyInfoState extends State<MyInfo> {
                 const SizedBox(width: 16),
                 GestureDetector(
                   onTap: () => Navigator.pushNamed(context, '/search'),
-                  child: Image.asset('assets/images/home.png', width: 24, height: 24),
+                  child: Image.asset('assets/images/home.png',
+                      width: 24, height: 24),
                 ),
               ],
             ),
@@ -249,32 +266,38 @@ class _MyInfoState extends State<MyInfo> {
                           onTap: () => Navigator.pushNamed(context, '/people'),
                           child: const Padding(
                             padding: EdgeInsets.symmetric(vertical: 14),
-                            child: Text('친구', style: TextStyle(color: Colors.grey)),
+                            child:
+                                Text('친구', style: TextStyle(color: Colors.grey)),
                           ),
                         ),
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 14),
-                          child: Text('내 정보', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                          child: Text('내 정보',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),
                   ),
                   const Divider(height: 1),
                   const SizedBox(height: 16),
-                  
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       children: [
-                        const Text('내 정보 공개 범위 설정', style: TextStyle(fontWeight: FontWeight.w600)),
+                        const Text('내 정보 공개 범위 설정',
+                            style: TextStyle(fontWeight: FontWeight.w600)),
                         const SizedBox(width: 6),
                         GestureDetector(
                           onTap: () => _showPrivacyInfo(context),
-                          child: Image.asset('assets/images/info.png', width: 12),
+                          child: Image.asset('assets/images/info.png',
+                              width: 12),
                         ),
                         const Spacer(),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10,vertical:3),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 3),
                           decoration: BoxDecoration(
                             color: const Color(0xFF383C59),
                             borderRadius: BorderRadius.circular(20),
@@ -284,11 +307,17 @@ class _MyInfoState extends State<MyInfo> {
                               isDense: true,
                               value: selectedPrivacy,
                               dropdownColor: const Color(0xFF383C59),
-                              icon: Image.asset('assets/images/down.arrow.png', width: 12, height: 12),
-                              items: ['비공개', '즐겨찾기 공개', '전체공개'].map((value) {
+                              icon: Image.asset(
+                                  'assets/images/down.arrow.png',
+                                  width: 12,
+                                  height: 12),
+                              items: ['비공개', '친한 친구 공개', '전체공개']
+                                  .map((value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
-                                  child: Text(value, style: const TextStyle(color: Colors.white, fontSize: 12)),
+                                  child: Text(value,
+                                      style: const TextStyle(
+                                          color: Colors.white, fontSize: 12)),
                                 );
                               }).toList(),
                               onChanged: (newValue) {
@@ -303,16 +332,17 @@ class _MyInfoState extends State<MyInfo> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Text('나의 장소', style: TextStyle(fontWeight: FontWeight.w600)),
+                    child:
+                        Text('나의 장소', style: TextStyle(fontWeight: FontWeight.w600)),
                   ),
                   const SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 14),
                       decoration: BoxDecoration(
                         color: const Color(0xFF383C59),
                         borderRadius: BorderRadius.circular(10),
@@ -321,7 +351,9 @@ class _MyInfoState extends State<MyInfo> {
                         children: const [
                           Icon(Icons.school, color: Colors.white),
                           SizedBox(width: 10),
-                          Text('경희대학교 국제캠퍼스', style: TextStyle(color: Colors.white, fontSize: 14)),
+                          Text('경희대학교 국제캠퍼스',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 14)),
                         ],
                       ),
                     ),
@@ -339,23 +371,27 @@ class _MyInfoState extends State<MyInfo> {
                           color: Colors.white,
                         ),
                         child: const Center(
-                          child: Text('+ 장소 등록하기', style: TextStyle(fontWeight: FontWeight.w500)),
+                          child: Text('+ 장소 등록하기',
+                              style: TextStyle(fontWeight: FontWeight.w500)),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 22),
-                  
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text('KB가 추천해주는 $userName님 맞춤 기프티콘',
-                      style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 18)),
+                    child: Text(
+                        'CASHLOOP가 추천해주는 $userName님 맞춤 기프티콘',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18)),
                   ),
                   const SizedBox(height: 2),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text('$userName님 근처에서 요즘 인기 있는 기프티콘을 모아봤어요!',
-                        style: const TextStyle(color: Color.fromARGB(128, 31, 30, 30), fontSize: 15)),
+                        style: const TextStyle(
+                            color: Color.fromARGB(128, 31, 30, 30),
+                            fontSize: 15)),
                   ),
                   const SizedBox(height: 10),
                   _buildRecommendedGifticonList(),
@@ -370,27 +406,22 @@ class _MyInfoState extends State<MyInfo> {
     if (recommendedGifticons.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0), // 좌우 패딩 추가
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
-            mainAxisSize: MainAxisSize.min, 
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              // 1. mapping.png 이미지
               Image.asset(
-                'assets/images/mapping.png', 
-                width: 350, 
+                'assets/images/mapping.png',
+                width: 350,
                 height: 350,
               ),
-              
-              const SizedBox(height: 7), // 이미지와 카드 목록 사이의 간격
-
-              // ⭐ 요청하신 세로 목록 카드 3개 추가 ⭐
+              const SizedBox(height: 7),
               ListView.builder(
-                shrinkWrap: true, // Column 안에 ListView를 넣을 때 필수
-                physics: const NeverScrollableScrollPhysics(), // 외부 SingleChildScrollView에 의존
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: placeholderGifts.length,
                 itemBuilder: (context, index) {
                   final gift = placeholderGifts[index];
-                  // 새로운 세로 카드 위젯 사용
                   return _VerticalGiftCard(
                     name: gift['name']!,
                     store: gift['store']!,
@@ -401,22 +432,18 @@ class _MyInfoState extends State<MyInfo> {
                 },
               ),
               const SizedBox(height: 15),
-              // ⭐ 세로 목록 카드 3개 추가 끝 ⭐
-              
-              // 2. 원래 텍스트
               const Text(
                 '지금 있는 곳 근처의 추천 기프티콘 사용 가능 매장이에요.',
                 style: TextStyle(fontSize: 13, color: Colors.grey),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 20), // 하단 여백 추가
+              const SizedBox(height: 20),
             ],
           ),
         ),
       );
     }
-      
-    // (기존 recommendedGifticons가 있을 때의 ListView.builder 로직은 그대로 유지)
+
     return SizedBox(
       height: 250,
       child: ListView.builder(
@@ -430,12 +457,14 @@ class _MyInfoState extends State<MyInfo> {
             margin: const EdgeInsets.only(right: 16.0),
             child: Card(
               elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
               child: InkWell(
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => GifticonDetailPage(gifticon: gifticon),
+                      builder: (context) =>
+                          GifticonDetailPage(gifticon: gifticon),
                     ),
                   );
                 },
@@ -443,7 +472,8 @@ class _MyInfoState extends State<MyInfo> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ClipRRect(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                      borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(12)),
                       child: CachedNetworkImage(
                         imageUrl: gifticon.imagePath,
                         width: 150,
@@ -458,7 +488,8 @@ class _MyInfoState extends State<MyInfo> {
                         children: [
                           Text(
                             gifticon.name,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold),
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
@@ -480,7 +511,7 @@ class _MyInfoState extends State<MyInfo> {
   }
 }
 
-// 기프티콘 상세 페이지 위젯 (기존 유지)
+// 기프티콘 상세 페이지 위젯
 class GifticonDetailPage extends StatelessWidget {
   final Gifticon gifticon;
   const GifticonDetailPage({super.key, required this.gifticon});
@@ -509,7 +540,8 @@ class GifticonDetailPage extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 '브랜드: ${gifticon.brand}',
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Text(
@@ -529,7 +561,7 @@ class GifticonDetailPage extends StatelessWidget {
   }
 }
 
-// 3. 🆕 새로운 세로 기프티콘 카드 위젯 정의
+// 새로운 세로 기프티콘 카드 위젯
 class _VerticalGiftCard extends StatelessWidget {
   final String name;
   final String store;
@@ -559,7 +591,6 @@ class _VerticalGiftCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 임시 이미지
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.asset(
@@ -570,7 +601,6 @@ class _VerticalGiftCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            // 기프티콘 정보
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -587,7 +617,8 @@ class _VerticalGiftCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.location_on_outlined, size: 14, color: Colors.grey),
+                      const Icon(Icons.location_on_outlined,
+                          size: 14, color: Colors.grey),
                       const SizedBox(width: 4),
                       Text(
                         '$store · $distance 이내',
@@ -609,15 +640,7 @@ class _VerticalGiftCard extends StatelessWidget {
                           fontSize: 14,
                         ),
                       ),
-                      const Spacer(),
-                      const Text(
-                        '사용 가능',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      // "사용 가능" 텍스트 제거됨
                     ],
                   ),
                 ],

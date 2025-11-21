@@ -361,7 +361,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                       imageAsset: 'assets/images/백억.png',
                       brand: '백억커피',
                       name: '바닐라 라떼 (ICE)',
-                      period: '2025.08.11~2026.08.11',
+                      period: '2025.04.07~2026.04.07',
                       statusLabel: _isBaeokConverted
                           ? '전환완료'
                           : '포인트 전환 가능 금액: 250원',
@@ -377,7 +377,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                     imageAsset: 'assets/images/megamericano.png',
                     brand: '메가커피',
                     name: '아이스아메리카노 (ICE)',
-                    period: '2025.08.11~2026.08.11',
+                    period: '2024.12.25~2025.12.25',
                     statusLabel: '사용완료',
                     statusColor: Color(0xFF2F2C46),
                     statusTextColor: Colors.white,
@@ -388,7 +388,7 @@ class _MyCouponsPageState extends State<MyCouponsPage> {
                       imageAsset: 'assets/images/composeamericano.png',
                       brand: '컴포즈커피',
                       name: '아이스아메리카노 (ICE)',
-                      period: '2025.08.11~2026.08.11',
+                      period: '2024.08.24~2025.08.24',
                       statusLabel: '기한 만료',
                       statusColor: Color(0xFF2F2C46),
                       statusTextColor: Colors.white,

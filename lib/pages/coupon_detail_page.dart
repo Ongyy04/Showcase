@@ -211,7 +211,7 @@ class _CouponDetailPageState extends State<CouponDetailPage> {
           ),
           titleSpacing: 0,
           title: const Text(
-            '모바일 쿠폰마켓',
+            '내 기프티콘',
             style: TextStyle(color: Colors.black, fontSize: 17, fontWeight: FontWeight.w600),
           ),
           actions: [
@@ -244,13 +244,13 @@ class _CouponDetailPageState extends State<CouponDetailPage> {
                     backgroundColor: const Color(0xFF383C59),
                     child: const CircleAvatar(
                       radius: 16,
-                      backgroundImage: AssetImage('assets/images/chick_g3.png'),
+                      backgroundImage: AssetImage('assets/images/chick_g1.png'),
                       backgroundColor: Colors.transparent,
                     ),
                   ),
                   const SizedBox(width: 8),
                   const Text(
-                    '김지안님의 선물',
+                    'rwd님의 선물',
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   ),
                 ],

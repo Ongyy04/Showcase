@@ -28,9 +28,7 @@ import 'package:my_app/models/user.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ⚠️ path_provider는 웹에서 사용 불가 → 분기 필요
   if (kIsWeb) {
-    // 웹에서는 파일 경로 없음 → 기본 init만
     await Hive.initFlutter();
   } else {
     final dir = await getApplicationDocumentsDirectory();
@@ -53,7 +51,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'Pretendard'),
-      // ✅ 스플래시에서 자동 라우팅
       initialRoute: '/splash',
       routes: {
         '/splash': (context) => const _SplashGate(),
@@ -78,13 +75,11 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/// 현재 세션을 보고 자동으로 라우팅
 class _SplashGate extends StatefulWidget {
   const _SplashGate({super.key});
   @override
   State<_SplashGate> createState() => _SplashGateState();
 }
-
 
 class _SplashGateState extends State<_SplashGate> {
   @override
@@ -94,17 +89,13 @@ class _SplashGateState extends State<_SplashGate> {
   }
 
   Future<void> _route() async {
-    // 🔥 DatabaseService.init()이 실제로 완료될 때까지 기다림
     await Future.delayed(const Duration(milliseconds: 100));
-    await DatabaseService.session.clear();//이게 앱 다시 시작 할 때마다 캐시 삭제해주는 거임 그래서 다시 회원가입 해야됨
-    final key = DatabaseService.currentUserKey();
-    if (!mounted) return;
 
-    if (key != null) {
-      Navigator.pushReplacementNamed(context, '/my_coupons');
-    } else {
-      Navigator.pushReplacementNamed(context, '/login');
-    }
+    // 자동 로그인만 해제
+    await DatabaseService.clearCurrentUserKey();
+
+    if (!mounted) return;
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   @override
@@ -115,4 +106,3 @@ class _SplashGateState extends State<_SplashGate> {
     );
   }
 }
-

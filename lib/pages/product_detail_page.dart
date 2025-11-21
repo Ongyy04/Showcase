@@ -1,3 +1,4 @@
+// lib/pages/product_detail_page.dart
 import 'package:flutter/material.dart';
 import 'package:my_app/models/friend.dart';
 import 'package:my_app/services/database.dart';
@@ -16,7 +17,6 @@ class ProductDetailPage extends StatelessWidget {
     final int salePrice = args['salePrice'] ?? 4050;
     final int discountPercent = args['discountPercent'] ?? 10;
 
-    // ✅ 상품별 설명을 arguments에서 받기
     final String description = args['description'] ??
         '부드러운 우유가 들어있는 커피로 전세계적으로 스타벅스에서 가장 인기있는 음료중 하나입니다.';
     final String subDescription = args['subDescription'] ?? 'Only ICE';
@@ -33,7 +33,6 @@ class ProductDetailPage extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
-
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 8),
@@ -61,7 +60,6 @@ class ProductDetailPage extends StatelessWidget {
           ),
         ],
       ),
-
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         children: [
@@ -118,17 +116,13 @@ class ProductDetailPage extends StatelessWidget {
           const SizedBox(height: 16),
           const Divider(height: 1, color: divider),
           const SizedBox(height: 16),
-
           const Text(
             '상품 설명',
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 8),
-
-          // ✅ 여기부터는 하드코딩 대신 arguments 사용
           _BulletLine(description),
           _BulletLine(subDescription),
-
           const SizedBox(height: 20),
           const Text(
             '이용 안내',
@@ -141,7 +135,6 @@ class ProductDetailPage extends StatelessWidget {
           const SizedBox(height: 80),
         ],
       ),
-
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: Container(
@@ -230,7 +223,8 @@ class ProductDetailPage extends StatelessWidget {
   }
 
   static String _money(int v) =>
-      v.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',');
+      v.toString().replaceAllMapped(
+          RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',');
 }
 
 class _BulletLine extends StatelessWidget {

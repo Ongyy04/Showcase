@@ -1,4 +1,4 @@
-// payment_page.dart
+// lib/pages/payment_page.dart
 import 'package:flutter/material.dart';
 import 'package:my_app/models/friend.dart';
 import 'package:my_app/models/user.dart';
@@ -54,18 +54,73 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   void initState() {
     super.initState();
+
     _currentUserKey = DatabaseService.currentUserKey();
     if (_currentUserKey != null) {
       final user = DatabaseService.users.get(_currentUserKey!);
       availablePoint = user?.starPoint ?? 0;
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showTopNotification(
+        context,
+        '남은 잔액 ${_fmtPoint(availablePoint)}P에서 사용하면 10% 할인이 가능해요!',
+      );
+    });
   }
 
-  Future<void> _showPaymentResultDialog(String label) async {
+  void _showTopNotification(BuildContext context, String message) {
+    final overlay = Overlay.of(context);
+    if (overlay == null) return;
+
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: 50,
+        left: 16,
+        right: 16,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 255, 255, 255),
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 6,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Text(
+              message,
+              style: const TextStyle(
+                color: Color.fromARGB(255, 0, 0, 0),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(overlayEntry);
+
+    Future.delayed(const Duration(seconds: 2), () {
+      overlayEntry.remove();
+    });
+  }
+
+  // parentContext를 받아서 다이얼로그 닫고 PaymentPage까지 닫음
+  Future<void> _showPaymentResultDialog(
+    BuildContext parentContext,
+    String label,
+  ) async {
     return showDialog<void>(
-      context: context,
+      context: parentContext,
       barrierDismissible: true,
-      builder: (BuildContext context) {
+      builder: (dialogContext) {
         return Dialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: Container(
@@ -92,7 +147,10 @@ class _PaymentPageState extends State<PaymentPage> {
                 ),
                 const SizedBox(height: 24),
                 GestureDetector(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    Navigator.pop(dialogContext); // 다이얼로그 닫기
+                    Navigator.pop(parentContext); // PaymentPage 닫기 -> ProductDetail로 복귀
+                  },
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -130,8 +188,10 @@ class _PaymentPageState extends State<PaymentPage> {
     final Friend? friend = args['friend'] as Friend?;
 
     final bool isSelfGift = (friend == null) || (args['selfGift'] == true);
-    final String avatarPath = isSelfGift ? 'assets/images/hello.png' : (friend!.imagePath);
-    final String recipientLabel = isSelfGift ? '나에게 선물' : '${friend!.name}님에게 선물';
+    final String avatarPath =
+        isSelfGift ? 'assets/images/hello.png' : friend!.imagePath;
+    final String recipientLabel =
+        isSelfGift ? '나에게 선물' : '${friend!.name}님에게 선물';
 
     final int itemTotal = price * qty;
     final int pointUse = usePoint ? availablePoint.clamp(0, itemTotal) : 0;
@@ -283,20 +343,22 @@ class _PaymentPageState extends State<PaymentPage> {
                     final userBox = DatabaseService.users;
                     final user = userBox.get(_currentUserKey!);
                     if (user != null) {
-                      user.starPoint = (user.starPoint - pointUse).clamp(0, 1 << 31);
+                      user.starPoint =
+                          (user.starPoint - pointUse).clamp(0, 1 << 31);
                       userBox.put(_currentUserKey!, user);
                       setState(() => availablePoint = user.starPoint);
                     }
                   }
 
                   if (payTotal == 0) {
-                    await _showPaymentResultDialog('포인트'); // 포인트 결제 완료
+                    await _showPaymentResultDialog(context, '포인트');
                   } else {
                     if (_selectedPayMethod == null) {
                       _showPaymentMethodSheet(context);
                     } else {
-                      final label = methodLabels[_selectedPayMethod!] ?? '결제수단';
-                      await _showPaymentResultDialog(label); // 일반 결제 완료
+                      final label =
+                          methodLabels[_selectedPayMethod!] ?? '결제수단';
+                      await _showPaymentResultDialog(context, label);
                     }
                   }
 
@@ -316,46 +378,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       paymentDetails: "",
                     );
                   }
-                    // 10% 할인 쿠폰 발급
-// 10% 할인 쿠폰 발급 알림 (상단)
-void showTopNotification(BuildContext context, String message) {
-  final overlay = Overlay.of(context);
-  final overlayEntry = OverlayEntry(
-    builder: (context) => Positioned(
-      top: 50, // 상단 위치
-      left: 16,
-      right: 16,
-      child: Material(
-        color: Colors.transparent,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 255, 255, 255),
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: const [
-              BoxShadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 3)),
-            ],
-          ),
-          child: Text(
-            message,
-            style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
-    ),
-  );
-
-  overlay.insert(overlayEntry);
-
-  // 3초 후 자동 제거
-  Future.delayed(const Duration(seconds: 2), () {
-    overlayEntry.remove();
-  });
-}
-showTopNotification(context, '남은 잔액 ${availablePoint}P에서 사용하면 10% 할인이 가능해요!');
-
-       },
-                
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: accent,
                   foregroundColor: Colors.black,
@@ -491,7 +514,8 @@ showTopNotification(context, '남은 잔액 ${availablePoint}P에서 사용하�
   Widget _buildPayMethodIcon(String imagePath,
       {bool isSelected = false, VoidCallback? onTap}) {
     final fileName = imagePath.split('/').last;
-    final double scale = (logoScales[fileName] ?? 0.72).clamp(0.5, 0.95);
+    final double scale =
+        (logoScales[fileName] ?? 0.72).clamp(0.5, 0.95);
 
     return GestureDetector(
       onTap: onTap,
@@ -574,7 +598,9 @@ showTopNotification(context, '남은 잔액 ${availablePoint}P에서 사용하�
                       height: 40,
                       child: FittedBox(
                         fit: BoxFit.contain,
-                        child: Image.asset('assets/images/${_selectedPayMethod!}'),
+                        child: Image.asset(
+                          'assets/images/${_selectedPayMethod!}',
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -611,7 +637,8 @@ showTopNotification(context, '남은 잔액 ${availablePoint}P에서 사용하�
   }
 
   static String _fmtPoint(int v) =>
-      v.toString().replaceAllMapped(RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',');
+      v.toString().replaceAllMapped(
+          RegExp(r'\B(?=(\d{3})+(?!\d))'), (m) => ',');
 
   static String _fmtWon(int v) => _fmtPoint(v);
 }
