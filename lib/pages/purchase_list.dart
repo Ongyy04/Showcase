@@ -224,7 +224,7 @@ class _PurchaseHistoryPageState extends State<PurchaseHistoryPage> {
   }
 final List<Transaction> transactions = [
   Transaction(
-    date: '2025-11-20',
+    date: '2025-11-22',
     description: '스타벅스 카페라떼(ICE) khj님께[선물]',
     amount: 4500,
     pointAmount: -250,
@@ -267,6 +267,14 @@ final List<Transaction> transactions = [
     balance: 8151,
     imagePath: 'assets/images/sb10000.png',
     barcodePath: 'assets/images/barcode.png',
+  ),
+    Transaction(
+    date: '2025-11-22',
+    description: '250포인트 전환[적립]',
+    amount: 0,
+    pointAmount: 250,
+    balance: 250, // 이전 잔액 + pointAmount
+    imagePath: 'assets/images/병아리.png',
   ),
   Transaction(
     date: '2025-11-03',
